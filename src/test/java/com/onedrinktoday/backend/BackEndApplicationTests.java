@@ -1,4 +1,4 @@
-package com.example.backend;
+package com.onedrinktoday.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
