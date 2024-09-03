@@ -3,6 +3,7 @@ package com.onedrinktoday.backend.domain.region.controller;
 import com.onedrinktoday.backend.domain.region.dto.RegionRequest;
 import com.onedrinktoday.backend.domain.region.dto.RegionResponse;
 import com.onedrinktoday.backend.domain.region.service.RegionService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class RegionController {
   private final RegionService regionService;
 
   @PostMapping("/regions")
-  public ResponseEntity<RegionResponse> createRegion(@RequestBody RegionRequest request) {
+  public ResponseEntity<RegionResponse> createRegion(@Valid @RequestBody RegionRequest request) {
 
     return ResponseEntity.ok(regionService.createRegion(request));
   }
