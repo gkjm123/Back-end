@@ -3,7 +3,6 @@ package com.onedrinktoday.backend.domain.member.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.onedrinktoday.backend.global.type.Drink;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
@@ -21,13 +20,13 @@ public class MemberRequest {
     @NotNull(message = "지역 ID를 입력해주세요.")
     private Long regionId;
 
-    @Pattern(regexp = "^[a-zA-Z0-9가-힣_-]{2,10}$", message="이름을 2~10글자 사이로 입력해주세요.")
+    @Pattern(regexp = "^[a-zA-Z0-9가-힣_-]{2,10}$", message = "이름을 2~10글자 사이로 입력해주세요.")
     private String name;
 
     @Email(message = "메일을 확인해주세요.")
     private String email;
 
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,15}", message = "비밀번호는 8자 이상 15자 이하로, 소문자, 대문자, 숫자 및 특수문자를 모두 포함해야 합니다.")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@!%*?&])[A-Za-z\\d$@!%*?&]{8,15}", message = "비밀번호는 8자 이상 15자 이하로, 소문자, 대문자, 숫자 및 특수문자를 모두 포함해야 합니다.")
     private String password;
 
     @Past(message = "생일을 오늘보다 과거일자로 입력해주세요.")
