@@ -2,7 +2,11 @@ package com.onedrinktoday.backend.global.security;
 
 import com.onedrinktoday.backend.global.type.Role;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import javax.crypto.SecretKey;
@@ -47,7 +51,8 @@ public class JwtProvider {
       Date expiration = claims.getExpiration();
 
       return expiration.before(new Date());
-    } catch (RuntimeException e) {
+    } catch (SignatureException | UnsupportedJwtException | ExpiredJwtException |
+             MalformedJwtException e) {
       return true;
     }
   }
