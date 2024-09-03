@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class JwtProvider {
 
   private final SecretKey secretKey;
-  private static final long EXPIRE_TIME = 1000 * 60 * 60 * 24;
+  private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 60 * 30;
 
   public JwtProvider(@Value("${spring.jwt.secret}") String secret) {
     this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
@@ -30,7 +30,7 @@ public class JwtProvider {
         .subject(email)
         .claim("role", role)
         .issuedAt(new Date())
-        .expiration(new Date(System.currentTimeMillis() + EXPIRE_TIME))
+        .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
         .signWith(secretKey)
         .compact();
   }
