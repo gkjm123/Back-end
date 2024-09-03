@@ -4,14 +4,14 @@ import com.onedrinktoday.backend.domain.member.dto.MemberRequest;
 import com.onedrinktoday.backend.domain.member.dto.MemberResponse;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
 import jakarta.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.onedrinktoday.backend.global.security.TokenDTO;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,19 +27,16 @@ public class MemberController {
   }
 
   @PostMapping("/members/signin")
-  public ResponseEntity<String> signIn(@Valid @RequestBody MemberRequest.SignIn request) {
+  public ResponseEntity<TokenDTO> signIn(@Valid @RequestBody MemberRequest.SignIn request) {
 
     return ResponseEntity.ok(memberService.signIn(request));
   }
 
   @PostMapping("/members/refresh")
-  public ResponseEntity<Map<String, String>> refreshAccessToken(@RequestBody String refreshToken) {
+  public ResponseEntity<TokenDTO> refreshAccessToken(
+      @RequestHeader("Refresh-Token") String refreshToken) {
 
-    Map<String, String> response = new HashMap<>();
-    response.put("accessToken", memberService.refreshAccessToken(refreshToken));
-
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(memberService.refreshAccessToken(refreshToken));
   }
-
 
 }

@@ -10,6 +10,7 @@ import com.onedrinktoday.backend.domain.region.repository.RegionRepository;
 import com.onedrinktoday.backend.global.exception.CustomException;
 import com.onedrinktoday.backend.global.exception.ErrorCode;
 import com.onedrinktoday.backend.global.security.JwtProvider;
+import com.onedrinktoday.backend.global.security.TokenDTO;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -43,9 +44,8 @@ public class MemberService {
     return MemberResponse.from(memberRepository.save(member));
   }
 
-  @Transactional(readOnly = true)
-  public String signIn(SignIn request) {
-
+  @Transactional
+  public TokenDTO signIn(SignIn request) {
     Member member = memberRepository.findByEmail(request.getEmail())
         .orElseThrow(() -> new CustomException(ErrorCode.LOGIN_FAIL));
 
@@ -53,11 +53,17 @@ public class MemberService {
       throw new CustomException(ErrorCode.LOGIN_FAIL);
     }
 
-    return jwtProvider.createToken(member.getEmail(), member.getRole());
+    String AccessToken = jwtProvider.createToken(member.getEmail(), member.getRole());
+    String RefreshToken = jwtProvider.createRefreshToken(member.getEmail(), member.getRole());
+
+    return TokenDTO.builder()
+        .accessToken(AccessToken)
+        .refreshToken(RefreshToken)
+        .build();
   }
 
   @Transactional(readOnly = true)
-  public String refreshAccessToken(String refreshToken) {
+  public TokenDTO refreshAccessToken(String refreshToken) {
     String email;
     try {
       email = jwtProvider.getEmail(refreshToken);
@@ -65,7 +71,6 @@ public class MemberService {
       if (jwtProvider.isTokenExpired(refreshToken)) {
         throw new CustomException(ErrorCode.TOKEN_EXPIRED);
       }
-
     } catch (JwtException e) {
       throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
     }
@@ -73,6 +78,12 @@ public class MemberService {
     Member member = memberRepository.findByEmail(email)
         .orElseThrow(() -> new CustomException(ErrorCode.LOGIN_FAIL));
 
-    return jwtProvider.createToken(member.getEmail(), member.getRole());
+    String AccessToken = jwtProvider.createToken(member.getEmail(), member.getRole());
+    String RefreshToken = jwtProvider.createRefreshToken(member.getEmail(), member.getRole());
+
+    return TokenDTO.builder()
+        .accessToken(AccessToken)
+        .refreshToken(RefreshToken)
+        .build();
   }
 }
