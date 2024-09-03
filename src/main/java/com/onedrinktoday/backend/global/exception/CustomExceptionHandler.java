@@ -12,6 +12,6 @@ public class CustomExceptionHandler {
   @ExceptionHandler(CustomException.class)
   public ResponseEntity<CustomException> customExceptionHandler(final CustomException e) {
     log.warn("커스텀 에러 발생", e);
-    return ResponseEntity.badRequest().body(e);
+    return ResponseEntity.status(e.getStatus()).body(e);
   }
 }
