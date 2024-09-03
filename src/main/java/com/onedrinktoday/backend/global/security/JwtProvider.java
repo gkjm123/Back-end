@@ -1,6 +1,7 @@
 package com.onedrinktoday.backend.global.security;
 
 import com.onedrinktoday.backend.global.type.Role;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -33,5 +34,21 @@ public class JwtProvider {
   public String getEmail(String token) {
     return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token)
         .getPayload().getSubject();
+  }
+
+  public boolean isTokenExpired(String refreshToken) {
+    try {
+      Claims claims = Jwts.parser()
+          .verifyWith(secretKey)
+          .build()
+          .parseSignedClaims(refreshToken)
+          .getPayload();
+
+      Date expiration = claims.getExpiration();
+
+      return expiration.before(new Date());
+    } catch (RuntimeException e) {
+      return true;
+    }
   }
 }

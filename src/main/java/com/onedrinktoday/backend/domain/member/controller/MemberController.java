@@ -4,6 +4,8 @@ import com.onedrinktoday.backend.domain.member.dto.MemberRequest;
 import com.onedrinktoday.backend.domain.member.dto.MemberResponse;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
 import jakarta.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +32,14 @@ public class MemberController {
     return ResponseEntity.ok(memberService.signIn(request));
   }
 
+  @PostMapping("/members/refresh")
+  public ResponseEntity<Map<String, String>> refreshAccessToken(@RequestBody String refreshToken) {
 
+    Map<String, String> response = new HashMap<>();
+    response.put("accessToken", memberService.refreshAccessToken(refreshToken));
+
+    return ResponseEntity.ok(response);
+  }
 
 
 }

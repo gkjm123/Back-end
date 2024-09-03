@@ -10,6 +10,7 @@ import com.onedrinktoday.backend.domain.region.repository.RegionRepository;
 import com.onedrinktoday.backend.global.exception.CustomException;
 import com.onedrinktoday.backend.global.exception.ErrorCode;
 import com.onedrinktoday.backend.global.security.JwtProvider;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,26 @@ public class MemberService {
     if (!bCryptPasswordEncoder.matches(request.getPassword(), member.getPassword())) {
       throw new CustomException(ErrorCode.LOGIN_FAIL);
     }
+
+    return jwtProvider.createToken(member.getEmail(), member.getRole());
+  }
+
+  @Transactional(readOnly = true)
+  public String refreshAccessToken(String refreshToken) {
+    String email;
+    try {
+      email = jwtProvider.getEmail(refreshToken);
+
+      if (jwtProvider.isTokenExpired(refreshToken)) {
+        throw new CustomException(ErrorCode.TOKEN_EXPIRED);
+      }
+
+    } catch (JwtException e) {
+      throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
+    }
+
+    Member member = memberRepository.findByEmail(email)
+        .orElseThrow(() -> new CustomException(ErrorCode.LOGIN_FAIL));
 
     return jwtProvider.createToken(member.getEmail(), member.getRole());
   }
