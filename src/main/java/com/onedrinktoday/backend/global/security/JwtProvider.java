@@ -1,7 +1,12 @@
 package com.onedrinktoday.backend.global.security;
 
 import com.onedrinktoday.backend.global.type.Role;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import javax.crypto.SecretKey;
@@ -13,7 +18,8 @@ import org.springframework.stereotype.Service;
 public class JwtProvider {
 
   private final SecretKey secretKey;
-  private static final long EXPIRE_TIME = 1000 * 60 * 60 * 24;
+  private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 60 * 30;
+  private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 24 * 7;
 
   public JwtProvider(@Value("${spring.jwt.secret}") String secret) {
     this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
@@ -25,7 +31,17 @@ public class JwtProvider {
         .subject(email)
         .claim("role", role)
         .issuedAt(new Date())
-        .expiration(new Date(System.currentTimeMillis() + EXPIRE_TIME))
+        .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
+        .signWith(secretKey)
+        .compact();
+  }
+
+  public String createRefreshToken(String email, Role role) {
+    return Jwts.builder()
+        .subject(email)
+        .claim("role", role)
+        .issuedAt(new Date())
+        .expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRE_TIME))
         .signWith(secretKey)
         .compact();
   }
@@ -33,5 +49,22 @@ public class JwtProvider {
   public String getEmail(String token) {
     return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token)
         .getPayload().getSubject();
+  }
+
+  public boolean isTokenExpired(String refreshToken) {
+    try {
+      Claims claims = Jwts.parser()
+          .verifyWith(secretKey)
+          .build()
+          .parseSignedClaims(refreshToken)
+          .getPayload();
+
+      Date expiration = claims.getExpiration();
+
+      return expiration.before(new Date());
+    } catch (SignatureException | UnsupportedJwtException | ExpiredJwtException |
+             MalformedJwtException e) {
+      return true;
+    }
   }
 }
