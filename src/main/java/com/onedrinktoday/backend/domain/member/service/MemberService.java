@@ -92,6 +92,17 @@ public class MemberService {
 
   }
 
+  @Transactional(readOnly = true)
+  public MemberResponse getMemberInfo(Long memberId) {
+    Member member = getMember();
+
+    if (member.getId().equals(memberId)) {
+      return MemberResponse.from(member);
+    } else {
+      throw new CustomException(ErrorCode.ACCESS_DENIED);
+    }
+  }
+
   //멤버 정보 필요시 MemberService 주입받아 메서드 사용
   @Transactional(readOnly = true)
   public Member getMember() {
