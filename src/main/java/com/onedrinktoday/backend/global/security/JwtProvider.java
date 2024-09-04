@@ -1,12 +1,7 @@
 package com.onedrinktoday.backend.global.security;
 
 import com.onedrinktoday.backend.global.type.Role;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.SignatureException;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import javax.crypto.SecretKey;
@@ -26,7 +21,7 @@ public class JwtProvider {
         Jwts.SIG.HS256.key().build().getAlgorithm());
   }
 
-  public String createToken(String email, Role role) {
+  public String createAccessToken(String email, Role role) {
     return Jwts.builder()
         .subject(email)
         .claim("role", role)
@@ -47,24 +42,7 @@ public class JwtProvider {
   }
 
   public String getEmail(String token) {
-    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token)
-        .getPayload().getSubject();
-  }
-
-  public boolean isTokenExpired(String refreshToken) {
-    try {
-      Claims claims = Jwts.parser()
-          .verifyWith(secretKey)
-          .build()
-          .parseSignedClaims(refreshToken)
-          .getPayload();
-
-      Date expiration = claims.getExpiration();
-
-      return expiration.before(new Date());
-    } catch (SignatureException | UnsupportedJwtException | ExpiredJwtException |
-             MalformedJwtException e) {
-      return true;
-    }
+    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
+        .getSubject();
   }
 }

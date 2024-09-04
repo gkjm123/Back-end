@@ -38,9 +38,9 @@ public class GoogleService {
   @Value("${oauth2.google.resource-uri}")
   private String resourceUri;
 
-  public String join(String code) {
-    String accessToken = getAccessToken(code);
-    JsonNode userResourceNode = getUserResource(accessToken);
+  public TokenDto join(String code) {
+    String token = getAccessToken(code);
+    JsonNode userResourceNode = getUserResource(token);
 
     String id = userResourceNode.get("id").asText();
     String email = userResourceNode.get("email").asText();
@@ -56,7 +56,13 @@ public class GoogleService {
             .build())
         );
 
-    return jwtProvider.createToken(member.getEmail(), member.getRole());
+    String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
+    String refreshToken = jwtProvider.createRefreshToken(member.getEmail(), member.getRole());
+
+    return TokenDto.builder()
+        .accessToken(accessToken)
+        .refreshToken(refreshToken)
+        .build();
   }
 
   private String getAccessToken(String code) {

@@ -1,5 +1,9 @@
 package com.onedrinktoday.backend.global.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Slf4j
@@ -24,17 +29,36 @@ public class JwtFilter extends OncePerRequestFilter {
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
 
-    String token = request.getHeader("TOKEN");
+    String token = request.getHeader("Access-Token");
 
-    if (token != null && jwtProvider.getEmail(token) != null) {
+    //헤더에 토큰이 없으면 Auth 저장 없이 필터 통과
+    if (StringUtils.hasText(token)) {
 
-      String email = jwtProvider.getEmail(token);
-      MemberDetail userDetails = memberDetailService.loadUserByUsername(email);
+      try {
+        //getEmail 실행시 유효성 체크 후 email 정보 반환
+        MemberDetail memberDetail = memberDetailService.loadUserByUsername(
+            jwtProvider.getEmail(token));
 
-      Authentication auth =
-          new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        Authentication auth =
+            new UsernamePasswordAuthenticationToken(
+                memberDetail, null, memberDetail.getAuthorities());
 
-      SecurityContextHolder.getContext().setAuthentication(auth);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+      } catch (SignatureException | UnsupportedJwtException | ExpiredJwtException |
+               MalformedJwtException e) {
+
+        //만료된 토큰일 때 401번 응답 반환
+        if (e instanceof ExpiredJwtException) {
+          response.setStatus(401);
+        }
+
+        //이외 토큰 유효성 체크 실패시 500번 응답 반환
+        else {
+          response.setStatus(500);
+        }
+        response.flushBuffer();
+      }
     }
 
     filterChain.doFilter(request, response);
