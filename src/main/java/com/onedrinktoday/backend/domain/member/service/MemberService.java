@@ -94,27 +94,22 @@ public class MemberService {
   }
 
   @Transactional(readOnly = true)
-  public MemberResponse getMemberInfo(Long memberId) {
+  public MemberResponse getMemberInfo() {
 
-    Member member = getMember();
-
-    if (member.getId().equals(memberId)) {
-      return MemberResponse.from(member);
-    } else {
-      throw new CustomException(ErrorCode.ACCESS_DENIED);
-    }
+    return MemberResponse.from(getMember());
   }
 
   @Transactional
-  public MemberResponse updateMemberInfo(Long memberId, UpdateInfo updateInfo) {
+  public MemberResponse updateMemberInfo(UpdateInfo updateInfo) {
 
     Member member = getMember();
 
-    if (!member.getId().equals(memberId)) {
-      throw new CustomException(ErrorCode.ACCESS_DENIED);
-    }
-
-    updateMemberFields(member, updateInfo);
+    member.setRegion(regionRepository.findById(updateInfo.getRegionId())
+        .orElseThrow(() -> new CustomException(ErrorCode.REGION_NOT_FOUND)));
+    member.setName(updateInfo.getName());
+    member.setFavorDrink(updateInfo.getFavorDrink());
+    member.setAlarmEnabled(updateInfo.isAlarmEnabled());
+    member.setImageUrl(updateInfo.getImageUrl());
 
     return MemberResponse.from(memberRepository.save(member));
   }
@@ -130,20 +125,4 @@ public class MemberService {
         .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
   }
 
-  private void updateMemberFields(Member member, UpdateInfo updateInfo) {
-    if (updateInfo.getRegionId() != null) {
-      member.setRegion(regionRepository.findById(updateInfo.getRegionId())
-          .orElseThrow(() -> new CustomException(ErrorCode.REGION_NOT_FOUND)));
-    }
-    if (updateInfo.getName() != null) {
-      member.setName(updateInfo.getName());
-    }
-    if (updateInfo.getFavorDrink() != null) {
-      member.setFavorDrink(updateInfo.getFavorDrink());
-    }
-    member.setAlarmEnabled(updateInfo.isAlarmEnabled());
-    if (updateInfo.getImageUrl() != null) {
-      member.setImageUrl(updateInfo.getImageUrl());
-    }
-  }
 }
