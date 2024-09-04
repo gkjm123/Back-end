@@ -48,7 +48,7 @@ public class MemberController {
     return ResponseEntity.ok(memberService.getMemberInfo(memberId));
   }
 
-  @PostMapping("members/{memberId}")
+  @PostMapping("/members/{memberId}")
   public ResponseEntity<MemberResponse> updateMemberInfo(@PathVariable Long memberId,
       @Valid @RequestBody MemberRequest.UpdateInfo request) {
 
