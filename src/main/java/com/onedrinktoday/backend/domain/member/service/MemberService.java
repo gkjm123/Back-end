@@ -10,9 +10,14 @@ import com.onedrinktoday.backend.domain.region.repository.RegionRepository;
 import com.onedrinktoday.backend.global.exception.CustomException;
 import com.onedrinktoday.backend.global.exception.ErrorCode;
 import com.onedrinktoday.backend.global.security.JwtProvider;
-import com.onedrinktoday.backend.global.security.TokenDTO;
-import io.jsonwebtoken.JwtException;
+import com.onedrinktoday.backend.global.security.MemberDetail;
+import com.onedrinktoday.backend.global.security.TokenDto;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,8 +49,8 @@ public class MemberService {
     return MemberResponse.from(memberRepository.save(member));
   }
 
-  @Transactional
-  public TokenDTO signIn(SignIn request) {
+  @Transactional(readOnly = true)
+  public TokenDto signIn(SignIn request) {
     Member member = memberRepository.findByEmail(request.getEmail())
         .orElseThrow(() -> new CustomException(ErrorCode.LOGIN_FAIL));
 
@@ -53,37 +58,46 @@ public class MemberService {
       throw new CustomException(ErrorCode.LOGIN_FAIL);
     }
 
-    String AccessToken = jwtProvider.createToken(member.getEmail(), member.getRole());
-    String RefreshToken = jwtProvider.createRefreshToken(member.getEmail(), member.getRole());
+    String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
+    String refreshToken = jwtProvider.createRefreshToken(member.getEmail(), member.getRole());
 
-    return TokenDTO.builder()
-        .accessToken(AccessToken)
-        .refreshToken(RefreshToken)
+    return TokenDto.builder()
+        .accessToken(accessToken)
+        .refreshToken(refreshToken)
         .build();
   }
 
   @Transactional(readOnly = true)
-  public TokenDTO refreshAccessToken(String refreshToken) {
-    String email;
+  public TokenDto refreshAccessToken(String refreshToken) {
+
     try {
-      email = jwtProvider.getEmail(refreshToken);
+      //유효기관 경과시 exception 발생
+      String email = jwtProvider.getEmail(refreshToken);
 
-      if (jwtProvider.isTokenExpired(refreshToken)) {
-        throw new CustomException(ErrorCode.TOKEN_EXPIRED);
-      }
-    } catch (JwtException e) {
-      throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
+      Member member = memberRepository.findByEmail(email)
+          .orElseThrow(() -> new CustomException(ErrorCode.LOGIN_FAIL));
+
+      String AccessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
+
+      return TokenDto.builder()
+          .accessToken(AccessToken)
+          .build();
+
+    } catch (SignatureException | UnsupportedJwtException | ExpiredJwtException
+             | MalformedJwtException e) {
+
+      throw new CustomException(ErrorCode.TOKEN_EXPIRED);
     }
+  }
 
-    Member member = memberRepository.findByEmail(email)
-        .orElseThrow(() -> new CustomException(ErrorCode.LOGIN_FAIL));
+  //멤버 정보 필요시 MemberService 주입받아 메서드 사용
+  @Transactional(readOnly = true)
+  public Member getMember() {
 
-    String AccessToken = jwtProvider.createToken(member.getEmail(), member.getRole());
-    String RefreshToken = jwtProvider.createRefreshToken(member.getEmail(), member.getRole());
+    MemberDetail memberDetail =
+        (MemberDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-    return TokenDTO.builder()
-        .accessToken(AccessToken)
-        .refreshToken(RefreshToken)
-        .build();
+    return memberRepository.findByEmail(memberDetail.getUsername())
+        .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
   }
 }
