@@ -23,6 +23,7 @@ public class MemberService {
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final RegionRepository regionRepository;
   private final JwtProvider jwtProvider;
+  private final EmailService emailService;
 
   @Transactional
   public MemberResponse signUp(SignUp request) {
@@ -53,5 +54,29 @@ public class MemberService {
     }
 
     return jwtProvider.createToken(member.getEmail(), member.getRole());
+  }
+
+  // 비밀번호 재설정 토큰 생성 및 이메일 전송
+  @Transactional
+  public void requestPasswordReset(String email) {
+    Member member = memberRepository.findByEmail(email)
+        .orElseThrow(() -> new CustomException(ErrorCode.EMAIL_NOT_FOUND));
+
+    String token = jwtProvider.createToken(member.getEmail(), member.getRole());
+    String resetLink = "http://localhost:8080/api/members/reset-password?token=" + token;
+
+    emailService.sendPasswordResetEmail(member.getEmail(), resetLink);
+  }
+
+  // 비밀번호 재설정
+  @Transactional
+  public void resetPassword(String token, String newPassword) {
+    String email = jwtProvider.getEmail(token);
+
+    Member member = memberRepository.findByEmail(email)
+        .orElseThrow(() -> new CustomException(ErrorCode.EMAIL_NOT_FOUND));
+
+    member.setPassword(bCryptPasswordEncoder.encode(newPassword));
+    memberRepository.save(member);
   }
 }
