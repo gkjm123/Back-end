@@ -2,6 +2,7 @@ package com.onedrinktoday.backend.domain.member.service;
 
 import com.onedrinktoday.backend.domain.member.dto.MemberRequest.SignIn;
 import com.onedrinktoday.backend.domain.member.dto.MemberRequest.SignUp;
+import com.onedrinktoday.backend.domain.member.dto.MemberRequest.UpdateInfo;
 import com.onedrinktoday.backend.domain.member.dto.MemberResponse;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.repository.MemberRepository;
@@ -94,6 +95,7 @@ public class MemberService {
 
   @Transactional(readOnly = true)
   public MemberResponse getMemberInfo(Long memberId) {
+
     Member member = getMember();
 
     if (member.getId().equals(memberId)) {
@@ -101,6 +103,20 @@ public class MemberService {
     } else {
       throw new CustomException(ErrorCode.ACCESS_DENIED);
     }
+  }
+
+  @Transactional
+  public MemberResponse updateMemberInfo(Long memberId, UpdateInfo updateInfo) {
+
+    Member member = getMember();
+
+    if (!member.getId().equals(memberId)) {
+      throw new CustomException(ErrorCode.ACCESS_DENIED);
+    }
+
+    updateMemberFields(member, updateInfo);
+
+    return MemberResponse.from(memberRepository.save(member));
   }
 
   //멤버 정보 필요시 MemberService 주입받아 메서드 사용
@@ -112,5 +128,22 @@ public class MemberService {
 
     return memberRepository.findByEmail(memberDetail.getUsername())
         .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+  }
+
+  private void updateMemberFields(Member member, UpdateInfo updateInfo) {
+    if (updateInfo.getRegionId() != null) {
+      member.setRegion(regionRepository.findById(updateInfo.getRegionId())
+          .orElseThrow(() -> new CustomException(ErrorCode.REGION_NOT_FOUND)));
+    }
+    if (updateInfo.getName() != null) {
+      member.setName(updateInfo.getName());
+    }
+    if (updateInfo.getFavorDrink() != null) {
+      member.setFavorDrink(updateInfo.getFavorDrink());
+    }
+    member.setAlarmEnabled(updateInfo.isAlarmEnabled());
+    if (updateInfo.getImageUrl() != null) {
+      member.setImageUrl(updateInfo.getImageUrl());
+    }
   }
 }
