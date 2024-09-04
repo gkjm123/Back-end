@@ -70,24 +70,26 @@ public class MemberService {
   @Transactional(readOnly = true)
   public TokenDto refreshAccessToken(String refreshToken) {
 
+    String email;
+
     try {
       //유효기관 경과시 exception 발생
-      String email = jwtProvider.getEmail(refreshToken);
-
-      Member member = memberRepository.findByEmail(email)
-          .orElseThrow(() -> new CustomException(ErrorCode.LOGIN_FAIL));
-
-      String AccessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
-
-      return TokenDto.builder()
-          .accessToken(AccessToken)
-          .build();
+      email = jwtProvider.getEmail(refreshToken);
 
     } catch (SignatureException | UnsupportedJwtException | ExpiredJwtException
              | MalformedJwtException e) {
-
       throw new CustomException(ErrorCode.TOKEN_EXPIRED);
     }
+
+    Member member = memberRepository.findByEmail(email)
+        .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+    String AccessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
+
+    return TokenDto.builder()
+        .accessToken(AccessToken)
+        .build();
+
   }
 
   //멤버 정보 필요시 MemberService 주입받아 메서드 사용
