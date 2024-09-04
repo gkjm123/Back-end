@@ -5,12 +5,14 @@ import com.onedrinktoday.backend.domain.member.dto.MemberResponse;
 import com.onedrinktoday.backend.domain.member.dto.PasswordResetDTO;
 import com.onedrinktoday.backend.domain.member.dto.PasswordResetRequest;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
+import com.onedrinktoday.backend.global.security.TokenDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +31,7 @@ public class MemberController {
   }
 
   @PostMapping("/members/signin")
-  public ResponseEntity<String> signIn(@Valid @RequestBody MemberRequest.SignIn request) {
+  public ResponseEntity<TokenDto> signIn(@Valid @RequestBody MemberRequest.SignIn request) {
 
     return ResponseEntity.ok(memberService.signIn(request));
   }
@@ -53,4 +55,24 @@ public class MemberController {
     return ResponseEntity.ok().build();
   }
 
+  //access 토큰 만료시 FE 에서 요청하는 컨트롤러, Refresh Token 을 헤더로 받아, 엑세스 토큰 새로 발급해 반환
+  @PostMapping("/members/refresh")
+  public ResponseEntity<TokenDto> refreshAccessToken(
+      @RequestHeader("Refresh-Token") String refreshToken) {
+
+    return ResponseEntity.ok(memberService.refreshAccessToken(refreshToken));
+  }
+
+  @GetMapping("/members")
+  public ResponseEntity<MemberResponse> getMemberInfo() {
+
+    return ResponseEntity.ok(memberService.getMemberInfo());
+  }
+
+  @PostMapping("/members")
+  public ResponseEntity<MemberResponse> updateMemberInfo(
+      @Valid @RequestBody MemberRequest.UpdateInfo request) {
+
+    return ResponseEntity.ok(memberService.updateMemberInfo(request));
+  }
 }

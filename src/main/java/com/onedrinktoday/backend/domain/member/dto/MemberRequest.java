@@ -49,4 +49,19 @@ public class MemberRequest {
     private String password;
 
   }
+
+  @Getter
+  @Builder
+  public static class UpdateInfo {
+
+    private Long regionId;
+
+    @Pattern(regexp = "^[a-zA-Z0-9가-힣_-]{2,10}$", message = "이름을 2~10글자 사이로 입력해주세요.")
+    private String name;
+
+    private List<Drink> favorDrink;
+    private boolean alarmEnabled;
+    private String imageUrl;
+
+  }
 }
