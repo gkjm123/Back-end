@@ -73,7 +73,7 @@ public class MemberService {
     String email;
 
     try {
-      //유효기관 경과시 exception 발생
+      //유효기간 만료시 exception 발생
       email = jwtProvider.getEmail(refreshToken);
 
     } catch (SignatureException | UnsupportedJwtException | ExpiredJwtException
