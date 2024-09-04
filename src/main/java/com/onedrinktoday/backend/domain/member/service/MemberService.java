@@ -2,6 +2,7 @@ package com.onedrinktoday.backend.domain.member.service;
 
 import com.onedrinktoday.backend.domain.member.dto.MemberRequest.SignIn;
 import com.onedrinktoday.backend.domain.member.dto.MemberRequest.SignUp;
+import com.onedrinktoday.backend.domain.member.dto.MemberRequest.UpdateInfo;
 import com.onedrinktoday.backend.domain.member.dto.MemberResponse;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.repository.MemberRepository;
@@ -92,6 +93,27 @@ public class MemberService {
 
   }
 
+  @Transactional(readOnly = true)
+  public MemberResponse getMemberInfo() {
+
+    return MemberResponse.from(getMember());
+  }
+
+  @Transactional
+  public MemberResponse updateMemberInfo(UpdateInfo updateInfo) {
+
+    Member member = getMember();
+
+    member.setRegion(regionRepository.findById(updateInfo.getRegionId())
+        .orElseThrow(() -> new CustomException(ErrorCode.REGION_NOT_FOUND)));
+    member.setName(updateInfo.getName());
+    member.setFavorDrink(updateInfo.getFavorDrink());
+    member.setAlarmEnabled(updateInfo.isAlarmEnabled());
+    member.setImageUrl(updateInfo.getImageUrl());
+
+    return MemberResponse.from(memberRepository.save(member));
+  }
+
   //멤버 정보 필요시 MemberService 주입받아 메서드 사용
   @Transactional(readOnly = true)
   public Member getMember() {
@@ -102,4 +124,5 @@ public class MemberService {
     return memberRepository.findByEmail(memberDetail.getUsername())
         .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
   }
+
 }
