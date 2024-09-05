@@ -127,7 +127,7 @@ public class MemberService {
   }
 
 
-  // 비밀번호 재설정 토큰 생성 및 이메일 전송
+  // 비밀번호 재설정 토큰 생성 및 이메일 전송(회원이 비밀번호를 모를 경우)
   @Transactional
   public void requestPasswordReset(String email) {
     Member member = memberRepository.findByEmail(email)
@@ -141,13 +141,33 @@ public class MemberService {
     emailService.sendPasswordResetEmail(member.getEmail(), resetLink);
   }
 
-  // 비밀번호 재설정
+  // 비밀번호 재설정(회원이 비밀번호를 모를 경우)
   @Transactional
   public void resetPassword(String token, String newPassword) {
     String email = jwtProvider.getEmail(token);
 
     Member member = memberRepository.findByEmail(email)
         .orElseThrow(() -> new CustomException(ErrorCode.EMAIL_NOT_FOUND));
+
+    member.setPassword(bCryptPasswordEncoder.encode(newPassword));
+    memberRepository.save(member);
+  }
+
+  // 비밀번호 재설정(회원이 비밀번호를 알 경우)
+  @Transactional
+  public void changePassword(String email, String currentPassword, String newPassword) {
+    Member member = memberRepository.findByEmail(email)
+        .orElseThrow(() -> new CustomException(ErrorCode.EMAIL_NOT_FOUND));
+
+    // 현재 비밀번호 확인
+    if (!bCryptPasswordEncoder.matches(currentPassword, member.getPassword())) {
+      throw new CustomException(ErrorCode.LOGIN_FAIL);
+    }
+
+    // 새 비밀번호와 기존 비밀번호 동일인지 확인
+    if (bCryptPasswordEncoder.matches(newPassword, member.getPassword())) {
+      throw new CustomException(ErrorCode.SAME_PASSWORD);
+    }
 
     member.setPassword(bCryptPasswordEncoder.encode(newPassword));
     memberRepository.save(member);
