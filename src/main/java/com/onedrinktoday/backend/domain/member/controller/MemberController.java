@@ -61,7 +61,7 @@ public class MemberController {
 
   // 비밀번호 알 경우 재설정
   @PostMapping("/members/password-change")
-  public ResponseEntity<Void> changePassword(@RequestHeader("Authorization") String token, @RequestBody ChangePasswordRequestDTO request) {
+  public ResponseEntity<Void> changePassword(@RequestHeader("Access-Token") String token, @RequestBody ChangePasswordRequestDTO request) {
 
     String email = jwtProvider.getEmail(token);
 
