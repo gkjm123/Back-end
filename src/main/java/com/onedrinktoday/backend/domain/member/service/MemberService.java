@@ -31,6 +31,7 @@ public class MemberService {
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final RegionRepository regionRepository;
   private final JwtProvider jwtProvider;
+  private final EmailService emailService;
 
   @Transactional
   public MemberResponse signUp(SignUp request) {
@@ -125,4 +126,50 @@ public class MemberService {
         .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
   }
 
+
+  // 비밀번호 재설정 토큰 생성 및 이메일 전송(회원이 비밀번호를 모를 경우)
+  @Transactional
+  public void requestPasswordReset(String email) {
+    Member member = memberRepository.findByEmail(email)
+        .orElseThrow(() -> new CustomException(ErrorCode.EMAIL_NOT_FOUND));
+
+    String token = jwtProvider.createResetToken(member.getEmail(), member.getRole());
+
+    // 도메인 변경(예정)
+    String resetLink = "http://localhost:8080/api/members/reset-password?token=" + token;
+
+    emailService.sendPasswordResetEmail(member.getEmail(), resetLink);
+  }
+
+  // 비밀번호 재설정(회원이 비밀번호를 모를 경우)
+  @Transactional
+  public void resetPassword(String token, String newPassword) {
+    String email = jwtProvider.getEmail(token);
+
+    Member member = memberRepository.findByEmail(email)
+        .orElseThrow(() -> new CustomException(ErrorCode.EMAIL_NOT_FOUND));
+
+    member.setPassword(bCryptPasswordEncoder.encode(newPassword));
+    memberRepository.save(member);
+  }
+
+  // 비밀번호 재설정(회원이 비밀번호를 알 경우)
+  @Transactional
+  public void changePassword(String email, String currentPassword, String newPassword) {
+    Member member = memberRepository.findByEmail(email)
+        .orElseThrow(() -> new CustomException(ErrorCode.EMAIL_NOT_FOUND));
+
+    // 현재 비밀번호 확인
+    if (!bCryptPasswordEncoder.matches(currentPassword, member.getPassword())) {
+      throw new CustomException(ErrorCode.LOGIN_FAIL);
+    }
+
+    // 새 비밀번호와 기존 비밀번호 동일인지 확인
+    if (bCryptPasswordEncoder.matches(newPassword, member.getPassword())) {
+      throw new CustomException(ErrorCode.SAME_PASSWORD);
+    }
+
+    member.setPassword(bCryptPasswordEncoder.encode(newPassword));
+    memberRepository.save(member);
+  }
 }
