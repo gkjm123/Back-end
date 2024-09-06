@@ -36,6 +36,15 @@ public class MemberRequest {
     private List<Drink> favorDrink;
     private boolean alarmEnabled;
 
+    public SignUp(Long regionId, String name, String email, String password, Date birthDate, List<Drink> favorDrink, boolean alarmEnabled) {
+      this.regionId = regionId;
+      this.name = name;
+      this.email = email;
+      this.password = password;
+      this.birthDate = birthDate;
+      this.favorDrink = favorDrink;
+      this.alarmEnabled = alarmEnabled;
+    }
   }
 
   @Getter
@@ -48,6 +57,10 @@ public class MemberRequest {
     @NotNull(message = "비밀번호를 입력해주세요.")
     private String password;
 
+    public SignIn(String email, String password) {
+      this.email = email;
+      this.password = password;
+    }
   }
 
   @Getter
@@ -63,5 +76,12 @@ public class MemberRequest {
     private boolean alarmEnabled;
     private String imageUrl;
 
+    public UpdateInfo(Long regionId, String name, List<Drink> favorDrink, boolean alarmEnabled, String imageUrl) {
+      this.regionId = regionId;
+      this.name = name;
+      this.favorDrink = favorDrink;
+      this.alarmEnabled = alarmEnabled;
+      this.imageUrl = imageUrl;
+    }
   }
 }
