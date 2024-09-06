@@ -68,6 +68,8 @@ public class Member {
 
   private Timestamp deletedAt;
 
+  private String refreshToken;
+
   public static Member from(MemberRequest.SignUp request) {
     return Member.builder()
         .name(request.getName())

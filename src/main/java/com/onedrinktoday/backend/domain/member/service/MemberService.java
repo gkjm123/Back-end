@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +32,6 @@ public class MemberService {
   private final JwtProvider jwtProvider;
   private final EmailService emailService;
 
-  @Transactional
   public MemberResponse signUp(SignUp request) {
 
     if (memberRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -51,7 +49,6 @@ public class MemberService {
     return MemberResponse.from(memberRepository.save(member));
   }
 
-  @Transactional(readOnly = true)
   public TokenDto signIn(SignIn request) {
     Member member = memberRepository.findByEmail(request.getEmail())
         .orElseThrow(() -> new CustomException(ErrorCode.LOGIN_FAIL));
@@ -62,6 +59,8 @@ public class MemberService {
 
     String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
     String refreshToken = jwtProvider.createRefreshToken(member.getEmail(), member.getRole());
+    member.setRefreshToken(refreshToken);
+    memberRepository.save(member);
 
     return TokenDto.builder()
         .accessToken(accessToken)
@@ -69,7 +68,6 @@ public class MemberService {
         .build();
   }
 
-  @Transactional(readOnly = true)
   public TokenDto refreshAccessToken(String refreshToken) {
 
     String email;
@@ -86,21 +84,24 @@ public class MemberService {
     Member member = memberRepository.findByEmail(email)
         .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-    String AccessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
+    //DB의 리프레시 토큰과 일치하는지 체크
+    if (!refreshToken.equals(member.getRefreshToken())) {
+      throw new CustomException(ErrorCode.TOKEN_NOT_MATCH);
+    }
+
+    String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
 
     return TokenDto.builder()
-        .accessToken(AccessToken)
+        .refreshToken(refreshToken)
+        .accessToken(accessToken)
         .build();
-
   }
 
-  @Transactional(readOnly = true)
   public MemberResponse getMemberInfo() {
 
     return MemberResponse.from(getMember());
   }
 
-  @Transactional
   public MemberResponse updateMemberInfo(UpdateInfo updateInfo) {
 
     Member member = getMember();
@@ -116,7 +117,6 @@ public class MemberService {
   }
 
   //멤버 정보 필요시 MemberService 주입받아 메서드 사용
-  @Transactional(readOnly = true)
   public Member getMember() {
 
     MemberDetail memberDetail =
@@ -128,7 +128,6 @@ public class MemberService {
 
 
   // 비밀번호 재설정 토큰 생성 및 이메일 전송(회원이 비밀번호를 모를 경우)
-  @Transactional
   public void requestPasswordReset(String email) {
     Member member = memberRepository.findByEmail(email)
         .orElseThrow(() -> new CustomException(ErrorCode.EMAIL_NOT_FOUND));
@@ -142,7 +141,6 @@ public class MemberService {
   }
 
   // 비밀번호 재설정(회원이 비밀번호를 모를 경우)
-  @Transactional
   public void resetPassword(String token, String newPassword) {
     String email = jwtProvider.getEmail(token);
 
@@ -154,7 +152,6 @@ public class MemberService {
   }
 
   // 비밀번호 재설정(회원이 비밀번호를 알 경우)
-  @Transactional
   public void changePassword(String email, String currentPassword, String newPassword) {
     Member member = memberRepository.findByEmail(email)
         .orElseThrow(() -> new CustomException(ErrorCode.EMAIL_NOT_FOUND));
