@@ -9,7 +9,6 @@ import com.onedrinktoday.backend.global.exception.ErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +16,6 @@ public class RegionService {
 
   private final RegionRepository regionRepository;
 
-  @Transactional
   public RegionResponse createRegion(RegionRequest request) {
 
     if (regionRepository.findByPlaceName(request.getPlaceName()).isPresent()) {
@@ -27,14 +25,12 @@ public class RegionService {
     return RegionResponse.from(regionRepository.save(Region.from(request)));
   }
 
-  @Transactional(readOnly = true)
   public List<RegionResponse> getRegions() {
 
     List<Region> regions = regionRepository.findAll();
     return regions.stream().map(RegionResponse::from).toList();
   }
 
-  @Transactional(readOnly = true)
   public RegionResponse getRegion(Long regionId) {
 
     return RegionResponse.from(
