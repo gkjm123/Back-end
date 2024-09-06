@@ -42,7 +42,7 @@ public class EmailServiceTest {
   }
 
   @Test
-  @DisplayName("이메일 전송 실패 - 이메일 불일치")
+  @DisplayName("이메일 전송 실패 - 이메일을 전송하는 로직 null")
   void failSendEmail() {
     // Given
     EmailService emailService = new EmailService(null);
