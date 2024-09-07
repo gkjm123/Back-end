@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,6 +39,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -395,22 +395,26 @@ public class MemberServiceTest {
     //given
     String email = member.getEmail();
     String token = "token";
-    String resetLink = "http://localhost:8080/api/members/reset-password?token="+token;
+    String resetLink = "http://localhost:8080/api/members/reset-password?token=" + token;
 
-    Member members = new Member();
-    members.setEmail(email);
-    members.setRole(Role.USER);
+    Member existMember = new Member();
+    existMember.setEmail(email);
+    existMember.setRole(Role.USER);
 
-    when(memberRepository.findByEmail(members.getEmail())).thenReturn(Optional.of(members));
+    when(memberRepository.findByEmail(existMember.getEmail())).thenReturn(Optional.of(existMember));
     when(jwtProvider.createResetToken(email, Role.USER)).thenReturn(token);
 
-    doNothing().when(emailService).sendPasswordResetEmail(email, resetLink);
+    ArgumentCaptor<String> emailArgumentCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<String> resetLinkArgumentCaptor = ArgumentCaptor.forClass(String.class);
 
     //when
     memberService.requestPasswordReset(email);
 
     //then
-    verify(emailService, times(1)).sendPasswordResetEmail(email, resetLink);
+    verify(emailService, times(1)).sendPasswordResetEmail(emailArgumentCaptor.capture(),
+        resetLinkArgumentCaptor.capture());
+    assertEquals(email, emailArgumentCaptor.getValue());
+    assertEquals(resetLink, resetLinkArgumentCaptor.getValue());
   }
 
   @Test
