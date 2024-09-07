@@ -22,13 +22,13 @@ public class EmailServiceTest {
   @Mock
   private JavaMailSender emailSender;
 
+  static final String to = "john.doe@example.com";
+  static final String resetLink = "http://localhost:8080/api/members/reset-password?token=resetToken";
+
   @Test
   @DisplayName("이메일 전송 성공")
   void successSendEmail() {
     // Given
-    String to = "john.doe@example.com";
-    String resetLink = "http://localhost:8080/api/members/reset-password?token=resetToken";
-
     // When
     emailService.sendPasswordResetEmail(to, resetLink);
 
@@ -46,8 +46,6 @@ public class EmailServiceTest {
   void failSendEmail() {
     // Given
     EmailService emailService = new EmailService(null);
-    String to = "john.doe@example.com";
-    String resetLink = "http://localhost:8080/api/members/reset-password?token=resetToken";
 
     // When
     // Then
