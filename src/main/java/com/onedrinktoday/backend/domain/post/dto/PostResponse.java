@@ -48,4 +48,17 @@ public class PostResponse {
         .updatedAt(post.getUpdatedAt())
         .build();
   }
+
+  // post 엔티티 변환
+  public static PostResponse from(Post post) {
+    return PostResponse.builder()
+        .id(post.getId())
+        .title(post.getTitle())
+        .content(post.getContent())
+        .rating(post.getRating())
+        .viewCount(post.getViewCount())
+        .createdAt(post.getCreatedAt())
+        .drink(DrinkDTO.from(post.getDrink()))
+        .build();
+  }
 }
