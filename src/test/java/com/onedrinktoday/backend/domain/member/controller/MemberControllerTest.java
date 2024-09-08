@@ -53,6 +53,15 @@ public class MemberControllerTest {
   @MockBean
   private JwtProvider jwtProvider;
 
+  private static final String VALID_EMAIL = "john.doe@examples.com";
+  private static final String VALID_PASSWORD = "Password123!";
+  private static final String NEW_PASSWORD = "newPassword123!";
+  private static final String WRONG_PASSWORD = "wrongPassword!";
+  private static final String INVALID_TOKEN = "invalidToken";
+  private static final String REFRESH_TOKEN = "refreshToken";
+  private static final String TOKEN = "token";
+  private static final String WRONG_EMAIL = "wrong.email@examples.com";
+
   private MemberRequest.SignUp signUpRequest;
   private MemberResponse memberResponse;
   private MemberRequest.UpdateInfo updateInfo;
@@ -60,18 +69,13 @@ public class MemberControllerTest {
   private ChangePasswordRequestDTO changePasswordRequestDTO;
   private TokenDto tokenDto;
 
-  static final String token = "token";
-  static final String invalidToken = "invalidToken";
-  static final String newPassword = "newPassword123!";
-  static final String wrongPassword = "wrongPassword!";
-
   @BeforeEach
   public void setUp() {
     signUpRequest = MemberRequest.SignUp.builder()
         .regionId(1L)
         .name("JohnDoe")
-        .email("john.doe@examples.com")
-        .password("Password123!")
+        .email(VALID_EMAIL)
+        .password(VALID_PASSWORD)
         .birthDate(new Date())
         .favorDrink(List.of(Drink.SOJU, Drink.DISTILLED_SPIRITS))
         .alarmEnabled(true)
@@ -81,7 +85,7 @@ public class MemberControllerTest {
         .id(1L)
         .placeName("서울특별시")
         .name("JohnDoe")
-        .email("john.doe@examples.com")
+        .email(VALID_EMAIL)
         .birthDate(new Date())
         .favorDrink(List.of(Drink.SOJU, Drink.DISTILLED_SPIRITS))
         .role(Role.USER)
@@ -94,11 +98,11 @@ public class MemberControllerTest {
 
     tokenDto = TokenDto.builder()
         .accessToken("accessToken")
-        .refreshToken("refreshToken")
+        .refreshToken(REFRESH_TOKEN)
         .build();
 
-    passwordResetRequest = new PasswordResetRequest("john.doe@examples.com");
-    changePasswordRequestDTO = new ChangePasswordRequestDTO("Password123!!", "newPassword123!");
+    passwordResetRequest = new PasswordResetRequest(VALID_EMAIL);
+    changePasswordRequestDTO = new ChangePasswordRequestDTO(VALID_PASSWORD, NEW_PASSWORD);
   }
 
   @Test
@@ -151,8 +155,7 @@ public class MemberControllerTest {
   @DisplayName("로그인 성공")
   public void successSignIn() throws Exception {
     //given
-    MemberRequest.SignIn request = new MemberRequest.SignIn("john.doe@examples.com",
-        "Password123!");
+    MemberRequest.SignIn request = new MemberRequest.SignIn(VALID_EMAIL, VALID_PASSWORD);
 
     given(memberService.signIn(any(MemberRequest.SignIn.class))).willReturn(tokenDto);
 
@@ -170,7 +173,7 @@ public class MemberControllerTest {
   @DisplayName("로그인 실패 - 이메일 or 비밀번호 잘못된 입력")
   public void failSignIn() throws Exception {
     //given
-    MemberRequest.SignIn request = new MemberRequest.SignIn("wrongEmail", wrongPassword);
+    MemberRequest.SignIn request = new MemberRequest.SignIn(WRONG_EMAIL, WRONG_PASSWORD);
 
     given(memberService.signIn(any(MemberRequest.SignIn.class)))
         .willThrow(new CustomException(LOGIN_FAIL));
@@ -203,7 +206,7 @@ public class MemberControllerTest {
   @DisplayName("비밀번호 재설정 요청 실패 - 이메일 미등록")
   public void failRequestPasswordReset() throws Exception {
     //given
-    String wrongEmail = "wrong.email@examples.com";
+    String wrongEmail = WRONG_EMAIL;
 
     willThrow(new CustomException(EMAIL_NOT_FOUND)).given(memberService)
         .requestPasswordReset(wrongEmail);
@@ -227,9 +230,9 @@ public class MemberControllerTest {
     //then
     mockMvc.perform(get("/api/members/password-reset")
             .with(csrf())
-            .param("token", token))
+            .param("token", TOKEN))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$").value("비밀번호 재설정 페이지. 토큰: " + token))
+        .andExpect(jsonPath("$").value("비밀번호 재설정 페이지. 토큰: " + TOKEN))
         .andDo(print());
   }
 
@@ -248,7 +251,7 @@ public class MemberControllerTest {
   @DisplayName("비밀번호 재설정 성공 (비밀번호 모를 경우)")
   public void successResetPassword() throws Exception {
     //given
-    PasswordResetDTO passwordResetDTO = new PasswordResetDTO(token, newPassword);
+    PasswordResetDTO passwordResetDTO = new PasswordResetDTO(TOKEN, NEW_PASSWORD);
 
     //when
     //then
@@ -264,7 +267,7 @@ public class MemberControllerTest {
   @DisplayName("비밀번호 재설정 실패 (비밀번호 모를 경우) - 유효하지 않은 토큰 입력")
   public void failResetPassword() throws Exception {
     //given
-    PasswordResetDTO passwordResetDTO = new PasswordResetDTO(invalidToken, newPassword);
+    PasswordResetDTO passwordResetDTO = new PasswordResetDTO(INVALID_TOKEN, NEW_PASSWORD);
 
     willThrow(new CustomException(INVALID_REFRESH_TOKEN)).given(memberService)
         .resetPassword(passwordResetDTO.getToken(), passwordResetDTO.getNewPassword());
@@ -284,13 +287,13 @@ public class MemberControllerTest {
   @DisplayName("비밀번호 변경 성공 (비밀번호 알고 있을 경우)")
   public void successChangePassword() throws Exception {
     //given
-    given(jwtProvider.getEmail(token)).willReturn("john.doe@examples.com");
+    given(jwtProvider.getEmail(TOKEN)).willReturn(VALID_EMAIL);
 
     //when
     //then
     mockMvc.perform(post("/api/members/password-change")
             .with(csrf())
-            .header("Access-Token", token)
+            .header("Access-Token", TOKEN)
             .contentType(MediaType.APPLICATION_JSON)
             .content(new ObjectMapper().writeValueAsString(changePasswordRequestDTO)))
         .andExpect(status().isOk())
@@ -301,19 +304,18 @@ public class MemberControllerTest {
   @DisplayName("비밀번호 변경 실패 (비밀번호 알고 있을 경우) - 현재 비밀번호 틀림")
   public void failChangePassword() throws Exception {
     //given
-    String email = "john.doe@examples.com";
-    ChangePasswordRequestDTO request = new ChangePasswordRequestDTO(wrongPassword,
-        newPassword);
+    ChangePasswordRequestDTO request = new ChangePasswordRequestDTO(WRONG_PASSWORD,
+        NEW_PASSWORD);
 
-    given(jwtProvider.getEmail(token)).willReturn(email);
+    given(jwtProvider.getEmail(TOKEN)).willReturn(VALID_EMAIL);
     willThrow(new CustomException(LOGIN_FAIL)).given(memberService)
-        .changePassword(email, request.getCurrentPassword(), request.getNewPassword());
+        .changePassword(VALID_EMAIL, request.getCurrentPassword(), request.getNewPassword());
 
     //when
     //then
     mockMvc.perform(post("/api/members/password-change")
             .with(csrf())
-            .header("Access-Token", token)
+            .header("Access-Token", TOKEN)
             .contentType(MediaType.APPLICATION_JSON)
             .content(new ObjectMapper().writeValueAsString(request)))
         .andExpect(status().isBadRequest()) // 400 Bad Request
@@ -325,14 +327,13 @@ public class MemberControllerTest {
   @DisplayName("리프레시 토큰 갱신 성공")
   public void successRefreshAccessToken() throws Exception {
     //given
-    String refreshToken = "refreshToken";
-    given(memberService.refreshAccessToken(refreshToken)).willReturn(tokenDto);
+    given(memberService.refreshAccessToken(REFRESH_TOKEN)).willReturn(tokenDto);
 
     //when
     //then
     mockMvc.perform(post("/api/members/refresh")
             .with(csrf())
-            .header("Refresh-Token", refreshToken))
+            .header("Refresh-Token", REFRESH_TOKEN))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.accessToken").value(tokenDto.getAccessToken()))
         .andExpect(jsonPath("$.refreshToken").value(tokenDto.getRefreshToken()))
@@ -343,14 +344,14 @@ public class MemberControllerTest {
   @DisplayName("리프레시 토큰 갱신 실패 - 토큰이 유효하지 않음")
   public void failRefreshAccessToken() throws Exception {
     //given
-    given(memberService.refreshAccessToken(invalidToken))
+    given(memberService.refreshAccessToken(INVALID_TOKEN))
         .willThrow(new CustomException(INVALID_REFRESH_TOKEN));
 
     //when
     //then
     mockMvc.perform(post("/api/members/refresh")
             .with(csrf())
-            .header("Refresh-Token", invalidToken))
+            .header("Refresh-Token", INVALID_TOKEN))
         .andExpect(status().isBadRequest())
         .andExpect(content().string(INVALID_REFRESH_TOKEN.getMessage()))
         .andDo(print());
@@ -394,7 +395,7 @@ public class MemberControllerTest {
         .id(1L)
         .placeName("서울특별시")
         .name(updateInfo.getName())
-        .email("john.doe@examples.com")
+        .email(VALID_EMAIL)
         .birthDate(new Date())
         .favorDrink(updateInfo.getFavorDrink())
         .role(Role.USER)
