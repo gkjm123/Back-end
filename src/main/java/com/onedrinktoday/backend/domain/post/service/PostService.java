@@ -128,4 +128,33 @@ public class PostService {
     }
     postRepository.deleteById(postId);
   }
+
+  // 게시글 수정
+  public PostResponse updatePost(Long postId, PostRequest postRequest) {
+    Post post = postRepository.findById(postId)
+        .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글 ID입니다."));
+
+    post.setTitle(postRequest.getTitle());
+    post.setContent(postRequest.getContent());
+    post.setRating(postRequest.getRating());
+
+    // 음료 정보 수정할 시
+    if(postRequest.getDrinkId() != null) {
+      Drink drink = drinkRepository.findById(postRequest.getDrinkId())
+          .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 특산주입니다."));
+      post.setDrink(drink);
+    }
+
+    if (postRequest.getMemberId() != null) {
+      Member member = memberRepository.findById(postRequest.getMemberId())
+          .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
+      post.setMember(member);
+    }
+
+    postRepository.save(post);
+
+    List<Tag> updateTag = saveTags(postRequest.getTag(), post);
+
+    return PostResponse.from(post, updateTag);
+  }
 }

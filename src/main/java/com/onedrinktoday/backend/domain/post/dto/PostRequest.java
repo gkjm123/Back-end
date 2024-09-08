@@ -14,6 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PostRequest {
   private Long drinkId;
+  private Long memberId;
   private String type;
   private String title;
   private String content;
