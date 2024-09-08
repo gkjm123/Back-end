@@ -48,13 +48,13 @@ public class RegionControllerTest {
   @BeforeEach
   void setUp() {
     regionRequest = RegionRequest.builder()
-        .placeName("Seoul")
+        .placeName("서울특별시")
         .latitude(37.5665)
         .longitude(126.978)
         .build();
     regionResponse = RegionResponse.builder()
         .id(1L)
-        .placeName("Seoul")
+        .placeName("서울특별시")
         .latitude(37.5665)
         .longitude(126.978)
         .createdAt(new Timestamp(System.currentTimeMillis()))
