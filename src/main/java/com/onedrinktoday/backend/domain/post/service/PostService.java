@@ -120,4 +120,12 @@ public class PostService {
         .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글 ID입니다."));
     return PostResponse.from(post);
   }
+
+  // 게시글 삭제
+  public void deletePostById(Long postId) {
+    if(!postRepository.existsById(postId)) {
+      throw new IllegalArgumentException("유효하지 않은 게시글 ID입니다.");
+    }
+    postRepository.deleteById(postId);
+  }
 }
