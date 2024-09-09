@@ -31,7 +31,7 @@ public class PostResponse {
   private Timestamp createdAt;
   private Timestamp updatedAt;
 
-  public static PostResponse from(Post post, List<Tag> tags) {
+  public static PostResponse of(Post post, List<Tag> tags) {
     return PostResponse.builder()
         .id(post.getId())
         .memberId(post.getMember().getId())

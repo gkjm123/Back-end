@@ -86,7 +86,7 @@ public class PostService {
     // 태그 저장 및 PostTag 연결
     List<Tag> tags = saveTags(postRequest.getTag(), post);
 
-    return PostResponse.from(post, tags);
+    return PostResponse.of(post, tags);
   }
 
   // 태그 저장
@@ -130,7 +130,7 @@ public class PostService {
     // 태그 함께 조회
     List<Tag> tags = postTagRepository.findTagsByPostId(postId);
 
-    return PostResponse.from(post, tags);
+    return PostResponse.of(post, tags);
   }
 
   // 게시글 삭제
@@ -166,6 +166,6 @@ public class PostService {
 
     List<Tag> updateTag = saveTags(postRequest.getTag(), post);
 
-    return PostResponse.from(post, updateTag);
+    return PostResponse.of(post, updateTag);
   }
 }
