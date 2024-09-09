@@ -18,6 +18,8 @@ import com.onedrinktoday.backend.global.type.Type;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -110,11 +112,10 @@ public class PostService {
   }
 
   // 전체 게시글 조회
-  public List<PostResponse> getAllPosts() {
-    List<Post> Posts = postRepository.findAll();
-    return Posts.stream()
-        .map(PostResponse::from)
-        .collect(Collectors.toList());
+  public Page<PostResponse> getAllPosts(Pageable pageable) {
+    Page<Post> Posts = postRepository.findAll(pageable);
+
+    return Posts.map(PostResponse::from);
   }
 
   // 특정 게시글 조회

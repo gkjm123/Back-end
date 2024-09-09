@@ -3,8 +3,10 @@ package com.onedrinktoday.backend.domain.post.controller;
 import com.onedrinktoday.backend.domain.post.dto.PostRequest;
 import com.onedrinktoday.backend.domain.post.dto.PostResponse;
 import com.onedrinktoday.backend.domain.post.service.PostService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -29,8 +32,10 @@ public class PostController {
   }
 
   @GetMapping("/posts")
-  public ResponseEntity<List<PostResponse>> getAllPosts() {
-    List<PostResponse> posts = postService.getAllPosts();
+  public ResponseEntity<Page<PostResponse>> getAllPosts(@RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "10") int size) {
+    Pageable pageable = PageRequest.of(page, size);
+    Page<PostResponse> posts = postService.getAllPosts(pageable);
     return ResponseEntity.ok(posts);
   }
 
