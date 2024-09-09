@@ -96,10 +96,14 @@ public class PostService {
             newTag.setTagName(tagName);
             return tagRepository.save(newTag);
           });
-      PostTag postTag = new PostTag();
-      postTag.setPost(post);
-      postTag.setTag(tag);
-      postTagRepository.save(postTag);
+
+      postTagRepository.findByPostAndTag(post, tag)
+          .orElseGet(() -> {
+            PostTag newPostTag = new PostTag();
+            newPostTag.setPost(post);
+            newPostTag.setTag(tag);
+            return postTagRepository.save(newPostTag);
+          });
 
       return tag;
     }).collect(Collectors.toList());
