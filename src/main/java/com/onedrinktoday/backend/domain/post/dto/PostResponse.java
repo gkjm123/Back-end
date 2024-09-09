@@ -24,7 +24,6 @@ public class PostResponse {
   private String memberName;
   private DrinkDTO drink;
   private String type;
-  private String title;
   private String content;
   private Float rating;
   private List<TagDTO> tags;
@@ -39,7 +38,6 @@ public class PostResponse {
         .memberName(post.getMember().getName())
         .drink(DrinkDTO.from(post.getDrink()))
         .type(post.getType().name())
-        .title(post.getTitle())
         .content(post.getContent())
         .rating(post.getRating())
         .tags(tags.stream().map(TagDTO::from).collect(Collectors.toList()))
@@ -53,7 +51,6 @@ public class PostResponse {
   public static PostResponse from(Post post) {
     return PostResponse.builder()
         .id(post.getId())
-        .title(post.getTitle())
         .content(post.getContent())
         .rating(post.getRating())
         .viewCount(post.getViewCount())

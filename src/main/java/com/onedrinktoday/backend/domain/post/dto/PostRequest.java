@@ -16,7 +16,6 @@ public class PostRequest {
   private Long drinkId;
   private Long memberId;
   private String type;
-  private String title;
   private String content;
   private Float rating;
   private List<String> tag;

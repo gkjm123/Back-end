@@ -73,7 +73,6 @@ public class PostService {
         .member(member)
         .drink(drink)
         .type(Type.valueOf(postRequest.getType()))
-        .title(postRequest.getTitle())
         .content(postRequest.getContent())
         .rating(postRequest.getRating())
         .viewCount(0)  // 초기 조회수
@@ -134,7 +133,6 @@ public class PostService {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글 ID입니다."));
 
-    post.setTitle(postRequest.getTitle());
     post.setContent(postRequest.getContent());
     post.setRating(postRequest.getRating());
 

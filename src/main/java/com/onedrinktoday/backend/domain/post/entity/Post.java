@@ -50,9 +50,6 @@ public class Post {
   @Enumerated(EnumType.STRING)
   private Type type;
 
-  @Column(name = "title", length = 255, nullable = false)
-  private String title;
-
   @Column(name = "content", columnDefinition = "TEXT", nullable = false)
   private String content;
 
