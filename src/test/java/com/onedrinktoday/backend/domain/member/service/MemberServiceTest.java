@@ -159,8 +159,8 @@ public class MemberServiceTest {
 
     when(memberRepository.findByEmail(email)).thenReturn(Optional.of(member));
     when(bCryptPasswordEncoder.matches(password, encodedPassword)).thenReturn(true);
-    when(jwtProvider.createAccessToken(email, Role.USER)).thenReturn("accessToken");
-    when(jwtProvider.createRefreshToken(email, Role.USER)).thenReturn("refreshToken");
+    when(jwtProvider.createAccessToken(member.getId(),email, Role.USER)).thenReturn("accessToken");
+    when(jwtProvider.createRefreshToken(member.getId(),email, Role.USER)).thenReturn("refreshToken");
 
     //when
     TokenDto tokenDto = memberService.signIn(signInRequest);
@@ -211,7 +211,7 @@ public class MemberServiceTest {
         .refreshToken(refreshToken).build();
 
     when(memberRepository.findByEmail(email)).thenReturn(Optional.of(member));
-    when(jwtProvider.createAccessToken(email, Role.USER)).thenReturn(newAccessToken);
+    when(jwtProvider.createAccessToken(member.getId(),email, Role.USER)).thenReturn(newAccessToken);
 
     //when
     TokenDto tokenDto = memberService.refreshAccessToken(refreshToken);
@@ -402,7 +402,7 @@ public class MemberServiceTest {
     existMember.setRole(Role.USER);
 
     when(memberRepository.findByEmail(existMember.getEmail())).thenReturn(Optional.of(existMember));
-    when(jwtProvider.createResetToken(email, Role.USER)).thenReturn(token);
+    when(jwtProvider.createResetToken(member.getId(),email, Role.USER)).thenReturn(token);
 
     ArgumentCaptor<String> emailArgumentCaptor = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<String> resetLinkArgumentCaptor = ArgumentCaptor.forClass(String.class);
