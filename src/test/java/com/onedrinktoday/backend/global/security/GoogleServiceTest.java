@@ -4,6 +4,7 @@ package com.onedrinktoday.backend.global.security;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 import com.onedrinktoday.backend.domain.member.entity.Member;
@@ -44,10 +45,10 @@ class GoogleServiceTest {
     given(memberRepository.save(any()))
         .willReturn(member);
 
-    given(jwtProvider.createAccessToken(anyString(), any()))
+    given(jwtProvider.createAccessToken(eq(1L), anyString(), eq(Role.USER)))
         .willReturn("access");
 
-    given(jwtProvider.createRefreshToken(anyString(), any()))
+    given(jwtProvider.createRefreshToken(eq(1L), anyString(), eq(Role.USER)))
         .willReturn("refresh");
 
     //when

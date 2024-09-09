@@ -1,6 +1,7 @@
 package com.onedrinktoday.backend.global.security;
 
 import com.onedrinktoday.backend.global.type.Role;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -23,9 +24,10 @@ public class JwtProvider {
         Jwts.SIG.HS256.key().build().getAlgorithm());
   }
 
-  public String createAccessToken(String email, Role role) {
+  public String createAccessToken(Long memberId, String email, Role role) {
     return Jwts.builder()
         .subject(email)
+        .claim("member_id", memberId)
         .claim("role", role)
         .issuedAt(new Date())
         .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
@@ -33,9 +35,10 @@ public class JwtProvider {
         .compact();
   }
 
-  public String createRefreshToken(String email, Role role) {
+  public String createRefreshToken(Long memberId, String email, Role role) {
     return Jwts.builder()
         .subject(email)
+        .claim("member_id", memberId)
         .claim("role", role)
         .issuedAt(new Date())
         .expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRE_TIME))
@@ -44,9 +47,10 @@ public class JwtProvider {
   }
 
   // 비밀번호 재설정 토큰 생성
-  public String createResetToken(String email, Role role) {
+  public String createResetToken(Long memberId, String email, Role role) {
     return Jwts.builder()
         .subject(email)
+        .claim("member_id", memberId)
         .claim("role", role)
         .issuedAt(new Date())
         .expiration(new Date(System.currentTimeMillis() + PASSWORD_RESET_EXPIRE_TIME))
@@ -57,5 +61,15 @@ public class JwtProvider {
   public String getEmail(String token) {
     return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
         .getSubject();
+  }
+
+  public Long getMemberId(String token) {
+    Claims claims = Jwts.parser()
+        .verifyWith(secretKey)
+        .build()
+        .parseSignedClaims(token)
+        .getPayload();
+
+    return claims.get("member_id", Long.class);  // member_id 추출
   }
 }

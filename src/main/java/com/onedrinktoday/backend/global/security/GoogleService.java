@@ -56,8 +56,8 @@ public class GoogleService {
             .build())
         );
 
-    String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
-    String refreshToken = jwtProvider.createRefreshToken(member.getEmail(), member.getRole());
+    String accessToken = jwtProvider.createAccessToken(member.getId(), member.getEmail(), member.getRole());
+    String refreshToken = jwtProvider.createRefreshToken(member.getId(), member.getEmail(), member.getRole());
 
     return TokenDto.builder()
         .accessToken(accessToken)
