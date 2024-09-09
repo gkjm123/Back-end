@@ -15,6 +15,7 @@ import com.onedrinktoday.backend.domain.region.repository.RegionRepository;
 import com.onedrinktoday.backend.domain.tag.entity.Tag;
 import com.onedrinktoday.backend.domain.tag.repository.TagRepository;
 import com.onedrinktoday.backend.global.type.Type;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -142,6 +143,7 @@ public class PostService {
   }
 
   // 게시글 수정
+  @Transactional
   public PostResponse updatePost(Long postId, PostRequest postRequest) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글 ID입니다."));
@@ -164,7 +166,11 @@ public class PostService {
 
     postRepository.save(post);
 
+    // 기존 태그 삭제
+    postTagRepository.deleteByPostId(postId);
     List<Tag> updateTag = saveTags(postRequest.getTag(), post);
+
+    postRepository.save(post);
 
     return PostResponse.of(post, updateTag);
   }
