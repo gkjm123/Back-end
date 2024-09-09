@@ -117,7 +117,15 @@ public class PostService {
   public PostResponse getPostById(Long postId) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글 ID입니다."));
-    return PostResponse.from(post);
+
+    // viewCount 증가
+    post.setViewCount(post.getViewCount() + 1);
+    postRepository.save(post);
+
+    // 태그 함께 조회
+    List<Tag> tags = postTagRepository.findTagsByPostId(postId);
+
+    return PostResponse.from(post, tags);
   }
 
   // 게시글 삭제
