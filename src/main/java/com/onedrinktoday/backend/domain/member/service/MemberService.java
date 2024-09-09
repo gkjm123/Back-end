@@ -57,8 +57,8 @@ public class MemberService {
       throw new CustomException(ErrorCode.LOGIN_FAIL);
     }
 
-    String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
-    String refreshToken = jwtProvider.createRefreshToken(member.getEmail(), member.getRole());
+    String accessToken = jwtProvider.createAccessToken(member.getId(), member.getEmail(), member.getRole());
+    String refreshToken = jwtProvider.createRefreshToken(member.getId(), member.getEmail(), member.getRole());
     member.setRefreshToken(refreshToken);
     memberRepository.save(member);
 
@@ -89,7 +89,7 @@ public class MemberService {
       throw new CustomException(ErrorCode.TOKEN_NOT_MATCH);
     }
 
-    String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
+    String accessToken = jwtProvider.createAccessToken(member.getId(), member.getEmail(), member.getRole());
 
     return TokenDto.builder()
         .refreshToken(refreshToken)
@@ -132,7 +132,7 @@ public class MemberService {
     Member member = memberRepository.findByEmail(email)
         .orElseThrow(() -> new CustomException(ErrorCode.EMAIL_NOT_FOUND));
 
-    String token = jwtProvider.createResetToken(member.getEmail(), member.getRole());
+    String token = jwtProvider.createResetToken(member.getId(), member.getEmail(), member.getRole());
 
     // 도메인 변경(예정)
     String resetLink = "http://localhost:8080/api/members/reset-password?token=" + token;
