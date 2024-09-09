@@ -17,7 +17,7 @@ public class DrinkDTO {
   private Long id;
   private String placeName;
   private String name;
-  private String drinkType;
+  private com.onedrinktoday.backend.global.type.Drink drinkType;
   private Integer degree;
   private Integer sweetness;
   private Integer cost;
@@ -30,7 +30,7 @@ public class DrinkDTO {
         .id(drink.getId())
         .placeName(drink.getRegion().getPlaceName())
         .name(drink.getName())
-        .drinkType(drink.getDrink().name())
+        .drinkType(drink.getDrink())
         .degree(drink.getDegree())
         .sweetness(drink.getSweetness())
         .cost(drink.getCost())
