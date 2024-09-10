@@ -109,7 +109,7 @@ public class MemberService {
     member.setRegion(regionRepository.findById(updateInfo.getRegionId())
         .orElseThrow(() -> new CustomException(ErrorCode.REGION_NOT_FOUND)));
     member.setName(updateInfo.getName());
-    member.setFavorDrink(updateInfo.getFavorDrink());
+    member.setFavorDrinkType(updateInfo.getFavorDrinkType());
     member.setAlarmEnabled(updateInfo.isAlarmEnabled());
     member.setImageUrl(updateInfo.getImageUrl());
 

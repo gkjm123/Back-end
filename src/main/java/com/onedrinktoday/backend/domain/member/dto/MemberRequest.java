@@ -1,7 +1,7 @@
 package com.onedrinktoday.backend.domain.member.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.onedrinktoday.backend.global.type.Drink;
+import com.onedrinktoday.backend.global.type.DrinkType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
@@ -33,16 +33,16 @@ public class MemberRequest {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date birthDate;
 
-    private List<Drink> favorDrink;
+    private List<DrinkType> favorDrinkType;
     private boolean alarmEnabled;
 
-    public SignUp(Long regionId, String name, String email, String password, Date birthDate, List<Drink> favorDrink, boolean alarmEnabled) {
+    public SignUp(Long regionId, String name, String email, String password, Date birthDate, List<DrinkType> favorDrinkType, boolean alarmEnabled) {
       this.regionId = regionId;
       this.name = name;
       this.email = email;
       this.password = password;
       this.birthDate = birthDate;
-      this.favorDrink = favorDrink;
+      this.favorDrinkType = favorDrinkType;
       this.alarmEnabled = alarmEnabled;
     }
   }
@@ -72,14 +72,14 @@ public class MemberRequest {
     @Pattern(regexp = "^[a-zA-Z0-9가-힣_-]{2,10}$", message = "이름을 2~10글자 사이로 입력해주세요.")
     private String name;
 
-    private List<Drink> favorDrink;
+    private List<DrinkType> favorDrinkType;
     private boolean alarmEnabled;
     private String imageUrl;
 
-    public UpdateInfo(Long regionId, String name, List<Drink> favorDrink, boolean alarmEnabled, String imageUrl) {
+    public UpdateInfo(Long regionId, String name, List<DrinkType> favorDrinkType, boolean alarmEnabled, String imageUrl) {
       this.regionId = regionId;
       this.name = name;
-      this.favorDrink = favorDrink;
+      this.favorDrinkType = favorDrinkType;
       this.alarmEnabled = alarmEnabled;
       this.imageUrl = imageUrl;
     }

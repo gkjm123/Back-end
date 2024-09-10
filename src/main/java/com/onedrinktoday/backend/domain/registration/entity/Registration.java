@@ -1,17 +1,14 @@
-package com.onedrinktoday.backend.domain.drink.entity;
+package com.onedrinktoday.backend.domain.registration.entity;
 
+import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.region.entity.Region;
+import com.onedrinktoday.backend.domain.registration.dto.RegistrationRequest;
 import com.onedrinktoday.backend.global.type.DrinkType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,42 +18,43 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
-@Table(name = "drink")
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class Drink {
+@AllArgsConstructor
+public class Registration {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @ManyToOne
-  @JoinColumn(name = "region_id")
+  private Member member;
+
+  @ManyToOne
   private Region region;
 
-  @Column(name = "name", nullable = false, length = 100)
-  private String name;
-
-  @Enumerated(EnumType.STRING)
+  private String drinkName;
   private DrinkType type;
-
-  @Column(name = "degree")
   private Integer degree;
-
-  @Column(name = "sweetness")
   private Integer sweetness;
-
-  @Column(name = "cost")
   private Integer cost;
-
-  @Column(name = "description", columnDefinition = "TEXT", nullable = false)
   private String description;
-
-  @Column(name = "image_url")
   private String imageUrl;
+  private Boolean approved;
 
   @CreationTimestamp
   private Timestamp createdAt;
+
+  public static Registration from(RegistrationRequest request) {
+    return Registration.builder()
+        .drinkName(request.getDrinkName())
+        .type(request.getType())
+        .degree(request.getDegree())
+        .sweetness(request.getSweetness())
+        .cost(request.getCost())
+        .description(request.getDescription())
+        .build();
+  }
 }

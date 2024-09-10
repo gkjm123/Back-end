@@ -24,7 +24,7 @@ import com.onedrinktoday.backend.domain.member.service.MemberService;
 import com.onedrinktoday.backend.global.exception.CustomException;
 import com.onedrinktoday.backend.global.security.JwtProvider;
 import com.onedrinktoday.backend.global.security.TokenDto;
-import com.onedrinktoday.backend.global.type.Drink;
+import com.onedrinktoday.backend.global.type.DrinkType;
 import com.onedrinktoday.backend.global.type.Role;
 import java.sql.Timestamp;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +42,7 @@ import java.util.List;
 
 @WithMockUser
 @WebMvcTest(MemberController.class)
-public class MemberControllerTest {
+public class RegistrationControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -77,7 +77,7 @@ public class MemberControllerTest {
         .email(VALID_EMAIL)
         .password(VALID_PASSWORD)
         .birthDate(new Date())
-        .favorDrink(List.of(Drink.SOJU, Drink.DISTILLED_SPIRITS))
+        .favorDrinkType(List.of(DrinkType.SOJU, DrinkType.DISTILLED_SPIRITS))
         .alarmEnabled(true)
         .build();
 
@@ -87,14 +87,14 @@ public class MemberControllerTest {
         .name("JohnDoe")
         .email(VALID_EMAIL)
         .birthDate(new Date())
-        .favorDrink(List.of(Drink.SOJU, Drink.DISTILLED_SPIRITS))
+        .favorDrinkType(List.of(DrinkType.SOJU, DrinkType.DISTILLED_SPIRITS))
         .role(Role.USER)
         .alarmEnabled(true)
         .createdAt(new Timestamp(System.currentTimeMillis()))
         .build();
 
     updateInfo = new MemberRequest.UpdateInfo(
-        2L, "JohnDoeBa", List.of(Drink.BEER), false, "newImageUrl");
+        2L, "JohnDoeBa", List.of(DrinkType.BEER), false, "newImageUrl");
 
     tokenDto = TokenDto.builder()
         .accessToken("accessToken")
@@ -121,7 +121,7 @@ public class MemberControllerTest {
         .andExpect(jsonPath("$.name").value(memberResponse.getName()))
         .andExpect(jsonPath("$.email").value(memberResponse.getEmail()))
         .andExpect(
-            jsonPath("$.favorDrink[0]").value(memberResponse.getFavorDrink().get(0).toString()))
+            jsonPath("$.favorDrink[0]").value(memberResponse.getFavorDrinkType().get(0).toString()))
         .andExpect(jsonPath("$.role").value(memberResponse.getRole().toString()))
         .andExpect(jsonPath("$.alarmEnabled").value(memberResponse.isAlarmEnabled()))
         .andDo(print());
@@ -137,7 +137,7 @@ public class MemberControllerTest {
         .email(null)
         .password(null)
         .birthDate(null)
-        .favorDrink(List.of(Drink.SOJU, Drink.DISTILLED_SPIRITS))
+        .favorDrinkType(List.of(DrinkType.SOJU, DrinkType.DISTILLED_SPIRITS))
         .alarmEnabled(true)
         .build();
 
@@ -397,7 +397,7 @@ public class MemberControllerTest {
         .name(updateInfo.getName())
         .email(VALID_EMAIL)
         .birthDate(new Date())
-        .favorDrink(updateInfo.getFavorDrink())
+        .favorDrinkType(updateInfo.getFavorDrinkType())
         .role(Role.USER)
         .alarmEnabled(updateInfo.isAlarmEnabled())
         .createdAt(new Timestamp(System.currentTimeMillis()))
@@ -415,7 +415,7 @@ public class MemberControllerTest {
             .content(new ObjectMapper().writeValueAsString(updateInfo)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value(updateInfo.getName()))
-        .andExpect(jsonPath("$.favorDrink[0]").value(updateInfo.getFavorDrink().get(0).toString()))
+        .andExpect(jsonPath("$.favorDrink[0]").value(updateInfo.getFavorDrinkType().get(0).toString()))
         .andExpect(jsonPath("$.alarmEnabled").value(updateInfo.isAlarmEnabled()))
         .andExpect(jsonPath("$.imageUrl").value(updateInfo.getImageUrl()))
         .andDo(print());

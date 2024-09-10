@@ -1,7 +1,7 @@
 package com.onedrinktoday.backend.domain.member.dto;
 
 import com.onedrinktoday.backend.domain.member.entity.Member;
-import com.onedrinktoday.backend.global.type.Drink;
+import com.onedrinktoday.backend.global.type.DrinkType;
 import com.onedrinktoday.backend.global.type.Role;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -24,7 +24,7 @@ public class MemberResponse {
   private String name;
   private String email;
   private Date birthDate;
-  private List<Drink> favorDrink;
+  private List<DrinkType> favorDrinkType;
   private Role role;
   private boolean alarmEnabled;
   private String imageUrl;
@@ -39,7 +39,7 @@ public class MemberResponse {
         .name(member.getName())
         .email(member.getEmail())
         .birthDate(member.getBirthDate())
-        .favorDrink(member.getFavorDrink())
+        .favorDrinkType(member.getFavorDrinkType())
         .role(member.getRole())
         .alarmEnabled(member.isAlarmEnabled())
         .imageUrl(member.getImageUrl())

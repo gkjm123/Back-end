@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onedrinktoday.backend.global.exception.CustomException;
 import com.onedrinktoday.backend.global.exception.ErrorCode;
-import com.onedrinktoday.backend.global.type.Drink;
+import com.onedrinktoday.backend.global.type.DrinkType;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import java.util.Collections;
@@ -16,12 +16,12 @@ import org.apache.logging.log4j.util.Strings;
 
 @Converter
 @RequiredArgsConstructor
-public class DrinkListConverter implements AttributeConverter<List<Drink>, String> {
+public class DrinkListConverter implements AttributeConverter<List<DrinkType>, String> {
 
   private final ObjectMapper objectMapper;
 
   @Override
-  public String convertToDatabaseColumn(List<Drink> attribute) {
+  public String convertToDatabaseColumn(List<DrinkType> attribute) {
     if (Objects.isNull(attribute)) {
       return Strings.EMPTY;
     }
@@ -34,7 +34,7 @@ public class DrinkListConverter implements AttributeConverter<List<Drink>, Strin
   }
 
   @Override
-  public List<Drink> convertToEntityAttribute(String dbData) {
+  public List<DrinkType> convertToEntityAttribute(String dbData) {
     if (Strings.isBlank(dbData)) {
       return Collections.emptyList();
     }

@@ -1,9 +1,10 @@
 package com.onedrinktoday.backend.domain.post.dto;
 
-import com.onedrinktoday.backend.domain.drink.dto.DrinkDTO;
+import com.onedrinktoday.backend.domain.drink.dto.DrinkResponse;
 import com.onedrinktoday.backend.domain.post.entity.Post;
 import com.onedrinktoday.backend.domain.tag.dto.TagDTO;
 import com.onedrinktoday.backend.domain.tag.entity.Tag;
+import com.onedrinktoday.backend.global.type.Type;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,8 +23,8 @@ public class PostResponse {
   private Long id;
   private Long memberId;
   private String memberName;
-  private DrinkDTO drink;
-  private String type;
+  private DrinkResponse drink;
+  private Type type;
   private String content;
   private Float rating;
   private List<TagDTO> tags;
@@ -36,8 +37,8 @@ public class PostResponse {
         .id(post.getId())
         .memberId(post.getMember().getId())
         .memberName(post.getMember().getName())
-        .drink(DrinkDTO.from(post.getDrink()))
-        .type(post.getType().name())
+        .drink(DrinkResponse.from(post.getDrink()))
+        .type(post.getType())
         .content(post.getContent())
         .rating(post.getRating())
         .tags(tags.stream().map(TagDTO::from).collect(Collectors.toList()))
@@ -51,11 +52,15 @@ public class PostResponse {
   public static PostResponse from(Post post) {
     return PostResponse.builder()
         .id(post.getId())
+        .memberId(post.getMember().getId())
+        .memberName(post.getMember().getName())
+        .drink(DrinkResponse.from(post.getDrink()))
+        .type(post.getType())
         .content(post.getContent())
         .rating(post.getRating())
         .viewCount(post.getViewCount())
         .createdAt(post.getCreatedAt())
-        .drink(DrinkDTO.from(post.getDrink()))
+        .drink(DrinkResponse.from(post.getDrink()))
         .build();
   }
 }

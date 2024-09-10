@@ -1,6 +1,6 @@
 package com.onedrinktoday.backend.global.type;
 
-public enum Drink {
+public enum DrinkType {
   SOJU,
   BEER,
   LIQUOR,
