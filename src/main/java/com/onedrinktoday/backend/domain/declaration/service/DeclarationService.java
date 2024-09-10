@@ -1,5 +1,7 @@
 package com.onedrinktoday.backend.domain.declaration.service;
 
+import static com.onedrinktoday.backend.global.exception.ErrorCode.DECLARATION_NOT_FOUND;
+
 import com.onedrinktoday.backend.domain.declaration.dto.DeclarationRequest;
 import com.onedrinktoday.backend.domain.declaration.dto.DeclarationResponse;
 import com.onedrinktoday.backend.domain.declaration.entity.Declaration;
@@ -38,7 +40,7 @@ public class DeclarationService {
   public DeclarationResponse getDeclaration(Long declarationId) {
 
     Declaration declaration = declarationRepository.findById(declarationId)
-        .orElseThrow(() -> new CustomException(ErrorCode.DECLARATION_NOT_FOUND));
+        .orElseThrow(() -> new CustomException(DECLARATION_NOT_FOUND));
 
     return DeclarationResponse.from(declaration);
   }

@@ -3,6 +3,7 @@ package com.onedrinktoday.backend.domain.declaration.controller;
 import com.onedrinktoday.backend.domain.declaration.dto.DeclarationRequest;
 import com.onedrinktoday.backend.domain.declaration.dto.DeclarationResponse;
 import com.onedrinktoday.backend.domain.declaration.service.DeclarationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +27,7 @@ public class DeclarationController {
 
   @PostMapping("/declarations")
   public ResponseEntity<DeclarationResponse> createDeclaration(
-      @RequestBody DeclarationRequest declarationRequest
+      @Valid @RequestBody DeclarationRequest declarationRequest
   ) {
     return ResponseEntity.ok(declarationService.createDeclaration(declarationRequest));
   }
