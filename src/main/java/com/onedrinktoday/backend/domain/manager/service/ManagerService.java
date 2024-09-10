@@ -1,5 +1,8 @@
 package com.onedrinktoday.backend.domain.manager.service;
 
+import com.onedrinktoday.backend.domain.declaration.dto.DeclarationResponse;
+import com.onedrinktoday.backend.domain.declaration.entity.Declaration;
+import com.onedrinktoday.backend.domain.declaration.repository.DeclarationRepository;
 import com.onedrinktoday.backend.domain.drink.dto.DrinkResponse;
 import com.onedrinktoday.backend.domain.drink.entity.Drink;
 import com.onedrinktoday.backend.domain.drink.repository.DrinkRepository;
@@ -17,6 +20,7 @@ public class ManagerService {
 
   private final DrinkRepository drinkRepository;
   private final RegistrationRepository registrationRepository;
+  private final DeclarationRepository declarationRepository;
 
   @Transactional
   public DrinkResponse approveRegistration(Long registId) {
@@ -48,5 +52,25 @@ public class ManagerService {
 
     registration.setApproved(false);
     registrationRepository.save(registration);
+  }
+
+  public DeclarationResponse approveDeclaration(Long declarationId) {
+
+    Declaration declaration = declarationRepository.findById(declarationId)
+        .orElseThrow(() -> new CustomException(ErrorCode.DECLARATION_NOT_FOUND));
+
+    declaration.setApproved(true);
+
+    return DeclarationResponse.from(declarationRepository.save(declaration));
+  }
+
+  public DeclarationResponse cancelDeclaration(Long declarationId) {
+
+    Declaration declaration = declarationRepository.findById(declarationId)
+        .orElseThrow(() -> new CustomException(ErrorCode.DECLARATION_NOT_FOUND));
+
+    declaration.setApproved(false);
+
+    return DeclarationResponse.from(declarationRepository.save(declaration));
   }
 }
