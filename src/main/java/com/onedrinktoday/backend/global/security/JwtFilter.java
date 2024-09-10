@@ -58,6 +58,7 @@ public class JwtFilter extends OncePerRequestFilter {
           response.setStatus(500);
         }
         response.flushBuffer();
+        return;
       }
     }
 

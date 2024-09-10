@@ -1,5 +1,6 @@
 package com.onedrinktoday.backend.domain.post.dto;
 
+import com.onedrinktoday.backend.global.type.Type;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,18 +16,9 @@ import lombok.Setter;
 public class PostRequest {
   private Long drinkId;
   private Long memberId;
-  private String type;
+  private Type type;
   private String content;
   private Float rating;
   private List<String> tag;
 
-  // 새 음료 입력
-  private String drinkName;
-  private String description;
-  private Integer degree;
-  private Integer sweetness;
-  private Integer cost;
-  private String imageUrl;
-  private Long regionId;
-  private com.onedrinktoday.backend.global.type.Drink drinkType;
 }

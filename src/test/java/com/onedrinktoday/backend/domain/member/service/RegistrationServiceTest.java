@@ -29,7 +29,7 @@ import com.onedrinktoday.backend.global.exception.ErrorCode;
 import com.onedrinktoday.backend.global.security.JwtProvider;
 import com.onedrinktoday.backend.global.security.MemberDetail;
 import com.onedrinktoday.backend.global.security.TokenDto;
-import com.onedrinktoday.backend.global.type.Drink;
+import com.onedrinktoday.backend.global.type.DrinkType;
 import com.onedrinktoday.backend.global.type.Role;
 import java.util.Arrays;
 import java.util.Date;
@@ -49,7 +49,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
-public class MemberServiceTest {
+public class RegistrationServiceTest {
 
   @InjectMocks
   private MemberService memberService;
@@ -74,7 +74,7 @@ public class MemberServiceTest {
   private SignUp signUpRequest;
   private SignIn signInRequest;
   private UpdateInfo updateInfo;
-  private List<Drink> favorDrinks;
+  private List<DrinkType> favorDrinkTypes;
 
   @BeforeEach
   void setUp() {
@@ -88,12 +88,12 @@ public class MemberServiceTest {
     region.setPlaceName("서울특별시");
 
     // favorDrinks 리스트 초기화
-    favorDrinks = Arrays.asList(Drink.SOJU, Drink.BEER);
+    favorDrinkTypes = Arrays.asList(DrinkType.SOJU, DrinkType.BEER);
 
     signUpRequest = new SignUp(1L, "John", "john@google.com", "Password123!", new Date(),
-        favorDrinks, true);
+        favorDrinkTypes, true);
     signInRequest = new SignIn("john@google.com", "Password123!");
-    updateInfo = new UpdateInfo(1L, "John", favorDrinks, true, "new_image_url");
+    updateInfo = new UpdateInfo(1L, "John", favorDrinkTypes, true, "new_image_url");
   }
 
   @Test
@@ -108,7 +108,7 @@ public class MemberServiceTest {
         .name(signUpRequest.getName())
         .email(signUpRequest.getEmail())
         .birthDate(signUpRequest.getBirthDate())
-        .favorDrink(signUpRequest.getFavorDrink())
+        .favorDrinkType(signUpRequest.getFavorDrinkType())
         .role(Role.USER)
         .alarmEnabled(signUpRequest.isAlarmEnabled())
         .build();
@@ -124,7 +124,7 @@ public class MemberServiceTest {
     assertEquals(member.getName(), response.getName());
     assertEquals(member.getEmail(), response.getEmail());
     assertEquals(member.getBirthDate(), response.getBirthDate());
-    assertEquals(member.getFavorDrink(), response.getFavorDrink());
+    assertEquals(member.getFavorDrinkType(), response.getFavorDrinkType());
     assertEquals(member.getRole(), response.getRole());
     assertEquals(member.isAlarmEnabled(), response.isAlarmEnabled());
   }
@@ -260,7 +260,7 @@ public class MemberServiceTest {
         .role(Role.USER)
         .birthDate(birthDate)
         .alarmEnabled(true)
-        .favorDrink(favorDrinks)
+        .favorDrinkType(favorDrinkTypes)
         .deletedAt(null)
         .build();
 
@@ -280,7 +280,7 @@ public class MemberServiceTest {
     assertEquals(name, response.getName());
     assertEquals(birthDate, response.getBirthDate());
     assertEquals(Role.USER, response.getRole());
-    assertEquals(favorDrinks, response.getFavorDrink());
+    assertEquals(favorDrinkTypes, response.getFavorDrinkType());
     assertTrue(response.isAlarmEnabled());
     assertNull(response.getDeletedAt());
   }
@@ -317,7 +317,7 @@ public class MemberServiceTest {
         .name(member.getName())
         .email(member.getEmail())
         .birthDate(member.getBirthDate())
-        .favorDrink(member.getFavorDrink())
+        .favorDrinkType(member.getFavorDrinkType())
         .role(member.getRole())
         .alarmEnabled(true)
         .imageUrl(member.getImageUrl())
@@ -329,7 +329,7 @@ public class MemberServiceTest {
     Member updatedMember = Member.builder()
         .region(updateRegion)
         .name(updateInfo.getName())
-        .favorDrink(updateInfo.getFavorDrink())
+        .favorDrinkType(updateInfo.getFavorDrinkType())
         .alarmEnabled(updateInfo.isAlarmEnabled())
         .imageUrl(updateInfo.getImageUrl())
         .build();
@@ -349,7 +349,7 @@ public class MemberServiceTest {
     //then
     assertEquals(updatedMember.getRegion().getPlaceName(), response.getPlaceName());
     assertEquals(updatedMember.getName(), response.getName());
-    assertEquals(updatedMember.getFavorDrink(), response.getFavorDrink());
+    assertEquals(updatedMember.getFavorDrinkType(), response.getFavorDrinkType());
     assertEquals(updatedMember.isAlarmEnabled(), response.isAlarmEnabled());
     assertEquals(updatedMember.getImageUrl(), response.getImageUrl());
   }
@@ -364,14 +364,14 @@ public class MemberServiceTest {
         .name(member.getName())
         .email(member.getEmail())
         .birthDate(member.getBirthDate())
-        .favorDrink(member.getFavorDrink())
+        .favorDrinkType(member.getFavorDrinkType())
         .role(member.getRole())
         .alarmEnabled(true)
         .imageUrl(member.getImageUrl())
         .build();
 
     UpdateInfo wrongUpdateInfo = new UpdateInfo(101010L, updateInfo.getName(),
-        updateInfo.getFavorDrink(), updateInfo.isAlarmEnabled(), updateInfo.getImageUrl());
+        updateInfo.getFavorDrinkType(), updateInfo.isAlarmEnabled(), updateInfo.getImageUrl());
 
     //MemberDetail 사용하여 인증 정보 확인
     MemberDetail memberDetail = new MemberDetail(MemberResponse.from(existMember));

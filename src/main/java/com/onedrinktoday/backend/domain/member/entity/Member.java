@@ -2,7 +2,7 @@ package com.onedrinktoday.backend.domain.member.entity;
 
 import com.onedrinktoday.backend.domain.member.dto.MemberRequest;
 import com.onedrinktoday.backend.domain.region.entity.Region;
-import com.onedrinktoday.backend.global.type.Drink;
+import com.onedrinktoday.backend.global.type.DrinkType;
 import com.onedrinktoday.backend.global.type.Role;
 import com.onedrinktoday.backend.global.util.DrinkListConverter;
 import jakarta.persistence.Convert;
@@ -51,7 +51,7 @@ public class Member {
   private Date birthDate;
 
   @Convert(converter = DrinkListConverter.class)
-  private List<Drink> favorDrink;
+  private List<DrinkType> favorDrinkType;
 
   @Enumerated(EnumType.STRING)
   private Role role;
@@ -75,7 +75,7 @@ public class Member {
         .name(request.getName())
         .email(request.getEmail())
         .birthDate(request.getBirthDate())
-        .favorDrink(request.getFavorDrink())
+        .favorDrinkType(request.getFavorDrinkType())
         .role(Role.USER)
         .alarmEnabled(request.isAlarmEnabled())
         .build();
