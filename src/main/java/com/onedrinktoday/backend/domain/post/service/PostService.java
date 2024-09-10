@@ -91,9 +91,12 @@ public class PostService {
 
   // 전체 게시글 조회
   public Page<PostResponse> getAllPosts(Pageable pageable) {
-    Page<Post> Posts = postRepository.findAll(pageable);
+    Page<Post> posts = postRepository.findAll(pageable);
 
-    return Posts.map(PostResponse::from);
+    return posts.map(post -> {
+      List<Tag> tags = postTagRepository.findTagsByPostId(post.getId());
+      return PostResponse.of(post, tags);
+    });
   }
 
   // 특정 게시글 조회
