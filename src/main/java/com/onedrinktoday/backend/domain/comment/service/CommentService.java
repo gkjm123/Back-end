@@ -35,7 +35,7 @@ public class CommentService {
         .member(member)
         .post(post)
         .content(commentRequest.getContent())
-        .anonymous(commentRequest.getAnonymous())
+        .anonymous(commentRequest.isAnonymous())
         .build();
 
     commentRepository.save(comment);
@@ -75,7 +75,7 @@ public class CommentService {
     }
 
     comment.setContent(commentRequest.getContent());
-    comment.setAnonymous(commentRequest.getAnonymous());
+    comment.setAnonymous(commentRequest.isAnonymous());
 
     return CommentResponse.from(commentRepository.save(comment));
   }

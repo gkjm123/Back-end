@@ -20,7 +20,7 @@ public class CommentResponse {
   private String memberName;
   private Long postId;
   private String content;
-  private Boolean anonymous;
+  private boolean anonymous;
   private Timestamp createdAt;
   private Timestamp updatedAt;
 
@@ -31,7 +31,7 @@ public class CommentResponse {
         .memberName(comment.getMember().getName())
         .postId(comment.getPost().getId())
         .content(comment.getContent())
-        .anonymous(comment.getAnonymous())
+        .anonymous(comment.isAnonymous())
         .createdAt(comment.getCreatedAt())
         .updatedAt(comment.getUpdatedAt())
         .build();

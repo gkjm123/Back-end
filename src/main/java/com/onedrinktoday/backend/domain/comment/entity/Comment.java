@@ -48,7 +48,7 @@ public class Comment {
   private String content;
 
   @Column(name = "anonymous")
-  private Boolean anonymous;
+  private boolean anonymous;
 
   @CreationTimestamp
   private Timestamp createdAt;
