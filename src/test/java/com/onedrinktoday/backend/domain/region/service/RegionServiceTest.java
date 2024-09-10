@@ -1,4 +1,4 @@
-package com.onedrinktoday.backend.domain.member.service;
+package com.onedrinktoday.backend.domain.region.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -9,7 +9,6 @@ import com.onedrinktoday.backend.domain.region.dto.RegionRequest;
 import com.onedrinktoday.backend.domain.region.dto.RegionResponse;
 import com.onedrinktoday.backend.domain.region.entity.Region;
 import com.onedrinktoday.backend.domain.region.repository.RegionRepository;
-import com.onedrinktoday.backend.domain.region.service.RegionService;
 import com.onedrinktoday.backend.global.exception.CustomException;
 import com.onedrinktoday.backend.global.exception.ErrorCode;
 import java.util.List;

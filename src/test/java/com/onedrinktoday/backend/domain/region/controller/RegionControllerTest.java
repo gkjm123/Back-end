@@ -1,7 +1,6 @@
-package com.onedrinktoday.backend.domain.member.controller;
+package com.onedrinktoday.backend.domain.region.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.onedrinktoday.backend.domain.region.controller.RegionController;
 import com.onedrinktoday.backend.domain.region.dto.RegionRequest;
 import com.onedrinktoday.backend.domain.region.dto.RegionResponse;
 import com.onedrinktoday.backend.domain.region.service.RegionService;
