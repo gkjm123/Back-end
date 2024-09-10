@@ -12,10 +12,12 @@ import com.onedrinktoday.backend.domain.post.entity.Post;
 import com.onedrinktoday.backend.domain.post.repository.PostRepository;
 import com.onedrinktoday.backend.domain.postTag.entity.PostTag;
 import com.onedrinktoday.backend.domain.postTag.repository.PostTagRepository;
-import com.onedrinktoday.backend.domain.region.repository.RegionRepository;
 import com.onedrinktoday.backend.domain.tag.entity.Tag;
 import com.onedrinktoday.backend.domain.tag.repository.TagRepository;
 import com.onedrinktoday.backend.global.cache.CacheService;
+import com.onedrinktoday.backend.global.exception.CustomException;
+import com.onedrinktoday.backend.global.exception.ErrorCode;
+import com.onedrinktoday.backend.global.type.Role;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -126,9 +128,13 @@ public class PostService {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글 ID입니다."));
 
-    if (!postRepository.existsById(postId)) {
-      throw new IllegalArgumentException("유효하지 않은 게시글 ID입니다.");
+    Member member = memberService.getMember();
+
+    //작성자 본인 또는 관리자만 글 삭제 가능
+    if (!post.getMember().equals(member) && !member.getRole().equals(Role.MANAGER)) {
+      throw new CustomException(ErrorCode.ACCESS_DENIED);
     }
+
     postRepository.deleteById(postId);
     cacheManager.getCache("avg-rating").evict(post.getDrink().getId());
   }

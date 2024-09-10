@@ -42,7 +42,7 @@ import java.util.List;
 
 @WithMockUser
 @WebMvcTest(MemberController.class)
-public class RegistrationControllerTest {
+public class MemberRegistrationControllerTest {
 
   @Autowired
   private MockMvc mockMvc;

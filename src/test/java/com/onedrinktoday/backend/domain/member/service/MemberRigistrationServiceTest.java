@@ -49,7 +49,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
-public class RegistrationServiceTest {
+public class MemberRigistrationServiceTest {
 
   @InjectMocks
   private MemberService memberService;
