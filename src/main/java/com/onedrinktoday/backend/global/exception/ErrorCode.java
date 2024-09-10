@@ -14,6 +14,8 @@ public enum ErrorCode {
   EMAIL_EXIST("이미 가입된 메일입니다.", HttpStatus.BAD_REQUEST),
   EMAIL_NOT_FOUND("이메일이 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
   REGISTRATION_NOT_FOUND("특산주 등록 정보를 찾을수 없습니다.", HttpStatus.BAD_REQUEST),
+  COMMENT_NOT_FOUND("댓글을 찾을수 없습니다.", HttpStatus.BAD_REQUEST),
+  POST_NOT_FOUND("게시글을 찾을수 없습니다.", HttpStatus.BAD_REQUEST),
   REGION_NOT_FOUND("지역을 찾을수 없습니다.", HttpStatus.BAD_REQUEST),
   REGION_EXIST("이미 존재하는 지역명입니다.", HttpStatus.BAD_REQUEST),
   LOGIN_FAIL("이메일, 비밀번호를 확인해 주세요.", HttpStatus.BAD_REQUEST),
