@@ -1,7 +1,6 @@
 package com.onedrinktoday.backend.domain.suggest.controller;
 
 import com.onedrinktoday.backend.domain.drink.dto.DrinkResponse;
-import com.onedrinktoday.backend.domain.member.service.MemberService;
 import com.onedrinktoday.backend.domain.suggest.service.SuggestBirthDateService;
 import com.onedrinktoday.backend.domain.suggest.service.SuggestService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class SuggestController {
   private final SuggestService suggestService;
-  private final MemberService memberService;
   private final SuggestBirthDateService suggestBirthDateService;
 
   @GetMapping("/suggest/drink")
