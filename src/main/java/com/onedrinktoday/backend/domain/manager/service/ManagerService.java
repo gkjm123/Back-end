@@ -9,6 +9,7 @@ import com.onedrinktoday.backend.global.exception.CustomException;
 import com.onedrinktoday.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +18,7 @@ public class ManagerService {
   private final DrinkRepository drinkRepository;
   private final RegistrationRepository registrationRepository;
 
+  @Transactional
   public DrinkResponse approveRegistration(Long registId) {
 
     Registration registration = registrationRepository.findById(registId)
