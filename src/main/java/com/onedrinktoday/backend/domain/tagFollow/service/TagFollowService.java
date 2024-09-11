@@ -3,7 +3,6 @@ package com.onedrinktoday.backend.domain.tagFollow.service;
 import static com.onedrinktoday.backend.global.exception.ErrorCode.*;
 
 import com.onedrinktoday.backend.domain.member.entity.Member;
-import com.onedrinktoday.backend.domain.member.repository.MemberRepository;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
 import com.onedrinktoday.backend.domain.tag.entity.Tag;
 import com.onedrinktoday.backend.domain.tag.repository.TagRepository;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 public class TagFollowService {
 
   private final MemberService memberService;
-  private final MemberRepository memberRepository;
   private final TagFollowRepository tagFollowRepository;
   private final TagRepository tagRepository;
 
@@ -46,9 +44,9 @@ public class TagFollowService {
     return TagFollowResponse.from(tagFollow);
   }
 
-  public List<TagFollowResponse> getTagFollows(Long memberId) {
-    Member member = memberRepository.findById(memberId)
-        .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+  public List<TagFollowResponse> getTagFollows() {
+
+    Member member = memberService.getMember();
 
     List<TagFollow> tagFollows = tagFollowRepository.findByMember(member);
 
