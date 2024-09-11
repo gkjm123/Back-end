@@ -14,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TagFollowResponse {
 
-  private Long followId;
+  private Long id;
   private Long memberId;
   private String memberName;
   private Long tagId;
@@ -22,7 +22,7 @@ public class TagFollowResponse {
 
   public static TagFollowResponse from(TagFollow tagFollow) {
     return TagFollowResponse.builder()
-        .followId(tagFollow.getId())
+        .id(tagFollow.getId())
         .memberId(tagFollow.getMember().getId())
         .memberName(tagFollow.getMember().getName())
         .tagId(tagFollow.getTag().getTagId())
