@@ -6,6 +6,7 @@ import com.onedrinktoday.backend.domain.tagFollow.service.TagFollowService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,8 +35,8 @@ public class TagFollowController {
   }
 
   @DeleteMapping("/tags/follows/{followId}")
-  public void deleteTagFollow(@PathVariable Long followId) {
+  public ResponseEntity<String> deleteTagFollow(@PathVariable Long followId) {
     tagFollowService.deleteTagFollow(followId);
+    return ResponseEntity.ok("팔로우 태그가 삭제되었습니다.");
   }
-
 }
