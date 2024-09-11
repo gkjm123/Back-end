@@ -120,8 +120,7 @@ public class MemberRegistrationControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value(memberResponse.getName()))
         .andExpect(jsonPath("$.email").value(memberResponse.getEmail()))
-        .andExpect(
-            jsonPath("$.favorDrink[0]").value(memberResponse.getFavorDrinkType().get(0).toString()))
+        .andExpect(jsonPath("$.favorDrinkType[0]").value(memberResponse.getFavorDrinkType().get(0).toString()))
         .andExpect(jsonPath("$.role").value(memberResponse.getRole().toString()))
         .andExpect(jsonPath("$.alarmEnabled").value(memberResponse.isAlarmEnabled()))
         .andDo(print());
@@ -217,7 +216,7 @@ public class MemberRegistrationControllerTest {
             .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(new ObjectMapper().writeValueAsString(new PasswordResetRequest(wrongEmail))))
-        .andExpect(status().isBadRequest())
+        .andExpect(status().isNotFound())
         .andExpect(content().string(EMAIL_NOT_FOUND.getMessage()))
         .andDo(print());
   }
@@ -415,7 +414,7 @@ public class MemberRegistrationControllerTest {
             .content(new ObjectMapper().writeValueAsString(updateInfo)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value(updateInfo.getName()))
-        .andExpect(jsonPath("$.favorDrink[0]").value(updateInfo.getFavorDrinkType().get(0).toString()))
+        .andExpect(jsonPath("$.favorDrinkType[0]").value(updateInfo.getFavorDrinkType().get(0).toString()))
         .andExpect(jsonPath("$.alarmEnabled").value(updateInfo.isAlarmEnabled()))
         .andExpect(jsonPath("$.imageUrl").value(updateInfo.getImageUrl()))
         .andDo(print());
