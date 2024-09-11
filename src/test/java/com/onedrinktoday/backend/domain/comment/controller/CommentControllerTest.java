@@ -56,7 +56,7 @@ public class CommentControllerTest {
 
     commentRequest = CommentRequest.builder()
         .postId(1L)
-        .content("맛있어 보이네요")
+        .content("맛있어 보이네요. 저도 먹어보고 싶어요.")
         .anonymous(true)
         .build();
 
@@ -73,7 +73,7 @@ public class CommentControllerTest {
   @Test
   @DisplayName("댓글 생성 성공")
   void successCreateComment() throws Exception {
-    // given
+    //given
     when(commentService.createComment(any(CommentRequest.class))).thenReturn(commentResponse);
 
     //then

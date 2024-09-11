@@ -164,7 +164,7 @@ public class RegionControllerTest {
     mockMvc.perform(get("/api/regions/{regionId}", 101010L)
             .with(csrf())
             .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isBadRequest())
+        .andExpect(status().isNotFound())
         .andExpect(content().string(REGION_NOT_FOUND.getMessage()))
         .andDo(print());
   }
