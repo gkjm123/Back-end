@@ -19,7 +19,7 @@ public class DrinkResponse {
   private String placeName;
   private String name;
   private DrinkType type;
-  private Integer degree;
+  private Float degree;
   private Integer sweetness;
   private Integer cost;
   private Float averageRating;

@@ -43,7 +43,7 @@ public class Drink {
   private DrinkType type;
 
   @Column(name = "degree")
-  private Integer degree;
+  private Float degree;
 
   @Column(name = "sweetness")
   private Integer sweetness;
