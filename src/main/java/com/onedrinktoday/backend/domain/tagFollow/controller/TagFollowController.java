@@ -3,7 +3,6 @@ package com.onedrinktoday.backend.domain.tagFollow.controller;
 import com.onedrinktoday.backend.domain.tagFollow.dto.TagFollowRequest;
 import com.onedrinktoday.backend.domain.tagFollow.dto.TagFollowResponse;
 import com.onedrinktoday.backend.domain.tagFollow.service.TagFollowService;
-import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,19 +22,20 @@ public class TagFollowController {
   private final TagFollowService tagFollowService;
 
   @PostMapping("/tags/follows")
-  public TagFollowResponse followTag(@Valid @RequestBody TagFollowRequest request) {
+  public TagFollowResponse followTag(@RequestBody TagFollowRequest request) {
 
     return tagFollowService.followTag(request);
   }
 
-  @GetMapping("/members/{memberId}/tags/follows")
-  public List<TagFollowResponse> getTagFollows(@PathVariable Long memberId) {
+  @GetMapping("/members/tags/follows")
+  public List<TagFollowResponse> getTagFollows() {
 
-    return tagFollowService.getTagFollows(memberId);
+    return tagFollowService.getTagFollows();
   }
 
   @DeleteMapping("/tags/follows/{followId}")
   public ResponseEntity<String> deleteTagFollow(@PathVariable Long followId) {
+
     tagFollowService.deleteTagFollow(followId);
     return ResponseEntity.ok("팔로우 태그가 삭제되었습니다.");
   }
