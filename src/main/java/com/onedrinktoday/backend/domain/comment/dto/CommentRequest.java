@@ -18,7 +18,7 @@ public class CommentRequest {
 
   @NotNull(message = "게시글 ID를 입력해주세요.")
   private Long postId;
-  @Size(max = 2000)
+  @Size(min = 10, max = 2000)
   @NotBlank(message = "댓글 내용을 입력해주세요.")
   private String content;
   private boolean anonymous;
