@@ -22,7 +22,7 @@ public class RegistrationResponse {
   private String placeName;
   private String drinkName;
   private DrinkType type;
-  private Integer degree;
+  private Float degree;
   private Integer sweetness;
   private Integer cost;
   private String description;
