@@ -33,6 +33,10 @@ public class TagFollowService {
     Tag tag = tagRepository.findById(request.getTagId())
         .orElseThrow(() -> new CustomException(TAG_NOT_FOUND));
 
+    if (tagFollowRepository.existsByMemberAndTag(member, tag)) {
+      throw new CustomException(ALREADY_FOLLOWING);
+    }
+
     TagFollow tagFollow = TagFollow.builder()
         .member(member)
         .tag(tag)
