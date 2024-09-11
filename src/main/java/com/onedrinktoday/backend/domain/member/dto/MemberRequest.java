@@ -20,7 +20,7 @@ public class MemberRequest {
     @NotNull(message = "지역 ID를 입력해주세요.")
     private Long regionId;
 
-    @Pattern(regexp = "^[a-zA-Z0-9가-힣_-]{2,10}$", message = "이름을 2~10글자 사이로 입력해주세요.")
+    @Pattern(regexp = "^[a-zA-Z0-9가-힣_-]{2,7}$", message = "이름을 2~7글자 사이로 입력해주세요.")
     private String name;
 
     @Email(message = "메일을 확인해주세요.")
