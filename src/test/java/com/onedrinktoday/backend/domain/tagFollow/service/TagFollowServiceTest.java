@@ -6,10 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import com.onedrinktoday.backend.domain.member.entity.Member;
-import com.onedrinktoday.backend.domain.member.repository.MemberRepository;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
 import com.onedrinktoday.backend.domain.tag.entity.Tag;
 import com.onedrinktoday.backend.domain.tag.repository.TagRepository;
@@ -42,9 +42,6 @@ public class TagFollowServiceTest {
 
   @Mock
   private TagFollowRepository tagFollowRepository;
-
-  @Mock
-  private MemberRepository memberRepository;
 
   private TagFollow tagFollow;
   private Member member;
@@ -109,14 +106,15 @@ public class TagFollowServiceTest {
   @DisplayName("팔로우한 태그 조회 성공")
   void successGetTagFollows() {
     //given
-    when(memberRepository.findById(anyLong())).thenReturn(Optional.of(member));
-    when(tagFollowRepository.findByMember(any(Member.class))).thenReturn(List.of(tagFollow));
+    given(memberService.getMember()).willReturn(member);
+    when(tagFollowRepository.findByMember(member)).thenReturn(List.of(tagFollow));
 
     //when
-    TagFollowResponse response = tagFollowService.getTagFollows(1L).get(0);
+    List<TagFollowResponse> responses = tagFollowService.getTagFollows();
 
     //then
-    assertEquals(tagFollow.getId(), response.getFollowId());
+    TagFollowResponse response = responses.get(0);
+    assertEquals(tagFollow.getId(), response.getId());
     assertEquals(member.getId(), response.getMemberId());
     assertEquals(member.getName(), response.getMemberName());
     assertEquals(tag.getTagId(), response.getTagId());
@@ -124,14 +122,14 @@ public class TagFollowServiceTest {
   }
 
   @Test
-  @DisplayName("팔로우한 태그 조회 실패 - 존재하지 않는 사용자 ID")
+  @DisplayName("팔로우한 태그 조회 실패 - 회원을 찾을 수 없음")
   void failGetTagFollows() {
     //given
-    when(memberRepository.findById(anyLong())).thenReturn(Optional.empty());
+    given(memberService.getMember()).willThrow(new CustomException(MEMBER_NOT_FOUND));
 
     //when
     CustomException thrown = assertThrows(CustomException.class,
-        () -> tagFollowService.getTagFollows(1L));
+        () -> tagFollowService.getTagFollows());
 
     //then
     assertEquals(MEMBER_NOT_FOUND, thrown.getErrorCode());

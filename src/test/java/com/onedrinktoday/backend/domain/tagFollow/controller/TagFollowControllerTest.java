@@ -53,7 +53,7 @@ public class TagFollowControllerTest {
     tagFollowRequest.setTagId(1L);
 
     tagFollowResponse = TagFollowResponse.builder()
-        .followId(1L)
+        .id(1L)
         .memberId(1L)
         .memberName("John")
         .tagId(1L)
@@ -74,7 +74,7 @@ public class TagFollowControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(tagFollowRequest)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.followId").value(tagFollowResponse.getFollowId()))
+        .andExpect(jsonPath("$.id").value(tagFollowResponse.getId()))
         .andExpect(jsonPath("$.memberId").value(tagFollowResponse.getMemberId()))
         .andExpect(jsonPath("$.memberName").value(tagFollowResponse.getMemberName()))
         .andExpect(jsonPath("$.tagId").value(tagFollowResponse.getTagId()))
@@ -104,15 +104,15 @@ public class TagFollowControllerTest {
   @DisplayName("태그 팔로우 목록 조회 성공")
   void successGetTagFollows() throws Exception {
     //given
-    given(tagFollowService.getTagFollows(anyLong())).willReturn(List.of(tagFollowResponse));
+    given(tagFollowService.getTagFollows()).willReturn(List.of(tagFollowResponse));
 
     //when
     //then
-    mockMvc.perform(get("/api/members/1/tags/follows")
+    mockMvc.perform(get("/api/members/tags/follows")
             .with(csrf())
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].followId").value(tagFollowResponse.getFollowId()))
+        .andExpect(jsonPath("$[0].id").value(tagFollowResponse.getId()))
         .andExpect(jsonPath("$[0].memberId").value(tagFollowResponse.getMemberId()))
         .andExpect(jsonPath("$[0].memberName").value(tagFollowResponse.getMemberName()))
         .andExpect(jsonPath("$[0].tagId").value(tagFollowResponse.getTagId()))
@@ -124,12 +124,11 @@ public class TagFollowControllerTest {
   @DisplayName("태그 팔로우 목록 조회 실패 - 회원을 찾을 수 없음")
   void failGetTagFollows() throws Exception {
     //given
-    given(tagFollowService.getTagFollows(anyLong())).willThrow(
-        new CustomException(MEMBER_NOT_FOUND));
+    given(tagFollowService.getTagFollows()).willThrow(new CustomException(MEMBER_NOT_FOUND));
 
     //when
     //then
-    mockMvc.perform(get("/api/members/1/tags/follows")
+    mockMvc.perform(get("/api/members/tags/follows")
             .with(csrf())
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isNotFound())
