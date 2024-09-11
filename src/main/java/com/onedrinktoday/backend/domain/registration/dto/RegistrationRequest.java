@@ -17,7 +17,7 @@ public class RegistrationRequest {
   private Long regionId;
   private String drinkName;
   private DrinkType type;
-  private Integer degree;
+  private Float degree;
   private Integer sweetness;
   private Integer cost;
   private String description;
