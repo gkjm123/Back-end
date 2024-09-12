@@ -34,11 +34,11 @@ import org.springframework.stereotype.Service;
 public class PostService {
 
   private final PostRepository postRepository;
-  private final MemberRepository memberRepository;
-  private final MemberService memberService;
-  private final DrinkRepository drinkRepository;
-  private final TagRepository tagRepository;
   private final PostTagRepository postTagRepository;
+  private final TagRepository tagRepository;
+  private final MemberRepository memberRepository;
+  private final DrinkRepository drinkRepository;
+  private final MemberService memberService;
   private final CacheManager cacheManager;
   private final CacheService cacheService;
   private final NotificationService notificationService;
@@ -95,8 +95,14 @@ public class PostService {
   }
 
   // 전체 게시글 조회
-  public Page<PostResponse> getAllPosts(Pageable pageable) {
-    Page<Post> posts = postRepository.findAll(pageable);
+  public Page<PostResponse> getAllPosts(Pageable pageable, String sortBy) {
+    Page<Post> posts;
+
+    if("viewCount".equals(sortBy)) {
+      posts = postRepository.findAllByOrderByViewCountDesc(pageable); // 조회수 정렬
+    } else {
+      posts = postRepository.findAllByOrderByCreatedAtDesc(pageable); // 최신순 정렬
+    }
 
     return posts.map(post -> {
       List<Tag> tags = postTagRepository.findTagsByPostId(post.getId());
