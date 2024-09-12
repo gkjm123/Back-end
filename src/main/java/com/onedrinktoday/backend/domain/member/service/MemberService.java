@@ -6,8 +6,6 @@ import com.onedrinktoday.backend.domain.member.dto.MemberRequest.UpdateInfo;
 import com.onedrinktoday.backend.domain.member.dto.MemberResponse;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.repository.MemberRepository;
-import com.onedrinktoday.backend.domain.region.entity.Region;
-import com.onedrinktoday.backend.domain.region.repository.RegionRepository;
 import com.onedrinktoday.backend.global.exception.CustomException;
 import com.onedrinktoday.backend.global.exception.ErrorCode;
 import com.onedrinktoday.backend.global.security.JwtProvider;
@@ -28,9 +26,14 @@ public class MemberService {
 
   private final MemberRepository memberRepository;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
-  private final RegionRepository regionRepository;
   private final JwtProvider jwtProvider;
   private final EmailService emailService;
+
+  public void validateEmail(String email) {
+    if (memberRepository.findByEmail(email).isPresent()) {
+      throw new CustomException(ErrorCode.EMAIL_EXIST);
+    }
+  }
 
   public MemberResponse signUp(SignUp request) {
 
@@ -39,11 +42,6 @@ public class MemberService {
     }
 
     Member member = Member.from(request);
-
-    Region region = regionRepository.findById(request.getRegionId())
-        .orElseThrow(() -> new CustomException(ErrorCode.REGION_NOT_FOUND));
-
-    member.setRegion(region);
     member.setPassword(bCryptPasswordEncoder.encode(request.getPassword()));
 
     return MemberResponse.from(memberRepository.save(member));
@@ -57,8 +55,10 @@ public class MemberService {
       throw new CustomException(ErrorCode.LOGIN_FAIL);
     }
 
-    String accessToken = jwtProvider.createAccessToken(member.getId(), member.getEmail(), member.getRole());
-    String refreshToken = jwtProvider.createRefreshToken(member.getId(), member.getEmail(), member.getRole());
+    String accessToken = jwtProvider.createAccessToken(member.getId(), member.getEmail(),
+        member.getRole());
+    String refreshToken = jwtProvider.createRefreshToken(member.getId(), member.getEmail(),
+        member.getRole());
     member.setRefreshToken(refreshToken);
     memberRepository.save(member);
 
@@ -89,7 +89,8 @@ public class MemberService {
       throw new CustomException(ErrorCode.TOKEN_NOT_MATCH);
     }
 
-    String accessToken = jwtProvider.createAccessToken(member.getId(), member.getEmail(), member.getRole());
+    String accessToken = jwtProvider.createAccessToken(member.getId(), member.getEmail(),
+        member.getRole());
 
     return TokenDto.builder()
         .refreshToken(refreshToken)
@@ -105,13 +106,9 @@ public class MemberService {
   public MemberResponse updateMemberInfo(UpdateInfo updateInfo) {
 
     Member member = getMember();
-
-    member.setRegion(regionRepository.findById(updateInfo.getRegionId())
-        .orElseThrow(() -> new CustomException(ErrorCode.REGION_NOT_FOUND)));
     member.setName(updateInfo.getName());
     member.setFavorDrinkType(updateInfo.getFavorDrinkType());
     member.setAlarmEnabled(updateInfo.isAlarmEnabled());
-    member.setImageUrl(updateInfo.getImageUrl());
 
     return MemberResponse.from(memberRepository.save(member));
   }
@@ -132,7 +129,8 @@ public class MemberService {
     Member member = memberRepository.findByEmail(email)
         .orElseThrow(() -> new CustomException(ErrorCode.EMAIL_NOT_FOUND));
 
-    String token = jwtProvider.createResetToken(member.getId(), member.getEmail(), member.getRole());
+    String token = jwtProvider.createResetToken(member.getId(), member.getEmail(),
+        member.getRole());
 
     // 도메인 변경(예정)
     String resetLink = "http://localhost:8080/api/members/reset-password?token=" + token;

@@ -35,7 +35,7 @@ public class MemberResponse {
   public static MemberResponse from(Member member) {
     return MemberResponse.builder()
         .id(member.getId())
-        .placeName(member.getRegion().getPlaceName())
+        .placeName(member.getRegion() == null ? null : member.getRegion().getPlaceName())
         .name(member.getName())
         .email(member.getEmail())
         .birthDate(member.getBirthDate())
