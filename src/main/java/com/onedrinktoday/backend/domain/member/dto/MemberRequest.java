@@ -17,9 +17,6 @@ public class MemberRequest {
   @Builder
   public static class SignUp {
 
-    @NotNull(message = "지역 ID를 입력해주세요.")
-    private Long regionId;
-
     @Pattern(regexp = "^[a-zA-Z0-9가-힣_-]{2,7}$", message = "이름을 2~7글자 사이로 입력해주세요.")
     private String name;
 
@@ -36,8 +33,7 @@ public class MemberRequest {
     private List<DrinkType> favorDrinkType;
     private boolean alarmEnabled;
 
-    public SignUp(Long regionId, String name, String email, String password, Date birthDate, List<DrinkType> favorDrinkType, boolean alarmEnabled) {
-      this.regionId = regionId;
+    public SignUp(String name, String email, String password, Date birthDate, List<DrinkType> favorDrinkType, boolean alarmEnabled) {
       this.name = name;
       this.email = email;
       this.password = password;
@@ -67,21 +63,16 @@ public class MemberRequest {
   @Builder
   public static class UpdateInfo {
 
-    private Long regionId;
-
     @Pattern(regexp = "^[a-zA-Z0-9가-힣_-]{2,10}$", message = "이름을 2~10글자 사이로 입력해주세요.")
     private String name;
 
     private List<DrinkType> favorDrinkType;
     private boolean alarmEnabled;
-    private String imageUrl;
 
-    public UpdateInfo(Long regionId, String name, List<DrinkType> favorDrinkType, boolean alarmEnabled, String imageUrl) {
-      this.regionId = regionId;
+    public UpdateInfo(String name, List<DrinkType> favorDrinkType, boolean alarmEnabled) {
       this.name = name;
       this.favorDrinkType = favorDrinkType;
       this.alarmEnabled = alarmEnabled;
-      this.imageUrl = imageUrl;
     }
   }
 }

@@ -72,7 +72,6 @@ public class MemberRegistrationControllerTest {
   @BeforeEach
   public void setUp() {
     signUpRequest = MemberRequest.SignUp.builder()
-        .regionId(1L)
         .name("JohnDoe")
         .email(VALID_EMAIL)
         .password(VALID_PASSWORD)
@@ -94,7 +93,7 @@ public class MemberRegistrationControllerTest {
         .build();
 
     updateInfo = new MemberRequest.UpdateInfo(
-        2L, "JohnDoeBa", List.of(DrinkType.BEER), false, "newImageUrl");
+        "JohnDoeBa", List.of(DrinkType.BEER), false);
 
     tokenDto = TokenDto.builder()
         .accessToken("accessToken")
@@ -131,7 +130,6 @@ public class MemberRegistrationControllerTest {
   public void failSignUp() throws Exception {
     //given
     MemberRequest.SignUp invalidRequest = MemberRequest.SignUp.builder()
-        .regionId(null)
         .name(null)
         .email(null)
         .password(null)
@@ -400,7 +398,6 @@ public class MemberRegistrationControllerTest {
         .role(Role.USER)
         .alarmEnabled(updateInfo.isAlarmEnabled())
         .createdAt(new Timestamp(System.currentTimeMillis()))
-        .imageUrl(updateInfo.getImageUrl())
         .build();
 
     given(memberService.updateMemberInfo(any(MemberRequest.UpdateInfo.class)))
@@ -416,7 +413,6 @@ public class MemberRegistrationControllerTest {
         .andExpect(jsonPath("$.name").value(updateInfo.getName()))
         .andExpect(jsonPath("$.favorDrinkType[0]").value(updateInfo.getFavorDrinkType().get(0).toString()))
         .andExpect(jsonPath("$.alarmEnabled").value(updateInfo.isAlarmEnabled()))
-        .andExpect(jsonPath("$.imageUrl").value(updateInfo.getImageUrl()))
         .andDo(print());
   }
 

@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -26,6 +27,12 @@ public class MemberController {
 
   private final MemberService memberService;
   private final JwtProvider jwtProvider;
+
+  @GetMapping("/members/email/{email}/validation")
+  public ResponseEntity<String> validateEmail(@PathVariable String email) {
+    memberService.validateEmail(email);
+    return ResponseEntity.ok().body("이메일 중복 확인 완료");
+  }
 
   @PostMapping("/members/signup")
   public ResponseEntity<MemberResponse> signUp(@Valid @RequestBody MemberRequest.SignUp request) {
