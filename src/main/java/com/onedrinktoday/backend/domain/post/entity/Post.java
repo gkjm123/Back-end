@@ -56,6 +56,9 @@ public class Post {
   @Column(name = "rating", nullable = true)
   private Float rating;
 
+  @Column(name = "image_url")
+  private String imageUrl;
+
   @Column(name = "view_count", nullable = true)
   private Integer viewCount;
 

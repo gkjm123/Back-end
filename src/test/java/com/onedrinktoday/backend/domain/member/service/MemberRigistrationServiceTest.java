@@ -90,10 +90,10 @@ public class MemberRigistrationServiceTest {
     // favorDrinks 리스트 초기화
     favorDrinkTypes = Arrays.asList(DrinkType.SOJU, DrinkType.BEER);
 
-    signUpRequest = new SignUp(1L, "John", "john@google.com", "Password123!", new Date(),
+    signUpRequest = new SignUp("John", "john@google.com", "Password123!", new Date(),
         favorDrinkTypes, true);
     signInRequest = new SignIn("john@google.com", "Password123!");
-    updateInfo = new UpdateInfo(1L, "John", favorDrinkTypes, true, "new_image_url");
+    updateInfo = new UpdateInfo("John", favorDrinkTypes, true);
   }
 
   @Test
@@ -323,15 +323,10 @@ public class MemberRigistrationServiceTest {
         .imageUrl(member.getImageUrl())
         .build();
 
-    Region updateRegion = new Region();
-    updateRegion.setId(updateInfo.getRegionId());
-
     Member updatedMember = Member.builder()
-        .region(updateRegion)
         .name(updateInfo.getName())
         .favorDrinkType(updateInfo.getFavorDrinkType())
         .alarmEnabled(updateInfo.isAlarmEnabled())
-        .imageUrl(updateInfo.getImageUrl())
         .build();
 
     when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(existMember));
@@ -370,8 +365,8 @@ public class MemberRigistrationServiceTest {
         .imageUrl(member.getImageUrl())
         .build();
 
-    UpdateInfo wrongUpdateInfo = new UpdateInfo(101010L, updateInfo.getName(),
-        updateInfo.getFavorDrinkType(), updateInfo.isAlarmEnabled(), updateInfo.getImageUrl());
+    UpdateInfo wrongUpdateInfo = new UpdateInfo(updateInfo.getName(),
+        updateInfo.getFavorDrinkType(), updateInfo.isAlarmEnabled());
 
     //MemberDetail 사용하여 인증 정보 확인
     MemberDetail memberDetail = new MemberDetail(MemberResponse.from(existMember));
