@@ -20,7 +20,7 @@ public class NotificationController {
 
   @GetMapping("/notifications")
   public Page<NotificationResponse> getRecentNotifications(
-      @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+      @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
     return notificationService.getRecentNotifications(pageable)
         .map(NotificationResponse::from);
