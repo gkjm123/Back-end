@@ -19,6 +19,8 @@ import com.onedrinktoday.backend.global.exception.CustomException;
 import com.onedrinktoday.backend.global.type.NotificationType;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -43,9 +45,9 @@ public class NotificationService {
     notificationRepository.save(notification);
   }
 
-  public List<Notification> getRecentNotifications() {
-    Long member = memberService.getMember().getId();
-    return notificationRepository.findTop20ByMemberIdOrderByCreatedAtDesc(member);
+  public Page<Notification> getRecentNotifications(Pageable pageable) {
+    Long memberId = memberService.getMember().getId();
+    return notificationRepository.findByMemberId(memberId, pageable);
   }
 
   public void postCommentNotification(Long postId, String memberName, boolean isAnonymous) {
