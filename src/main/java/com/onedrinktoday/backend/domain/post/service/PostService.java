@@ -6,6 +6,7 @@ import com.onedrinktoday.backend.domain.drink.repository.DrinkRepository;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.repository.MemberRepository;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
+import com.onedrinktoday.backend.domain.notification.service.NotificationService;
 import com.onedrinktoday.backend.domain.post.dto.PostRequest;
 import com.onedrinktoday.backend.domain.post.dto.PostResponse;
 import com.onedrinktoday.backend.domain.post.entity.Post;
@@ -40,6 +41,7 @@ public class PostService {
   private final PostTagRepository postTagRepository;
   private final CacheManager cacheManager;
   private final CacheService cacheService;
+  private final NotificationService notificationService;
 
   // 게시글 생성 및 저장
   @CacheEvict(key = "#postRequest.drinkId", value = "avg-rating")
@@ -66,6 +68,7 @@ public class PostService {
     // 태그 저장 및 PostTag 연결
     List<Tag> tags = saveTags(postRequest.getTag(), post);
 
+    notificationService.tagFollowPostNotification(post.getId());
     return PostResponse.of(post, tags);
   }
 
