@@ -8,6 +8,7 @@ import com.onedrinktoday.backend.domain.comment.entity.Comment;
 import com.onedrinktoday.backend.domain.comment.repository.CommentRepository;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
+import com.onedrinktoday.backend.domain.notification.service.NotificationService;
 import com.onedrinktoday.backend.domain.post.entity.Post;
 import com.onedrinktoday.backend.domain.post.repository.PostRepository;
 import com.onedrinktoday.backend.global.exception.CustomException;
@@ -23,6 +24,7 @@ public class CommentService {
   private final CommentRepository commentRepository;
   private final PostRepository postRepository;
   private final MemberService memberService;
+  private final NotificationService notificationService;
 
   public CommentResponse createComment(CommentRequest commentRequest) {
 
@@ -39,6 +41,7 @@ public class CommentService {
         .build();
 
     commentRepository.save(comment);
+    notificationService.postCommentNotification(post.getId(), member.getName(), commentRequest.isAnonymous());
 
     return CommentResponse.from(comment);
   }
