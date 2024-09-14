@@ -10,7 +10,6 @@ import com.onedrinktoday.backend.domain.notification.entity.Notification;
 import com.onedrinktoday.backend.domain.notification.repository.NotificationRepository;
 import com.onedrinktoday.backend.domain.post.entity.Post;
 import com.onedrinktoday.backend.domain.post.repository.PostRepository;
-import com.onedrinktoday.backend.domain.postTag.repository.PostTagRepository;
 import com.onedrinktoday.backend.domain.registration.entity.Registration;
 import com.onedrinktoday.backend.domain.tag.entity.Tag;
 import com.onedrinktoday.backend.domain.tagFollow.entity.TagFollow;
@@ -31,7 +30,6 @@ public class NotificationService {
   private final MemberService memberService;
   private final PostRepository postRepository;
   private final TagFollowRepository tagFollowRepository;
-  private final PostTagRepository postTagRepository;
 
   public void createNotification(Member member, Long postId, NotificationType type,
       String content) {
@@ -59,11 +57,9 @@ public class NotificationService {
     createNotification(post.getMember(), postId, COMMENT, content);
   }
 
-  public void tagFollowPostNotification(Long postId) {
+  public void tagFollowPostNotification(Long postId, List<Tag> tags) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-
-    List<Tag> tags = postTagRepository.findTagsByPostId(postId);
 
     for (Tag tag : tags) {
       List<TagFollow> tagFollows = tagFollowRepository.findByTag(tag);
