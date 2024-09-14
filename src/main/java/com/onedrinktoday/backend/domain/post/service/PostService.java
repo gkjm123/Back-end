@@ -104,6 +104,11 @@ public class PostService {
       posts = postRepository.findAllByOrderByCreatedAtDesc(pageable); // 최신순 정렬
     }
 
+    // posts가 null이 아닌지 확인
+    if (posts == null || posts.isEmpty()) {
+      return Page.empty(pageable);  // 빈 페이지 반환
+    }
+
     return posts.map(post -> {
       List<Tag> tags = postTagRepository.findTagsByPostId(post.getId());
       return PostResponse.of(post, tags);
