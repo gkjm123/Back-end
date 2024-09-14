@@ -13,9 +13,12 @@ import com.onedrinktoday.backend.domain.post.repository.PostRepository;
 import com.onedrinktoday.backend.domain.registration.entity.Registration;
 import com.onedrinktoday.backend.domain.registration.repository.RegistrationRepository;
 import com.onedrinktoday.backend.global.exception.CustomException;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.UriTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +29,12 @@ public class ManagerService {
   private final DeclarationRepository declarationRepository;
   private final PostRepository postRepository;
   private final NotificationService notificationService;
+
+  @Value("${post.uri}")
+  private String postUri;
+
+  @Value("${post.postId}")
+  private String postId;
 
   @Transactional
   public DrinkResponse approveRegistration(Long registId) {
@@ -70,8 +79,6 @@ public class ManagerService {
     Post post = postRepository.findById(postIdFromLink(declaration.getLink()))
         .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
 
-    postRepository.delete(post);
-
     notificationService.postDeclarationNotification(post, declaration);
 
     declaration.setApproved(true);
@@ -91,10 +98,12 @@ public class ManagerService {
   //링크에서 게시글 ID를 확인하여 게시글를 조회
   private Long postIdFromLink(String link) {
     try {
-      String[] parts = link.split("/");
+      UriTemplate template = new UriTemplate(postUri);
+      Map<String, String> variables = template.match(link);
 
-      return Long.parseLong(parts[parts.length - 1]);
-    } catch (CustomException e) {
+      // 설정 파일에 정의된 것을 사용하여 postId를 추출
+      return Long.parseLong(variables.get(postId));
+    } catch (Exception e) {
       throw new CustomException(LINK_NOT_FOUND);
     }
   }
