@@ -86,7 +86,7 @@ public class NotificationService {
         declaration.getMember(),
         null,
         NotificationType.DECLARATION,
-        "신고된 게시글이 승인되어 삭제되었습니다."
+        "신고된 게시글이 승인되었습니다."
     );
   }
 
