@@ -103,7 +103,7 @@ public class ManagerService {
 
       // 설정 파일에 정의된 것을 사용하여 postId를 추출
       return Long.parseLong(variables.get(postId));
-    } catch (Exception e) {
+    } catch (CustomException e) {
       throw new CustomException(LINK_NOT_FOUND);
     }
   }
