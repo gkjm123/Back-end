@@ -47,6 +47,10 @@ public class ManagerService {
         .imageUrl(registration.getImageUrl())
         .build();
 
+    notificationService.approveRegistrationNotification(
+        registration.getMember(), registration
+    );
+
     return DrinkResponse.from(drinkRepository.save(drink));
   }
 

@@ -68,7 +68,7 @@ public class PostService {
     // 태그 저장 및 PostTag 연결
     List<Tag> tags = saveTags(postRequest.getTag(), post);
 
-    notificationService.tagFollowPostNotification(post.getId());
+    notificationService.tagFollowPostNotification(post.getId(), tags);
     return PostResponse.of(post, tags);
   }
 
