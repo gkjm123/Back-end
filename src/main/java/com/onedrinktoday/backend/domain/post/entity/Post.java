@@ -59,6 +59,7 @@ public class Post {
   @Column(name = "rating", nullable = true)
   private Float rating;
 
+  @Setter
   @Column(name = "image_url")
   private String imageUrl;
 
