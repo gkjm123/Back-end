@@ -30,14 +30,14 @@ public class SuggestController {
     return ResponseEntity.ok(suggestDrink);
   }
 
-  // 생일 자정 이메일 전송
-  @Scheduled(cron = "0 0 0 * * *")
+  // 생일 자정 전송
+  @GetMapping("/suggest/birthday-suggestion")
   public void sendBirthdayDrinkSuggestion() {
     suggestBirthDateService.sendBirthDateDrinkSuggestion();
   }
 
-  // 매월 1일 이메일 전송
-  @Scheduled(cron = "0 0 0 1 * *")
+  // 매월 1일 전송
+  @GetMapping("/suggest/monthly-suggestion")
   public void sendMonthlyDrinkSuggestion() {
     suggestMonthlyService.sendMonthlyDrinkSuggestion();
   }

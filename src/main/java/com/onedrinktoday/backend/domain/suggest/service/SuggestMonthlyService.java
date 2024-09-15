@@ -7,6 +7,7 @@ import com.onedrinktoday.backend.domain.suggest.repository.SuggestRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +18,7 @@ public class SuggestMonthlyService {
   private final MemberRepository memberRepository;
 
   // 매월 1일 특산주 추천
+  @Scheduled(cron = "0 0 0 1 * *")
   public void sendMonthlyDrinkSuggestion() {
     List<Member> allMembers = memberRepository.findAll();
 

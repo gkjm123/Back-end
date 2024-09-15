@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,6 +17,7 @@ public class SuggestBirthDateService {
   private final SendBirthDateEmailService emailService;
 
   // 생일이 오늘인 사용자 대상 특산주 추천
+  @Scheduled(cron = "0 0 0 * * *")
   public void sendBirthDateDrinkSuggestion() {
     List<Member> membersWithBirthDate = suggestRepository.findAllByBirthDate(new Date());
 
