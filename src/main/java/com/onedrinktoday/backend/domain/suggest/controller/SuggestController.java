@@ -6,10 +6,10 @@ import com.onedrinktoday.backend.domain.suggest.service.SuggestMonthlyService;
 import com.onedrinktoday.backend.domain.suggest.service.SuggestService;
 import com.onedrinktoday.backend.domain.suggest.service.SuggestTagService;
 import com.onedrinktoday.backend.domain.tag.dto.TagDTO;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,10 +30,19 @@ public class SuggestController {
     return ResponseEntity.ok(suggestDrink);
   }
 
-  // 생일 자정 전송
+  // 생일 메일 전송 (오늘 날짜 기준)
   @GetMapping("/suggest/birthday-suggestion")
-  public void sendBirthdayDrinkSuggestion() {
+  public ResponseEntity<Void> sendBirthdayDrinkSuggestion() {
     suggestBirthDateService.sendBirthDateDrinkSuggestion();
+    return ResponseEntity.ok().build();
+  }
+
+  // 생일 메일 전송 (특정 날짜 기준 - 테스트용)
+  @GetMapping("/suggest/birthday-suggestion/custom")
+  public ResponseEntity<Void> sendBirthdayDrinkSuggestionForDate(@RequestParam String customDate) {
+    LocalDate date = LocalDate.parse(customDate);
+    suggestBirthDateService.sendBirthDateDrinkSuggestionForDate(date);
+    return ResponseEntity.ok().build();
   }
 
   // 매월 1일 전송

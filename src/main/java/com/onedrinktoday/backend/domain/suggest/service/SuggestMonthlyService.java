@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class SuggestMonthlyService {
   private final SuggestRepository suggestRepository;
   private final SendMonthlyEmailService emailService;
+  private final SuggestBirthDateService suggestBirthDateService;
   private final MemberRepository memberRepository;
 
   // 매월 1일 특산주 추천
@@ -22,11 +23,13 @@ public class SuggestMonthlyService {
   public void sendMonthlyDrinkSuggestion() {
     List<Member> allMembers = memberRepository.findAll();
 
-    for (Member member : allMembers) {
-      // 회원 지역 정보 있는지 확인
-      if (member.getRegion() != null) {
-        List<Drink> suggestDrink = suggestRepository.findRandomDrink(member.getRegion().getId(), PageRequest.of(0, 3));
+    // 매월 1일 생일자 가져오기
+    List<Long> birthdayOneday = suggestBirthDateService.getBirthdayOnedayList();
 
+    for (Member member : allMembers) {
+      // 1일 생일자 & 회원 지역 정보 있는지 확인
+      if (!birthdayOneday.contains(member.getId()) && member.getRegion() != null) {
+        List<Drink> suggestDrink = suggestRepository.findRandomDrink(member.getRegion().getId(), PageRequest.of(0, 3));
         emailService.sendMonthlyDrinkEmail(member, suggestDrink);
       }
     }
