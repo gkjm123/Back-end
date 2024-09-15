@@ -98,7 +98,7 @@ public class PostServiceTest {
 
   @Test
   @DisplayName("게시글 생성 성공 테스트")
-  void createPostSuccess() {
+  void successCreatePost() {
     // Given
     given(memberService.getMember()).willReturn(member);
     given(drinkRepository.findById(1L)).willReturn(Optional.of(drink));
@@ -128,7 +128,7 @@ public class PostServiceTest {
 
   @Test
   @DisplayName("게시글 생성 실패 테스트 - Drink ID 없음")
-  void createPostFailNoDrinkId() {
+  void failNoDrinkIdCreatePost() {
     // Given
     postRequest.setDrinkId(999L); // 존재하지 않는 Drink ID
     given(drinkRepository.findById(999L)).willReturn(Optional.empty());
@@ -139,7 +139,7 @@ public class PostServiceTest {
 
   @Test
   @DisplayName("게시글 조회 성공 테스트")
-  void getPostByIdSuccess() {
+  void successGetPostById() {
     // Given
     given(postRepository.findById(1L)).willReturn(Optional.of(post));
     given(postTagRepository.findTagsByPostId(1L)).willReturn(tags);
@@ -165,7 +165,7 @@ public class PostServiceTest {
 
   @Test
   @DisplayName("게시글 리스트 조회 성공 테스트")
-  void getPostsSuccess() {
+  void successGetPosts() {
     PageRequest pageable = PageRequest.of(0, 10);
     Page<Post> postsPage = new PageImpl<>(List.of(post), pageable, 1);
 
@@ -180,7 +180,7 @@ public class PostServiceTest {
 
   @Test
   @DisplayName("게시글 리스트 조회 실패 테스트 - 게시글 없음")
-  void getPostsFail() {
+  void failGetPosts() {
     PageRequest pageable = PageRequest.of(0, 10);
     Page<Post> emptyPage = new PageImpl<>(List.of(), pageable, 0);
 
@@ -194,7 +194,7 @@ public class PostServiceTest {
 
   @Test
   @DisplayName("게시글 수정 성공 테스트")
-  void updatePostSuccess() {
+  void successUpdatePost() {
     // Given
     given(postRepository.findById(1L)).willReturn(Optional.of(post));
     given(drinkRepository.findById(1L)).willReturn(Optional.of(drink));
@@ -226,7 +226,7 @@ public class PostServiceTest {
 
   @Test
   @DisplayName("게시글 수정 실패 테스트 - 게시글 ID 없음")
-  void updatePostFailNoPostId() {
+  void failNoPostIdUpdatePost() {
     // Given
     PostRequest updatedRequest = new PostRequest();
     updatedRequest.setDrinkId(1L);
@@ -242,7 +242,7 @@ public class PostServiceTest {
 
   @Test
   @DisplayName("게시글 삭제 성공 테스트")
-  void deletePostSuccess() {
+  void successDeletePost() {
     // Given
     given(postRepository.findById(1L)).willReturn(Optional.of(post));
     given(memberService.getMember()).willReturn(member);
@@ -261,7 +261,7 @@ public class PostServiceTest {
 
   @Test
   @DisplayName("게시글 삭제 실패 테스트 - 권한 없음")
-  void deletePostFail() {
+  void failDeletePost() {
     // Given
     Member anotherMember = Member.builder().id(2L).name("Jane").role(Role.USER).build();
     post.setMember(anotherMember);
