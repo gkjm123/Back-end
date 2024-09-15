@@ -1,15 +1,13 @@
 package com.onedrinktoday.backend.domain.declaration.dto;
 
 import com.onedrinktoday.backend.domain.declaration.entity.Declaration;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,7 +20,7 @@ public class DeclarationResponse {
   private String type;
   private String content;
   private Boolean approved;
-  private Timestamp createdAt;
+  private LocalDateTime createdAt;
 
   public static DeclarationResponse from(Declaration declaration) {
     return DeclarationResponse.builder()

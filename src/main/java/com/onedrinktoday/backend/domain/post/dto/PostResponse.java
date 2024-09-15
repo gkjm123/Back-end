@@ -5,7 +5,7 @@ import com.onedrinktoday.backend.domain.post.entity.Post;
 import com.onedrinktoday.backend.domain.tag.dto.TagDTO;
 import com.onedrinktoday.backend.domain.tag.entity.Tag;
 import com.onedrinktoday.backend.global.type.Type;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,6 +22,7 @@ public class PostResponse {
   private Long id;
   private Long memberId;
   private String memberName;
+  @Setter
   private DrinkResponse drink;
   private Type type;
   private String content;
@@ -30,8 +30,8 @@ public class PostResponse {
   private List<TagDTO> tags;
   private String imageUrl;
   private Integer viewCount;
-  private Timestamp createdAt;
-  private Timestamp updatedAt;
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
 
   public static PostResponse of(Post post, List<Tag> tags) {
     return PostResponse.builder()

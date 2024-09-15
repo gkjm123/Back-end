@@ -2,6 +2,7 @@ package com.onedrinktoday.backend.domain.declaration.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import com.onedrinktoday.backend.domain.declaration.dto.DeclarationRequest;
@@ -52,7 +53,7 @@ class DeclarationServiceTest {
     given(memberService.getMember())
         .willReturn(member);
 
-    given(declarationRepository.save(any()))
+    given(declarationRepository.save(any(Declaration.class)))
         .willReturn(Declaration.builder()
             .id(1L)
             .member(member)
@@ -115,7 +116,7 @@ class DeclarationServiceTest {
         .content("내용")
         .build();
 
-    given(declarationRepository.findById(any()))
+    given(declarationRepository.findById(anyLong()))
         .willReturn(Optional.of(declaration));
 
     //when

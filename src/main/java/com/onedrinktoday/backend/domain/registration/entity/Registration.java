@@ -9,7 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +19,6 @@ import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,9 +28,11 @@ public class Registration {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Setter
   @ManyToOne
   private Member member;
 
+  @Setter
   @ManyToOne
   private Region region;
 
@@ -42,10 +43,12 @@ public class Registration {
   private Integer cost;
   private String description;
   private String imageUrl;
+
+  @Setter
   private Boolean approved;
 
   @CreationTimestamp
-  private Timestamp createdAt;
+  private LocalDateTime createdAt;
 
   public static Registration from(RegistrationRequest request) {
     return Registration.builder()

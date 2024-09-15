@@ -19,10 +19,10 @@ import lombok.Setter;
 @Entity
 @Table(name = "post_tag")
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
 public class PostTag {
 
   @Id

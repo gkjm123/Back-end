@@ -14,7 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -29,7 +29,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,37 +36,48 @@ import org.hibernate.annotations.UpdateTimestamp;
 @SQLDelete(sql = "UPDATE member SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 public class Member {
 
+  @Setter
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Setter
   @ManyToOne
   @JoinColumn(name = "region_id")
   private Region region;
 
+  @Setter
   private String name;
+
+  @Setter
   private String email;
+
+  @Setter
   private String password;
   private Date birthDate;
 
+  @Setter
   @Convert(converter = DrinkListConverter.class)
   private List<DrinkType> favorDrinkType;
 
+  @Setter
   @Enumerated(EnumType.STRING)
   private Role role;
 
+  @Setter
   private boolean alarmEnabled;
 
   private String imageUrl;
 
   @CreationTimestamp
-  private Timestamp createdAt;
+  private LocalDateTime createdAt;
 
   @UpdateTimestamp
-  private Timestamp updatedAt;
+  private LocalDateTime updatedAt;
 
-  private Timestamp deletedAt;
+  private LocalDateTime deletedAt;
 
+  @Setter
   private String refreshToken;
 
   public static Member from(MemberRequest.SignUp request) {
