@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
   @Query(value = "select AVG(rating) from post where drink_id = :drinkId", nativeQuery = true)
-  Float getAverageRating(Long drinkId);
+  Double getAverageRating(Long drinkId);
 
   // 최신순으로 정렬
   Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
