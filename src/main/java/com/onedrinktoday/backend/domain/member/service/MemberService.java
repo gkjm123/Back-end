@@ -59,6 +59,7 @@ public class MemberService {
         member.getRole());
     String refreshToken = jwtProvider.createRefreshToken(member.getId(), member.getEmail(),
         member.getRole());
+
     member.setRefreshToken(refreshToken);
     memberRepository.save(member);
 

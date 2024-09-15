@@ -1,15 +1,13 @@
 package com.onedrinktoday.backend.domain.comment.dto;
 
 import com.onedrinktoday.backend.domain.comment.entity.Comment;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,8 +19,8 @@ public class CommentResponse {
   private Long postId;
   private String content;
   private boolean anonymous;
-  private Timestamp createdAt;
-  private Timestamp updatedAt;
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
 
   public static CommentResponse from(Comment comment) {
     return CommentResponse.builder()

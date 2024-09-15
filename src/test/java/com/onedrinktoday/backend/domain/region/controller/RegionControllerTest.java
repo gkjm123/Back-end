@@ -1,11 +1,23 @@
 package com.onedrinktoday.backend.domain.region.controller;
 
+import static com.onedrinktoday.backend.global.exception.ErrorCode.REGION_EXIST;
+import static com.onedrinktoday.backend.global.exception.ErrorCode.REGION_NOT_FOUND;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onedrinktoday.backend.domain.region.dto.RegionRequest;
 import com.onedrinktoday.backend.domain.region.dto.RegionResponse;
 import com.onedrinktoday.backend.domain.region.service.RegionService;
 import com.onedrinktoday.backend.global.exception.CustomException;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,17 +28,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static com.onedrinktoday.backend.global.exception.ErrorCode.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WithMockUser
 @WebMvcTest(RegionController.class)
@@ -56,7 +57,7 @@ public class RegionControllerTest {
         .placeName("서울특별시")
         .latitude(37.5665)
         .longitude(126.978)
-        .createdAt(new Timestamp(System.currentTimeMillis()))
+        .createdAt(LocalDateTime.now())
         .build();
   }
 

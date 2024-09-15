@@ -2,7 +2,7 @@ package com.onedrinktoday.backend.domain.drink.dto;
 
 import com.onedrinktoday.backend.domain.drink.entity.Drink;
 import com.onedrinktoday.backend.global.type.DrinkType;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,10 +21,12 @@ public class DrinkResponse {
   private Float degree;
   private Integer sweetness;
   private Integer cost;
+
+  @Setter
   private Float averageRating;
   private String description;
   private String imageUrl;
-  private Timestamp createdAt;
+  private LocalDateTime createdAt;
 
   public static DrinkResponse from(Drink drink) {
     return DrinkResponse.builder()

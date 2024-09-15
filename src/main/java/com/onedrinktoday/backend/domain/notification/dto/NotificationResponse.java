@@ -2,7 +2,7 @@ package com.onedrinktoday.backend.domain.notification.dto;
 
 import com.onedrinktoday.backend.domain.notification.entity.Notification;
 import com.onedrinktoday.backend.global.type.NotificationType;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +18,7 @@ public class NotificationResponse {
   private Long postId;
   private NotificationType type;
   private String content;
-  private Timestamp createdAt;
+  private LocalDateTime createdAt;
 
   public static NotificationResponse from(Notification notification) {
     return NotificationResponse.builder()

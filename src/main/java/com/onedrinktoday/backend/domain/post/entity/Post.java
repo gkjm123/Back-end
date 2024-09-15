@@ -13,7 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,7 +27,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Entity
 @Table(name = "post")
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -39,10 +38,12 @@ public class Post {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Setter
   @ManyToOne
   @JoinColumn(name = "member_id")
   private Member member;
 
+  @Setter
   @ManyToOne
   @JoinColumn(name = "drink_id")
   private Drink drink;
@@ -50,23 +51,26 @@ public class Post {
   @Enumerated(EnumType.STRING)
   private Type type;
 
+  @Setter
   @Column(name = "content", columnDefinition = "TEXT", nullable = false)
   private String content;
 
+  @Setter
   @Column(name = "rating", nullable = true)
   private Float rating;
 
   @Column(name = "image_url")
   private String imageUrl;
 
+  @Setter
   @Column(name = "view_count", nullable = true)
   private Integer viewCount;
 
   @CreationTimestamp
-  private Timestamp createdAt;
+  private LocalDateTime createdAt;
 
   @UpdateTimestamp
-  private Timestamp updatedAt;
+  private LocalDateTime updatedAt;
 
-  private Timestamp deletedAt;
+  private LocalDateTime deletedAt;
 }
