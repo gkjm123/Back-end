@@ -2,6 +2,7 @@ package com.onedrinktoday.backend.domain.registration.service;
 
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
+import com.onedrinktoday.backend.domain.notification.service.NotificationService;
 import com.onedrinktoday.backend.domain.region.entity.Region;
 import com.onedrinktoday.backend.domain.region.repository.RegionRepository;
 import com.onedrinktoday.backend.domain.registration.dto.RegistrationRequest;
@@ -22,6 +23,7 @@ public class RegistrationService {
   private final RegistrationRepository registrationRepository;
   private final MemberService memberService;
   private final RegionRepository regionRepository;
+  private final NotificationService notificationService;
 
   public RegistrationResponse register(RegistrationRequest request) {
 
@@ -35,7 +37,14 @@ public class RegistrationService {
     registration.setMember(member);
     registration.setRegion(region);
 
-    return RegistrationResponse.from(registrationRepository.save(registration));
+    Registration savedRegistration = registrationRepository.save(registration);
+
+    notificationService.approveRegistrationNotification(
+        registration.getMember(),
+        savedRegistration
+    );
+
+    return RegistrationResponse.from(savedRegistration);
   }
 
   public Page<RegistrationResponse> getRegistrations(Pageable pageable) {
