@@ -25,8 +25,11 @@ public class PostResponse {
   @Setter
   private DrinkResponse drink;
   private Type type;
+  @Setter
   private String content;
+  @Setter
   private Float rating;
+  @Setter
   private List<TagDTO> tags;
   private String imageUrl;
   private Integer viewCount;
