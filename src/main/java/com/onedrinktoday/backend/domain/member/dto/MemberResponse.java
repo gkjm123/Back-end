@@ -3,17 +3,15 @@ package com.onedrinktoday.backend.domain.member.dto;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.global.type.DrinkType;
 import com.onedrinktoday.backend.global.type.Role;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,9 +26,9 @@ public class MemberResponse {
   private Role role;
   private boolean alarmEnabled;
   private String imageUrl;
-  private Timestamp createdAt;
-  private Timestamp updatedAt;
-  private Timestamp deletedAt;
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
+  private LocalDateTime deletedAt;
 
   public static MemberResponse from(Member member) {
     return MemberResponse.builder()

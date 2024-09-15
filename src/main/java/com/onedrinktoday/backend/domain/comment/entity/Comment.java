@@ -10,7 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,7 +24,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Entity
 @Table(name = "comment")
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -44,17 +43,19 @@ public class Comment {
   @JoinColumn(name = "post_id", nullable = false)
   private Post post;
 
+  @Setter
   @Column(name = "content", columnDefinition = "TEXT", nullable = false)
   private String content;
 
+  @Setter
   @Column(name = "anonymous")
   private boolean anonymous;
 
   @CreationTimestamp
-  private Timestamp createdAt;
+  private LocalDateTime createdAt;
 
   @UpdateTimestamp
-  private Timestamp updatedAt;
+  private LocalDateTime updatedAt;
 
-  private Timestamp deletedAt;
+  private LocalDateTime deletedAt;
 }

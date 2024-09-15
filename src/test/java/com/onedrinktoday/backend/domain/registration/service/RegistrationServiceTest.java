@@ -2,6 +2,7 @@ package com.onedrinktoday.backend.domain.registration.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import com.onedrinktoday.backend.domain.member.entity.Member;
@@ -59,10 +60,10 @@ class RegistrationServiceTest {
     given(memberService.getMember())
         .willReturn(member);
 
-    given(regionRepository.findById(any()))
+    given(regionRepository.findById(anyLong()))
         .willReturn(Optional.of(region));
 
-    given(registrationRepository.save(any()))
+    given(registrationRepository.save(any(Registration.class)))
         .willReturn(Registration.builder()
             .id(1L)
             .member(member)

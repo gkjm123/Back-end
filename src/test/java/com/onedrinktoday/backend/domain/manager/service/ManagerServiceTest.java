@@ -61,10 +61,10 @@ class ManagerServiceTest {
     given(registrationRepository.findById(anyLong()))
         .willReturn(Optional.of(registration));
 
-    given(registrationRepository.save(any()))
+    given(registrationRepository.save(any(Registration.class)))
         .willReturn(registration);
 
-    given(drinkRepository.save(any()))
+    given(drinkRepository.save(any(Drink.class)))
         .willReturn(drink);
 
     //when
@@ -92,7 +92,7 @@ class ManagerServiceTest {
     given(registrationRepository.findById(anyLong()))
         .willReturn(Optional.of(registration));
 
-    given(registrationRepository.save(any()))
+    given(registrationRepository.save(any(Registration.class)))
         .willReturn(registration);
 
     //when

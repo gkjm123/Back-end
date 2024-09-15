@@ -1,14 +1,15 @@
 package com.onedrinktoday.backend.domain.member.controller;
 
-import static com.onedrinktoday.backend.global.exception.ErrorCode.*;
 import static com.onedrinktoday.backend.global.exception.ErrorCode.EMAIL_NOT_FOUND;
+import static com.onedrinktoday.backend.global.exception.ErrorCode.INVALID_REFRESH_TOKEN;
 import static com.onedrinktoday.backend.global.exception.ErrorCode.LOGIN_FAIL;
+import static com.onedrinktoday.backend.global.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -26,7 +27,9 @@ import com.onedrinktoday.backend.global.security.JwtProvider;
 import com.onedrinktoday.backend.global.security.TokenDto;
 import com.onedrinktoday.backend.global.type.DrinkType;
 import com.onedrinktoday.backend.global.type.Role;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,9 +39,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Date;
-import java.util.List;
 
 @WithMockUser
 @WebMvcTest(MemberController.class)
@@ -89,7 +89,7 @@ public class MemberRegistrationControllerTest {
         .favorDrinkType(List.of(DrinkType.SOJU, DrinkType.DISTILLED_SPIRITS))
         .role(Role.USER)
         .alarmEnabled(true)
-        .createdAt(new Timestamp(System.currentTimeMillis()))
+        .createdAt(LocalDateTime.now())
         .build();
 
     updateInfo = new MemberRequest.UpdateInfo(
@@ -397,7 +397,7 @@ public class MemberRegistrationControllerTest {
         .favorDrinkType(updateInfo.getFavorDrinkType())
         .role(Role.USER)
         .alarmEnabled(updateInfo.isAlarmEnabled())
-        .createdAt(new Timestamp(System.currentTimeMillis()))
+        .createdAt(LocalDateTime.now())
         .build();
 
     given(memberService.updateMemberInfo(any(MemberRequest.UpdateInfo.class)))

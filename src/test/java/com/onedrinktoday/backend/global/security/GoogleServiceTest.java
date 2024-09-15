@@ -42,7 +42,7 @@ class GoogleServiceTest {
     given(memberRepository.findByEmail(anyString()))
         .willReturn(Optional.of(member));
 
-    given(memberRepository.save(any()))
+    given(memberRepository.save(any(Member.class)))
         .willReturn(member);
 
     given(jwtProvider.createAccessToken(eq(1L), anyString(), eq(Role.USER)))

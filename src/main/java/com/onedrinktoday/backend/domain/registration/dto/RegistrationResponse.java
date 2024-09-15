@@ -2,15 +2,13 @@ package com.onedrinktoday.backend.domain.registration.dto;
 
 import com.onedrinktoday.backend.domain.registration.entity.Registration;
 import com.onedrinktoday.backend.global.type.DrinkType;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,7 +26,7 @@ public class RegistrationResponse {
   private String description;
   private String imageUrl;
   private Boolean approved;
-  private Timestamp createdAt;
+  private LocalDateTime createdAt;
 
   public static RegistrationResponse from(Registration registration) {
     return RegistrationResponse.builder()

@@ -15,10 +15,10 @@ import lombok.Setter;
 @Entity
 @Table(name = "tag")
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
 public class Tag {
 
   @Id
