@@ -124,10 +124,18 @@ public class PostService {
 
     PostResponse postResponse = PostResponse.of(post, tags);
 
-    DrinkResponse drinkResponse = DrinkResponse.from(post.getDrink());
-    drinkResponse.setAverageRating(cacheService.getAverageRating(post.getDrink().getId()));
+    // CacheService에서 Double 타입의 평균 평점 가져오기
+    Double averageRating = cacheService.getAverageRating(post.getDrink().getId());
 
-    postResponse.setDrink(drinkResponse);
+    if (averageRating != null) {
+      // 소수점 둘째 자리까지 평균 평점 조회
+      String formattedRating = String.format("%.2f", averageRating);
+      Double formattedAverageRating = Double.parseDouble(formattedRating);
+
+      DrinkResponse drinkResponse = DrinkResponse.from(post.getDrink());
+      drinkResponse.setAverageRating(formattedAverageRating);
+      postResponse.setDrink(drinkResponse);
+    }
 
     return postResponse;
   }

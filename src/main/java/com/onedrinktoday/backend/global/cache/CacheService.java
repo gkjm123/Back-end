@@ -12,7 +12,7 @@ public class CacheService {
   private final PostRepository postRepository;
 
   @Cacheable(key = "#drinkId", value = "avg-rating")
-  public Float getAverageRating(Long drinkId) {
+  public Double getAverageRating(Long drinkId) {
     return postRepository.getAverageRating(drinkId);
   }
 }
