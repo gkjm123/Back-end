@@ -2,6 +2,7 @@ package com.onedrinktoday.backend.domain.suggest.controller;
 
 import com.onedrinktoday.backend.domain.drink.dto.DrinkResponse;
 import com.onedrinktoday.backend.domain.suggest.service.SuggestBirthDateService;
+import com.onedrinktoday.backend.domain.suggest.service.SuggestMonthlyService;
 import com.onedrinktoday.backend.domain.suggest.service.SuggestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SuggestController {
   private final SuggestService suggestService;
   private final SuggestBirthDateService suggestBirthDateService;
+  private final SuggestMonthlyService suggestMonthlyService;
 
   @GetMapping("/suggest/drink")
   public ResponseEntity<DrinkResponse> suggestDrink(@RequestParam Float lat, @RequestParam Float lon) {
@@ -28,5 +30,11 @@ public class SuggestController {
   @Scheduled(cron = "0 0 0 * * *")
   public void sendBirthdayDrinkSuggestion() {
     suggestBirthDateService.sendBirthDateDrinkSuggestion();
+  }
+
+  // 매월 1일 이메일 전송
+  @Scheduled(cron = "0 0 0 1 * *")
+  public void sendMonthlyDrinkSuggestion() {
+    suggestMonthlyService.sendMonthlyDrinkSuggestion();
   }
 }
