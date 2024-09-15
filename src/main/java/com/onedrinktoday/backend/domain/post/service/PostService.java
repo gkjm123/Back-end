@@ -52,6 +52,9 @@ public class PostService {
     Drink drink = drinkRepository.findById(postRequest.getDrinkId())
         .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 특산주입니다."));
 
+    // 이미지 우선순위 설정 - 1순위 : 게시글 업로드 이미지, 2순위 : 특산주 등록 이미지
+    String imageUrl = postRequest.getImageUrl() != null ? postRequest.getImageUrl() : drink.getImageUrl();
+
     // 게시글 엔티티 생성
     Post post = Post.builder()
         .member(member)
@@ -60,6 +63,7 @@ public class PostService {
         .content(postRequest.getContent())
         .rating(postRequest.getRating())
         .viewCount(0)  // 초기 조회수
+        .imageUrl(imageUrl)
         .build();
 
     // 게시글 저장
@@ -183,6 +187,10 @@ public class PostService {
           .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
       post.setMember(member);
     }
+
+    // 이미지 수정: 1순위 : 게시글 업로드 이미지, 2순위 : 특산주 등록 이미지
+    String imageUrl = postRequest.getImageUrl() != null ? postRequest.getImageUrl() : post.getDrink().getImageUrl();
+    post.setImageUrl(imageUrl);
 
     postRepository.save(post);
 

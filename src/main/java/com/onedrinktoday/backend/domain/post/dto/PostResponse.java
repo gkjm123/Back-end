@@ -34,6 +34,8 @@ public class PostResponse {
   private LocalDateTime updatedAt;
 
   public static PostResponse of(Post post, List<Tag> tags) {
+
+    String imageUrl = post.getImageUrl() != null ? post.getImageUrl() : post.getDrink().getImageUrl();
     return PostResponse.builder()
         .id(post.getId())
         .memberId(post.getMember().getId())
@@ -43,7 +45,7 @@ public class PostResponse {
         .content(post.getContent())
         .rating(post.getRating())
         .tags(tags.stream().map(TagDTO::from).collect(Collectors.toList()))
-        .imageUrl(post.getImageUrl())
+        .imageUrl(imageUrl)
         .viewCount(post.getViewCount())
         .createdAt(post.getCreatedAt())
         .updatedAt(post.getUpdatedAt())
