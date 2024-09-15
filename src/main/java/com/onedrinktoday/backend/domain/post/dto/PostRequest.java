@@ -14,11 +14,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PostRequest {
   private Long drinkId;
+
   private Long memberId;
+
   private Type type;
+
   @Size(min = 10, max = 3000)
   private String content;
+
   private Float rating;
+
   private List<String> tag;
 
+  private String imageUrl;
 }
