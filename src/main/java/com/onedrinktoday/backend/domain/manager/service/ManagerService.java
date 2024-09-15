@@ -82,6 +82,7 @@ public class ManagerService {
     notificationService.postDeclarationNotification(post, declaration);
 
     declaration.setApproved(true);
+
     return DeclarationResponse.from(declarationRepository.save(declaration));
   }
 

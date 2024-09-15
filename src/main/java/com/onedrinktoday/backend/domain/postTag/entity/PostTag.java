@@ -37,4 +37,10 @@ public class PostTag {
   @ManyToOne
   @JoinColumn(name = "tag_id", nullable = false)
   private Tag tag;
+
+  // Post와 Tag를 받는 생성자 추가
+  public PostTag(Post post, Tag tag) {
+    this.post = post;
+    this.tag = tag;
+  }
 }

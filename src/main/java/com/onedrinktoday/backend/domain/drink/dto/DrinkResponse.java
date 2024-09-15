@@ -23,7 +23,7 @@ public class DrinkResponse {
   private Integer cost;
 
   @Setter
-  private Float averageRating;
+  private Double averageRating;
   private String description;
   private String imageUrl;
   private LocalDateTime createdAt;

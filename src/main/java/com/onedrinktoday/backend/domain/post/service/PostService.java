@@ -34,11 +34,11 @@ import org.springframework.stereotype.Service;
 public class PostService {
 
   private final PostRepository postRepository;
-  private final MemberRepository memberRepository;
-  private final MemberService memberService;
-  private final DrinkRepository drinkRepository;
-  private final TagRepository tagRepository;
   private final PostTagRepository postTagRepository;
+  private final TagRepository tagRepository;
+  private final MemberRepository memberRepository;
+  private final DrinkRepository drinkRepository;
+  private final MemberService memberService;
   private final CacheManager cacheManager;
   private final CacheService cacheService;
   private final NotificationService notificationService;
@@ -52,6 +52,9 @@ public class PostService {
     Drink drink = drinkRepository.findById(postRequest.getDrinkId())
         .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 특산주입니다."));
 
+    // 이미지 우선순위 설정 - 1순위 : 게시글 업로드 이미지, 2순위 : 특산주 등록 이미지
+    String imageUrl = postRequest.getImageUrl() != null ? postRequest.getImageUrl() : drink.getImageUrl();
+
     // 게시글 엔티티 생성
     Post post = Post.builder()
         .member(member)
@@ -60,6 +63,7 @@ public class PostService {
         .content(postRequest.getContent())
         .rating(postRequest.getRating())
         .viewCount(0)  // 초기 조회수
+        .imageUrl(imageUrl)
         .build();
 
     // 게시글 저장
@@ -95,8 +99,19 @@ public class PostService {
   }
 
   // 전체 게시글 조회
-  public Page<PostResponse> getAllPosts(Pageable pageable) {
-    Page<Post> posts = postRepository.findAll(pageable);
+  public Page<PostResponse> getAllPosts(Pageable pageable, String sortBy) {
+    Page<Post> posts;
+
+    if("viewCount".equals(sortBy)) {
+      posts = postRepository.findAllByOrderByViewCountDesc(pageable); // 조회수 정렬
+    } else {
+      posts = postRepository.findAllByOrderByCreatedAtDesc(pageable); // 최신순 정렬
+    }
+
+    // posts가 null이 아닌지 확인
+    if (posts == null || posts.isEmpty()) {
+      return Page.empty(pageable);  // 빈 페이지 반환
+    }
 
     return posts.map(post -> {
       List<Tag> tags = postTagRepository.findTagsByPostId(post.getId());
@@ -118,10 +133,18 @@ public class PostService {
 
     PostResponse postResponse = PostResponse.of(post, tags);
 
-    DrinkResponse drinkResponse = DrinkResponse.from(post.getDrink());
-    drinkResponse.setAverageRating(cacheService.getAverageRating(post.getDrink().getId()));
+    // CacheService에서 Double 타입의 평균 평점 가져오기
+    Double averageRating = cacheService.getAverageRating(post.getDrink().getId());
 
-    postResponse.setDrink(drinkResponse);
+    if (averageRating != null) {
+      // 소수점 둘째 자리까지 평균 평점 조회
+      String formattedRating = String.format("%.2f", averageRating);
+      Double formattedAverageRating = Double.parseDouble(formattedRating);
+
+      DrinkResponse drinkResponse = DrinkResponse.from(post.getDrink());
+      drinkResponse.setAverageRating(formattedAverageRating);
+      postResponse.setDrink(drinkResponse);
+    }
 
     return postResponse;
   }
@@ -164,6 +187,10 @@ public class PostService {
           .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
       post.setMember(member);
     }
+
+    // 이미지 수정: 1순위 : 게시글 업로드 이미지, 2순위 : 특산주 등록 이미지
+    String imageUrl = postRequest.getImageUrl() != null ? postRequest.getImageUrl() : post.getDrink().getImageUrl();
+    post.setImageUrl(imageUrl);
 
     postRepository.save(post);
 
