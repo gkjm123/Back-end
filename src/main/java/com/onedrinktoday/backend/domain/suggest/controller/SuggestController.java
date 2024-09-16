@@ -2,6 +2,7 @@ package com.onedrinktoday.backend.domain.suggest.controller;
 
 import com.onedrinktoday.backend.domain.drink.dto.DrinkResponse;
 import com.onedrinktoday.backend.domain.suggest.service.SuggestBirthDateService;
+import com.onedrinktoday.backend.domain.suggest.service.SuggestDrinkService;
 import com.onedrinktoday.backend.domain.suggest.service.SuggestMonthlyService;
 import com.onedrinktoday.backend.domain.suggest.service.SuggestService;
 import com.onedrinktoday.backend.domain.suggest.service.SuggestTagService;
@@ -23,6 +24,7 @@ public class SuggestController {
   private final SuggestBirthDateService suggestBirthDateService;
   private final SuggestMonthlyService suggestMonthlyService;
   private final SuggestTagService suggestTagService;
+  private final SuggestDrinkService suggestDrinkService;
 
   @GetMapping("/suggest/drink")
   public ResponseEntity<DrinkResponse> suggestDrink(@RequestParam Float lat, @RequestParam Float lon) {
@@ -56,5 +58,12 @@ public class SuggestController {
   public ResponseEntity<List<TagDTO>> suggestRandomTags() {
     List<TagDTO> randomTags = suggestTagService.getRandomTopTags();
     return ResponseEntity.ok(randomTags);
+  }
+
+  // 인기 특산주 15개 조회
+  @GetMapping("/suggest/drinks")
+  public ResponseEntity<List<DrinkResponse>> suggestTopDrinks() {
+    List<DrinkResponse> topDrinks = suggestDrinkService.suggestTopDrinks();
+    return ResponseEntity.ok(topDrinks);
   }
 }
