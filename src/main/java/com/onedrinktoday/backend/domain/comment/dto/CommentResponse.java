@@ -23,10 +23,16 @@ public class CommentResponse {
   private LocalDateTime updatedAt;
 
   public static CommentResponse from(Comment comment) {
+
+    String memberName = "탈퇴한 사용자";
+    if (comment.getMember() != null) {
+      memberName = comment.isAnonymous() ? "익명" : comment.getMember().getName();
+    }
+
     return CommentResponse.builder()
         .id(comment.getId())
-        .memberId(comment.getMember().getId())
-        .memberName(comment.getMember().getName())
+        .memberId(comment.getMember() != null ? comment.getMember().getId() : null)
+        .memberName(memberName)
         .postId(comment.getPost().getId())
         .content(comment.getContent())
         .anonymous(comment.isAnonymous())
