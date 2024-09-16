@@ -29,10 +29,13 @@ public class RegistrationResponse {
   private LocalDateTime createdAt;
 
   public static RegistrationResponse from(Registration registration) {
+    Long memberId = registration.getMember() != null ? registration.getMember().getId() : null;
+    String memberName = memberId != null ? registration.getMember().getName() : "탈퇴한 사용자";
+
     return RegistrationResponse.builder()
         .id(registration.getId())
-        .memberId(registration.getMember().getId())
-        .memberName(registration.getMember().getName())
+        .memberId(memberId)
+        .memberName(memberName)
         .placeName(registration.getRegion().getPlaceName())
         .drinkName(registration.getDrinkName())
         .type(registration.getType())
