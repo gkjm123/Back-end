@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -518,5 +519,46 @@ public class MemberRigistrationServiceTest {
 
     //then
     assertEquals(ErrorCode.LOGIN_FAIL.getMessage(), customException.getMessage());
+  }
+
+  @Test
+  @DisplayName("회원 탈퇴 성공")
+  void successWithdrawMember() {
+    //given
+    String email = member.getEmail();
+    when(memberRepository.findByEmail(email)).thenReturn(Optional.of(member));
+    doNothing().when(memberRepository).delete(member);
+
+    //MemberDetail 사용하여 인증 정보 확인
+    MemberDetail memberDetail = new MemberDetail(MemberResponse.from(member));
+    Authentication authentication = new UsernamePasswordAuthenticationToken(memberDetail, null);
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+    //when
+    memberService.withdrawMember();
+
+    //then
+    verify(memberRepository, times(1)).delete(member);
+  }
+
+  @Test
+  @DisplayName("회원 탈퇴 실패 - 사용자 정보 없음")
+  void failWithdrawMember() {
+    //given
+    String email = member.getEmail();
+
+    //MemberDetail 사용하여 인증 정보 확인
+    MemberDetail memberDetail = new MemberDetail(MemberResponse.from(member));
+    Authentication authentication = new UsernamePasswordAuthenticationToken(memberDetail, null);
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+    when(memberRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+    //when
+    CustomException customException = assertThrows(CustomException.class,
+        () -> memberService.withdrawMember());
+
+    //then
+    assertEquals(MEMBER_NOT_FOUND.getMessage(), customException.getMessage());
   }
 }

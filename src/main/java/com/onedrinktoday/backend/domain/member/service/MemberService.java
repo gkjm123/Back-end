@@ -168,4 +168,8 @@ public class MemberService {
     member.setPassword(bCryptPasswordEncoder.encode(newPassword));
     memberRepository.save(member);
   }
+
+  public void withdrawMember() {
+    memberRepository.delete(getMember());
+  }
 }
