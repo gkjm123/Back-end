@@ -16,13 +16,13 @@ public class AutoCompleteController {
   private final AutoCompleteService autoCompleteService;
 
   @GetMapping("/auto-complete/tag")
-  public ResponseEntity<List<String>> getAutoCompleteTag(@RequestParam String tagName) {
-    return ResponseEntity.ok(autoCompleteService.getAutoCompleteTag(tagName));
+  public ResponseEntity<List<String>> getAutoCompleteTag(@RequestParam String name) {
+    return ResponseEntity.ok(autoCompleteService.getAutoCompleteTag(name));
   }
 
   @GetMapping("/auto-complete/drink")
-  public ResponseEntity<List<String>> getAutoCompleteDrink(@RequestParam String drinkName) {
-    return ResponseEntity.ok(autoCompleteService.getAutoCompleteDrink(drinkName));
+  public ResponseEntity<List<String>> getAutoCompleteDrink(@RequestParam String name) {
+    return ResponseEntity.ok(autoCompleteService.getAutoCompleteDrink(name));
   }
 
 }
