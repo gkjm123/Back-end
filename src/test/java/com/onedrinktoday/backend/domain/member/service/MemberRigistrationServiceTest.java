@@ -12,18 +12,26 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.onedrinktoday.backend.domain.comment.entity.Comment;
+import com.onedrinktoday.backend.domain.comment.repository.CommentRepository;
 import com.onedrinktoday.backend.domain.member.dto.MemberRequest.SignIn;
 import com.onedrinktoday.backend.domain.member.dto.MemberRequest.SignUp;
 import com.onedrinktoday.backend.domain.member.dto.MemberRequest.UpdateInfo;
 import com.onedrinktoday.backend.domain.member.dto.MemberResponse;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.repository.MemberRepository;
+import com.onedrinktoday.backend.domain.post.entity.Post;
+import com.onedrinktoday.backend.domain.post.repository.PostRepository;
 import com.onedrinktoday.backend.domain.region.entity.Region;
 import com.onedrinktoday.backend.domain.region.repository.RegionRepository;
+import com.onedrinktoday.backend.domain.registration.entity.Registration;
+import com.onedrinktoday.backend.domain.registration.repository.RegistrationRepository;
+import com.onedrinktoday.backend.domain.tagFollow.repository.TagFollowRepository;
 import com.onedrinktoday.backend.global.exception.CustomException;
 import com.onedrinktoday.backend.global.exception.ErrorCode;
 import com.onedrinktoday.backend.global.security.JwtProvider;
@@ -45,8 +53,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(MockitoExtension.class)
 public class MemberRigistrationServiceTest {
@@ -62,6 +72,18 @@ public class MemberRigistrationServiceTest {
 
   @Mock
   private RegionRepository regionRepository;
+
+  @Mock
+  private PostRepository postRepository;
+
+  @Mock
+  private RegistrationRepository registrationRepository;
+
+  @Mock
+  private CommentRepository commentRepository;
+
+  @Mock
+  private TagFollowRepository tagFollowRepository;
 
   @Mock
   private JwtProvider jwtProvider;
@@ -159,8 +181,9 @@ public class MemberRigistrationServiceTest {
 
     when(memberRepository.findByEmail(email)).thenReturn(Optional.of(member));
     when(bCryptPasswordEncoder.matches(password, encodedPassword)).thenReturn(true);
-    when(jwtProvider.createAccessToken(member.getId(),email, Role.USER)).thenReturn("accessToken");
-    when(jwtProvider.createRefreshToken(member.getId(),email, Role.USER)).thenReturn("refreshToken");
+    when(jwtProvider.createAccessToken(member.getId(), email, Role.USER)).thenReturn("accessToken");
+    when(jwtProvider.createRefreshToken(member.getId(), email, Role.USER)).thenReturn(
+        "refreshToken");
 
     //when
     TokenDto tokenDto = memberService.signIn(signInRequest);
@@ -211,7 +234,8 @@ public class MemberRigistrationServiceTest {
         .refreshToken(refreshToken).build();
 
     when(memberRepository.findByEmail(email)).thenReturn(Optional.of(member));
-    when(jwtProvider.createAccessToken(member.getId(),email, Role.USER)).thenReturn(newAccessToken);
+    when(jwtProvider.createAccessToken(member.getId(), email, Role.USER)).thenReturn(
+        newAccessToken);
 
     //when
     TokenDto tokenDto = memberService.refreshAccessToken(refreshToken);
@@ -397,7 +421,7 @@ public class MemberRigistrationServiceTest {
     existMember.setRole(Role.USER);
 
     when(memberRepository.findByEmail(existMember.getEmail())).thenReturn(Optional.of(existMember));
-    when(jwtProvider.createResetToken(member.getId(),email, Role.USER)).thenReturn(token);
+    when(jwtProvider.createResetToken(member.getId(), email, Role.USER)).thenReturn(token);
 
     ArgumentCaptor<String> emailArgumentCaptor = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<String> resetLinkArgumentCaptor = ArgumentCaptor.forClass(String.class);
@@ -518,5 +542,82 @@ public class MemberRigistrationServiceTest {
 
     //then
     assertEquals(ErrorCode.LOGIN_FAIL.getMessage(), customException.getMessage());
+  }
+
+  @Test
+  @Transactional
+  void successWithdrawMember() {
+    //given
+    Member existMember = Member.builder()
+        .id(1L)
+        .region(region)
+        .name(member.getName())
+        .email(member.getEmail())
+        .birthDate(member.getBirthDate())
+        .favorDrinkType(member.getFavorDrinkType())
+        .role(member.getRole())
+        .alarmEnabled(true)
+        .imageUrl(member.getImageUrl())
+        .build();
+
+    Post post = Post.builder()
+        .id(1L)
+        .member(existMember)
+        .build();
+    Comment comment = Comment.builder()
+        .id(1L)
+        .member(existMember)
+        .build();
+    Registration registration = Registration.builder()
+        .id(1L)
+        .member(existMember)
+        .build();
+
+    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(existMember));
+    when(postRepository.findAllByMember(existMember)).thenReturn(List.of(post));
+    when(commentRepository.findAllByMember(existMember)).thenReturn(List.of(comment));
+    when(registrationRepository.findAllByMember(existMember)).thenReturn(List.of(registration));
+
+    MemberResponse memberResponse = MemberResponse.from(existMember);
+    MemberDetail memberDetail = new MemberDetail(memberResponse);
+    Authentication authentication = new UsernamePasswordAuthenticationToken(memberDetail, null);
+
+    SecurityContext securityContext = mock(SecurityContext.class);
+    when(securityContext.getAuthentication()).thenReturn(authentication);
+    SecurityContextHolder.setContext(securityContext);
+
+    //when
+    memberService.withdrawMember();
+
+    //then
+    verify(tagFollowRepository, times(1)).deleteByMember(existMember);
+    verify(postRepository, times(1)).findAllByMember(existMember);
+    verify(commentRepository, times(1)).findAllByMember(existMember);
+    verify(registrationRepository, times(1)).findAllByMember(existMember);
+    verify(postRepository, times(1)).saveAll(List.of(post));
+    verify(commentRepository, times(1)).saveAll(List.of(comment));
+    verify(registrationRepository, times(1)).saveAll(List.of(registration));
+    verify(memberRepository, times(1)).delete(existMember);
+  }
+
+  @Test
+  @DisplayName("회원 탈퇴 실패 - 사용자 정보 없음")
+  void failWithdrawMember() {
+    //given
+    String email = member.getEmail();
+
+    //MemberDetail 사용하여 인증 정보 확인
+    MemberDetail memberDetail = new MemberDetail(MemberResponse.from(member));
+    Authentication authentication = new UsernamePasswordAuthenticationToken(memberDetail, null);
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+    when(memberRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+    //when
+    CustomException customException = assertThrows(CustomException.class,
+        () -> memberService.withdrawMember());
+
+    //then
+    assertEquals(MEMBER_NOT_FOUND.getMessage(), customException.getMessage());
   }
 }

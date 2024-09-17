@@ -15,4 +15,6 @@ public interface TagFollowRepository extends JpaRepository<TagFollow, Long> {
   boolean existsByMemberAndTag(Member member, Tag tag);
 
   List<TagFollow> findByTag(Tag tag);
+
+  void deleteByMember(Member member);
 }

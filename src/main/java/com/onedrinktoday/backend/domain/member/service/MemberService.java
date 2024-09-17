@@ -1,11 +1,18 @@
 package com.onedrinktoday.backend.domain.member.service;
 
+import com.onedrinktoday.backend.domain.comment.entity.Comment;
+import com.onedrinktoday.backend.domain.comment.repository.CommentRepository;
 import com.onedrinktoday.backend.domain.member.dto.MemberRequest.SignIn;
 import com.onedrinktoday.backend.domain.member.dto.MemberRequest.SignUp;
 import com.onedrinktoday.backend.domain.member.dto.MemberRequest.UpdateInfo;
 import com.onedrinktoday.backend.domain.member.dto.MemberResponse;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.repository.MemberRepository;
+import com.onedrinktoday.backend.domain.post.entity.Post;
+import com.onedrinktoday.backend.domain.post.repository.PostRepository;
+import com.onedrinktoday.backend.domain.registration.entity.Registration;
+import com.onedrinktoday.backend.domain.registration.repository.RegistrationRepository;
+import com.onedrinktoday.backend.domain.tagFollow.repository.TagFollowRepository;
 import com.onedrinktoday.backend.global.exception.CustomException;
 import com.onedrinktoday.backend.global.exception.ErrorCode;
 import com.onedrinktoday.backend.global.security.JwtProvider;
@@ -15,16 +22,22 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
 
   private final MemberRepository memberRepository;
+  private final CommentRepository commentRepository;
+  private final PostRepository postRepository;
+  private final TagFollowRepository tagFollowRepository;
+  private final RegistrationRepository registrationRepository;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final JwtProvider jwtProvider;
   private final EmailService emailService;
@@ -167,5 +180,36 @@ public class MemberService {
 
     member.setPassword(bCryptPasswordEncoder.encode(newPassword));
     memberRepository.save(member);
+  }
+
+  @Transactional
+  public void withdrawMember() {
+    Member member = getMember();
+
+    tagFollowRepository.deleteByMember(member);
+
+    handleEntitiesForWithdrawMember(member);
+
+    memberRepository.delete(member);
+  }
+
+  private void handleEntitiesForWithdrawMember(Member member) {
+    List<Post> posts = postRepository.findAllByMember(member);
+    if (!posts.isEmpty()) {
+      posts.forEach(post -> post.setMember(null));
+      postRepository.saveAll(posts);
+    }
+
+    List<Comment> comments = commentRepository.findAllByMember(member);
+    if (!comments.isEmpty()) {
+      comments.forEach(comment -> comment.setMember(null));
+      commentRepository.saveAll(comments);
+    }
+
+    List<Registration> registrations = registrationRepository.findAllByMember(member);
+    if (!registrations.isEmpty()) {
+      registrations.forEach(registration -> registration.setMember(null));
+      registrationRepository.saveAll(registrations);
+    }
   }
 }

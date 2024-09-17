@@ -35,6 +35,7 @@ public class Comment {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Setter
   @ManyToOne
   @JoinColumn(name = "member_id")
   private Member member;

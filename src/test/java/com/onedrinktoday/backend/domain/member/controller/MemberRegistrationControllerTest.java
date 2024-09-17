@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -431,6 +432,22 @@ public class MemberRegistrationControllerTest {
             .content(new ObjectMapper().writeValueAsString(updateInfo)))
         .andExpect(status().isNotFound())
         .andExpect(content().string(MEMBER_NOT_FOUND.getMessage()))
+        .andDo(print());
+  }
+
+  @Test
+  @DisplayName("회원탈퇴 성공")
+  public void successWithdrawMember() throws Exception {
+    //given
+    String successMessage = "회원 탈퇴 완료";
+
+    //when
+    //then
+    mockMvc.perform(delete("/api/members")
+            .with(csrf())
+            .header("Access-Token", TOKEN))
+        .andExpect(status().isOk())
+        .andExpect(content().string(successMessage))
         .andDo(print());
   }
 }
