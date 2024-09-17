@@ -77,7 +77,7 @@ public class PostService {
     List<Tag> tags = saveTags(postRequest.getTag(), post);
 
     notificationService.tagFollowPostNotification(post.getId(), tags);
-    searchService.save(post);
+    searchService.save(post, tags);
 
     return PostResponse.of(post, tags);
   }
@@ -207,7 +207,7 @@ public class PostService {
     List<Tag> updateTag = saveTags(postRequest.getTag(), post);
 
     post = postRepository.save(post);
-    searchService.save(post);
+    searchService.save(post, updateTag);
 
     return PostResponse.of(post, updateTag);
   }
