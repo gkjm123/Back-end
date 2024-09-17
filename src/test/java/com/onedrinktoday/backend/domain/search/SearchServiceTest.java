@@ -49,6 +49,6 @@ class SearchServiceTest {
         .willReturn(null);
 
     //when
-    searchService.save(post);
+    searchService.save(post, tags);
   }
 }

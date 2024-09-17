@@ -32,9 +32,7 @@ public class SearchService {
   private final PostTagRepository postTagRepository;
   private final PostRepository postRepository;
 
-  public void save(Post post) {
-
-    List<Tag> tagList = postTagRepository.findTagsByPostId(post.getId());
+  public void save(Post post, List<Tag> tagList) {
 
     String tags = String.join(" ", tagList.stream()
         .map(t -> StringUtils.trimAllWhitespace(t.getTagName())).toList());
@@ -86,15 +84,14 @@ public class SearchService {
     SearchHits<PostDocument> searchHits =
         elasticsearchOperations.search(nativeQuery, PostDocument.class);
 
-    List<Post> posts = searchHits.get()
+    List<PostResponse> postResponses = searchHits.get()
         .map(s -> postRepository.findById(s.getContent().getId()).orElse(null))
-        .filter(Objects::nonNull).toList();
-
-    List<PostResponse> postResponses = posts.stream()
+        .filter(Objects::nonNull)
         .map(post -> {
           List<Tag> tags = postTagRepository.findTagsByPostId(post.getId());
           return PostResponse.of(post, tags);
-        }).toList();
+        })
+        .toList();
 
     return new PageImpl<>(postResponses, pageable, searchHits.getTotalHits());
   }
