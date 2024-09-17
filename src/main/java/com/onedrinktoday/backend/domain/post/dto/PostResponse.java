@@ -33,6 +33,7 @@ public class PostResponse {
   private List<TagDTO> tags;
   private String imageUrl;
   private Integer viewCount;
+  private Integer likeCount;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
@@ -50,6 +51,7 @@ public class PostResponse {
         .tags(tags.stream().map(TagDTO::from).collect(Collectors.toList()))
         .imageUrl(imageUrl)
         .viewCount(post.getViewCount())
+        .likeCount(post.getLikeCount())
         .createdAt(post.getCreatedAt())
         .updatedAt(post.getUpdatedAt())
         .build();
@@ -67,6 +69,7 @@ public class PostResponse {
         .rating(post.getRating())
         .imageUrl(post.getImageUrl())
         .viewCount(post.getViewCount())
+        .likeCount(post.getLikeCount())
         .createdAt(post.getCreatedAt())
         .drink(DrinkResponse.from(post.getDrink()))
         .build();
