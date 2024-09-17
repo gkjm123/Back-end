@@ -17,6 +17,7 @@ public class AnnouncementResponse {
   private Long memberId;
   private String title;
   private String content;
+  private String imageUrl;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
@@ -26,6 +27,7 @@ public class AnnouncementResponse {
         .memberId(announcement.getMember().getId())
         .title(announcement.getTitle())
         .content(announcement.getContent())
+        .imageUrl(announcement.getImageUrl())
         .createdAt(announcement.getCreatedAt())
         .updatedAt(announcement.getUpdatedAt())
         .build();
