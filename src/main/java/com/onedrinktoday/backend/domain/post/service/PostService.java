@@ -169,6 +169,22 @@ public class PostService {
     return postResponse;
   }
 
+  @Transactional
+  public void likePost(Long postId, boolean isLiked) {
+    Post post = postRepository.findById(postId)
+        .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글 ID입니다."));
+
+    // 좋아요가 눌린 상태라면 좋아요 취소(좋아요 수 감소)
+    if(isLiked) {
+      post.setLikeCount(post.getLikeCount() - 1);
+    } else {
+      // 좋아요가 눌리지 않은 상태라면 좋아요 추가(좋아요 수 증가)
+      post.setLikeCount(post.getLikeCount() + 1);
+    }
+
+    postRepository.save(post);
+  }
+
   // 게시글 삭제
   public void deletePostById(Long postId) {
     Post post = postRepository.findById(postId)

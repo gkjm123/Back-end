@@ -59,4 +59,11 @@ public class PostController {
     PostResponse updatedPost = postService.updatePost(postId, postRequest);
     return ResponseEntity.ok(updatedPost);
   }
+
+  // 좋아요 토글 API
+  @PutMapping("posts/{postId}/like")
+  public ResponseEntity<Void> likePost(@PathVariable Long postId, @RequestParam boolean isLiked) {
+    postService.likePost(postId, isLiked);
+    return ResponseEntity.ok().build();
+  }
 }
