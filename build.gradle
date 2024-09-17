@@ -25,6 +25,9 @@ repositories {
 
 dependencies {
 
+    //es
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+
     //redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 

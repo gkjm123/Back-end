@@ -1,8 +1,10 @@
 package com.onedrinktoday.backend.domain.post.service;
 
+import com.onedrinktoday.backend.domain.autoComplete.AutoCompleteService;
 import com.onedrinktoday.backend.domain.drink.dto.DrinkResponse;
 import com.onedrinktoday.backend.domain.drink.entity.Drink;
 import com.onedrinktoday.backend.domain.drink.repository.DrinkRepository;
+import com.onedrinktoday.backend.domain.search.SearchService;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.repository.MemberRepository;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
@@ -42,6 +44,8 @@ public class PostService {
   private final CacheManager cacheManager;
   private final CacheService cacheService;
   private final NotificationService notificationService;
+  private final SearchService searchService;
+  private final AutoCompleteService autoCompleteService;
 
   // 게시글 생성 및 저장
   @CacheEvict(key = "#postRequest.drinkId", value = "avg-rating")
@@ -73,6 +77,8 @@ public class PostService {
     List<Tag> tags = saveTags(postRequest.getTag(), post);
 
     notificationService.tagFollowPostNotification(post.getId(), tags);
+    searchService.save(post);
+
     return PostResponse.of(post, tags);
   }
 
@@ -83,6 +89,7 @@ public class PostService {
           .orElseGet(() -> {
             Tag newTag = new Tag();
             newTag.setTagName(tagName);
+            autoCompleteService.saveAutoCompleteTag(tagName);
             return tagRepository.save(newTag);
           });
 
@@ -162,6 +169,7 @@ public class PostService {
     }
 
     postRepository.deleteById(postId);
+    searchService.delete(post);
     cacheManager.getCache("avg-rating").evict(post.getDrink().getId());
   }
 
@@ -198,7 +206,8 @@ public class PostService {
     postTagRepository.deleteByPostId(postId);
     List<Tag> updateTag = saveTags(postRequest.getTag(), post);
 
-    postRepository.save(post);
+    post = postRepository.save(post);
+    searchService.save(post);
 
     return PostResponse.of(post, updateTag);
   }

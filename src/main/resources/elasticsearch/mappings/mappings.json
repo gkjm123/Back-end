@@ -1,0 +1,12 @@
+{
+  "properties": {
+
+    "tags": {
+      "type": "text"
+    },
+
+    "drink": {
+      "type": "keyword"
+    }
+  }
+}
