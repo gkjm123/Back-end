@@ -1,6 +1,8 @@
 package com.onedrinktoday.backend.domain.manager.service;
 
 import static com.onedrinktoday.backend.global.exception.ErrorCode.*;
+
+import com.onedrinktoday.backend.domain.autoComplete.AutoCompleteService;
 import com.onedrinktoday.backend.domain.declaration.dto.DeclarationResponse;
 import com.onedrinktoday.backend.domain.declaration.entity.Declaration;
 import com.onedrinktoday.backend.domain.declaration.repository.DeclarationRepository;
@@ -29,6 +31,7 @@ public class ManagerService {
   private final DeclarationRepository declarationRepository;
   private final PostRepository postRepository;
   private final NotificationService notificationService;
+  private final AutoCompleteService autoCompleteService;
 
   @Value("${post.uri}")
   private String postUri;
@@ -59,6 +62,8 @@ public class ManagerService {
     notificationService.approveRegistrationNotification(
         registration.getMember(), registration
     );
+
+    autoCompleteService.saveAutoCompleteDrink(drink.getName());
 
     return DrinkResponse.from(drinkRepository.save(drink));
   }
