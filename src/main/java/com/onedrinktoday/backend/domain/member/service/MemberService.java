@@ -10,9 +10,9 @@ import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.repository.MemberRepository;
 import com.onedrinktoday.backend.domain.post.entity.Post;
 import com.onedrinktoday.backend.domain.post.repository.PostRepository;
-import com.onedrinktoday.backend.domain.postTag.repository.PostTagRepository;
 import com.onedrinktoday.backend.domain.registration.entity.Registration;
 import com.onedrinktoday.backend.domain.registration.repository.RegistrationRepository;
+import com.onedrinktoday.backend.domain.tagFollow.repository.TagFollowRepository;
 import com.onedrinktoday.backend.global.exception.CustomException;
 import com.onedrinktoday.backend.global.exception.ErrorCode;
 import com.onedrinktoday.backend.global.security.JwtProvider;
@@ -36,7 +36,7 @@ public class MemberService {
   private final MemberRepository memberRepository;
   private final CommentRepository commentRepository;
   private final PostRepository postRepository;
-  private final PostTagRepository postTagRepository;
+  private final TagFollowRepository tagFollowRepository;
   private final RegistrationRepository registrationRepository;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final JwtProvider jwtProvider;
@@ -186,13 +186,12 @@ public class MemberService {
   public void withdrawMember() {
     Member member = getMember();
 
+    tagFollowRepository.deleteByMember(member);
+
     List<Post> posts = postRepository.findAllByMember(member);
     if (!posts.isEmpty()) {
-      for (Post post : posts) {
-        commentRepository.deleteAllByPost(post);
-        postTagRepository.deleteByPostId(post.getId());
-      }
-      postRepository.deleteAll(posts);
+      posts.forEach(post -> post.setMember(null));
+      postRepository.saveAll(posts);
     }
 
     List<Comment> comments = commentRepository.findAllByMember(member);

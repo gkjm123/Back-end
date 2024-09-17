@@ -38,12 +38,14 @@ public class PostResponse {
   private LocalDateTime updatedAt;
 
   public static PostResponse of(Post post, List<Tag> tags) {
-
+    String memberName = post.getMember() != null ? post.getMember().getName() : "탈퇴한 사용자";
+    Long memberId = post.getMember() != null ? post.getMember().getId() : null;
     String imageUrl = post.getImageUrl() != null ? post.getImageUrl() : post.getDrink().getImageUrl();
+
     return PostResponse.builder()
         .id(post.getId())
-        .memberId(post.getMember().getId())
-        .memberName(post.getMember().getName())
+        .memberId(memberId)
+        .memberName(memberName)
         .drink(DrinkResponse.from(post.getDrink()))
         .type(post.getType())
         .content(post.getContent())
