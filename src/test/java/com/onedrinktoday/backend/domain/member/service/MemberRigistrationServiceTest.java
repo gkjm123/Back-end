@@ -27,11 +27,11 @@ import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.repository.MemberRepository;
 import com.onedrinktoday.backend.domain.post.entity.Post;
 import com.onedrinktoday.backend.domain.post.repository.PostRepository;
-import com.onedrinktoday.backend.domain.postTag.repository.PostTagRepository;
 import com.onedrinktoday.backend.domain.region.entity.Region;
 import com.onedrinktoday.backend.domain.region.repository.RegionRepository;
 import com.onedrinktoday.backend.domain.registration.entity.Registration;
 import com.onedrinktoday.backend.domain.registration.repository.RegistrationRepository;
+import com.onedrinktoday.backend.domain.tagFollow.repository.TagFollowRepository;
 import com.onedrinktoday.backend.global.exception.CustomException;
 import com.onedrinktoday.backend.global.exception.ErrorCode;
 import com.onedrinktoday.backend.global.security.JwtProvider;
@@ -83,7 +83,7 @@ public class MemberRigistrationServiceTest {
   private CommentRepository commentRepository;
 
   @Mock
-  private PostTagRepository postTagRepository;
+  private TagFollowRepository tagFollowRepository;
 
   @Mock
   private JwtProvider jwtProvider;
@@ -562,12 +562,15 @@ public class MemberRigistrationServiceTest {
 
     Post post = Post.builder()
         .id(1L)
+        .member(existMember)
         .build();
     Comment comment = Comment.builder()
         .id(1L)
+        .member(existMember)
         .build();
     Registration registration = Registration.builder()
         .id(1L)
+        .member(existMember)
         .build();
 
     when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(existMember));
@@ -587,12 +590,14 @@ public class MemberRigistrationServiceTest {
     memberService.withdrawMember();
 
     //then
-    verify(commentRepository, times(1)).deleteAllByPost(post);
-    verify(postTagRepository, times(1)).deleteByPostId(post.getId());
-    verify(postRepository, times(1)).deleteAll(List.of(post));
+    verify(tagFollowRepository, times(1)).deleteByMember(existMember);
+    verify(postRepository, times(1)).findAllByMember(existMember);
+    verify(commentRepository, times(1)).findAllByMember(existMember);
+    verify(registrationRepository, times(1)).findAllByMember(existMember);
+    verify(postRepository, times(1)).saveAll(List.of(post));
     verify(commentRepository, times(1)).saveAll(List.of(comment));
     verify(registrationRepository, times(1)).saveAll(List.of(registration));
-    verify(memberRepository, times(1)).delete(existMember); // Ensure delete was called
+    verify(memberRepository, times(1)).delete(existMember);
   }
 
   @Test
