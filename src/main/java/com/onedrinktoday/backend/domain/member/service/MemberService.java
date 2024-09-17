@@ -188,6 +188,12 @@ public class MemberService {
 
     tagFollowRepository.deleteByMember(member);
 
+    handleEntitiesForWithdrawMember(member);
+
+    memberRepository.delete(member);
+  }
+
+  private void handleEntitiesForWithdrawMember(Member member) {
     List<Post> posts = postRepository.findAllByMember(member);
     if (!posts.isEmpty()) {
       posts.forEach(post -> post.setMember(null));
@@ -205,7 +211,5 @@ public class MemberService {
       registrations.forEach(registration -> registration.setMember(null));
       registrationRepository.saveAll(registrations);
     }
-
-    memberRepository.delete(member);
   }
 }
