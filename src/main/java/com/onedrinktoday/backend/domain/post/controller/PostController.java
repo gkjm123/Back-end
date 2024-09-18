@@ -43,8 +43,8 @@ public class PostController {
   @GetMapping("/posts/{postId}")
   public ResponseEntity<PostResponse> getPostById(@PathVariable Long postId,
                                                   @RequestParam(required = false, defaultValue = "false") boolean isLiked,
-                                                  @RequestParam(required = false, defaultValue = "false") boolean isCliked) {
-    PostResponse postResponse = postService.getPostById(postId, isLiked, isCliked);
+                                                  @RequestParam(required = false, defaultValue = "false") boolean isClicked) {
+    PostResponse postResponse = postService.getPostById(postId, isLiked, isClicked);
     return ResponseEntity.ok(postResponse);
   }
 
