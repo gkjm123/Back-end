@@ -42,9 +42,8 @@ public class PostController {
   // 특정 게시글 조회 API
   @GetMapping("/posts/{postId}")
   public ResponseEntity<PostResponse> getPostById(@PathVariable Long postId,
-                                                  @RequestParam(required = false, defaultValue = "false") boolean isLiked,
                                                   @RequestParam(required = false, defaultValue = "false") boolean isClicked) {
-    PostResponse postResponse = postService.getPostById(postId, isLiked, isClicked);
+    PostResponse postResponse = postService.getPostById(postId, isClicked);
     return ResponseEntity.ok(postResponse);
   }
 
@@ -62,8 +61,8 @@ public class PostController {
 
   // 좋아요 토글 API
   @PutMapping("posts/{postId}/like")
-  public ResponseEntity<Void> likePost(@PathVariable Long postId, @RequestParam boolean isLiked) {
-    postService.likePost(postId, isLiked);
+  public ResponseEntity<Void> likePost(@PathVariable Long postId) {
+    postService.toggleLike(postId);
     return ResponseEntity.ok().build();
   }
 }

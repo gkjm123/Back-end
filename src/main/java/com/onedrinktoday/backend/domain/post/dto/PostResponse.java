@@ -34,10 +34,12 @@ public class PostResponse {
   private String imageUrl;
   private Integer viewCount;
   private Integer likeCount;
+  @Setter
+  private boolean isLiked;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
-  public static PostResponse of(Post post, List<Tag> tags) {
+  public static PostResponse of(Post post, List<Tag> tags, boolean isLiked) {
     String memberName = post.getMember() != null ? post.getMember().getName() : "탈퇴한 사용자";
     Long memberId = post.getMember() != null ? post.getMember().getId() : null;
     String imageUrl = post.getImageUrl() != null ? post.getImageUrl() : post.getDrink().getImageUrl();
@@ -54,6 +56,7 @@ public class PostResponse {
         .imageUrl(imageUrl)
         .viewCount(post.getViewCount())
         .likeCount(post.getLikeCount())
+        .isLiked(isLiked)
         .createdAt(post.getCreatedAt())
         .updatedAt(post.getUpdatedAt())
         .build();
