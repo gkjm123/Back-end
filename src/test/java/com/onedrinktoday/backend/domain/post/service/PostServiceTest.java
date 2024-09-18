@@ -19,9 +19,12 @@ import com.onedrinktoday.backend.domain.post.dto.PostRequest;
 import com.onedrinktoday.backend.domain.post.dto.PostResponse;
 import com.onedrinktoday.backend.domain.post.entity.Post;
 import com.onedrinktoday.backend.domain.post.repository.PostRepository;
+import com.onedrinktoday.backend.domain.postLike.entity.PostLike;
+import com.onedrinktoday.backend.domain.postLike.repository.PostLikeRepository;
 import com.onedrinktoday.backend.domain.postTag.entity.PostTag;
 import com.onedrinktoday.backend.domain.postTag.repository.PostTagRepository;
 import com.onedrinktoday.backend.domain.region.entity.Region;
+import com.onedrinktoday.backend.domain.search.SearchService;
 import com.onedrinktoday.backend.domain.tag.entity.Tag;
 import com.onedrinktoday.backend.domain.tag.repository.TagRepository;
 import com.onedrinktoday.backend.global.cache.CacheService;
@@ -66,6 +69,9 @@ public class PostServiceTest {
   private PostTagRepository postTagRepository;
 
   @Mock
+  private PostLikeRepository postLikeRepository;
+
+  @Mock
   private NotificationService notificationService;
 
   @Mock
@@ -73,6 +79,9 @@ public class PostServiceTest {
 
   @Mock
   private CacheManager cacheManager;
+
+  @Mock
+  private SearchService searchService;
 
   private PostRequest postRequest;
   private Post post;
@@ -86,7 +95,7 @@ public class PostServiceTest {
     member = Member.builder().id(1L).name("John").role(Role.USER).build();
     region = Region.builder().id(1L).placeName("서울특별시").build();
     drink = Drink.builder().id(1L).name("막걸리").region(region).build();
-    post = Post.builder().id(1L).member(member).drink(drink).content("맛있는 막걸리입니다!").viewCount(0).build();
+    post = Post.builder().id(1L).member(member).drink(drink).content("맛있는 막걸리입니다!").viewCount(0).likeCount(0).build();
     tags = Arrays.asList(new Tag(1L, "달콤"), new Tag(2L, "시원"));
 
     postRequest = new PostRequest();
@@ -145,8 +154,14 @@ public class PostServiceTest {
     given(postTagRepository.findTagsByPostId(1L)).willReturn(tags);
     given(cacheService.getAverageRating(1L)).willReturn(4.0);
 
+    // 로그인된 회원 정보 설정
+    given(memberService.getMember()).willReturn(member);
+
+    // 좋아요 상태 설정
+    given(postLikeRepository.existsByPostAndMember(any(Post.class), any(Member.class))).willReturn(true);
+
     // When
-    PostResponse postResponse = postService.getPostById(1L);
+    PostResponse postResponse = postService.getPostById(1L, false);
 
     // Then
     assertNotNull(postResponse);
@@ -160,7 +175,7 @@ public class PostServiceTest {
     given(postRepository.findById(999L)).willReturn(Optional.empty());
 
     // When & Then
-    assertThrows(IllegalArgumentException.class, () -> postService.getPostById(999L));
+    assertThrows(IllegalArgumentException.class, () -> postService.getPostById(999L, false));
   }
 
   @Test
@@ -198,6 +213,9 @@ public class PostServiceTest {
     // Given
     given(postRepository.findById(1L)).willReturn(Optional.of(post));
     given(drinkRepository.findById(1L)).willReturn(Optional.of(drink));
+
+    // Post 객체에 Member 설정
+    post.setMember(member);
 
     Tag newTag1 = Tag.builder().tagId(1L).tagName("씁쓸").build();
     Tag newTag2 = Tag.builder().tagId(2L).tagName("새콤").build();
@@ -285,5 +303,52 @@ public class PostServiceTest {
     // Then
     assertNotNull(rating);
     assertEquals(4.5, rating);
+  }
+
+  @Test
+  @DisplayName("좋아요 토글 테스트 - 처음 좋아요 누름")
+  void successToggleLikeFirstTime() {
+    // Given
+    given(postRepository.findById(1L)).willReturn(Optional.of(post));
+    given(memberService.getMember()).willReturn(member);
+    given(postLikeRepository.existsByPostAndMember(post, member)).willReturn(false);  // 아직 좋아요 안 누른 상태
+
+    // When
+    postService.toggleLike(1L);
+
+    // Then
+    assertEquals(1, post.getLikeCount());  // 좋아요 수가 1 증가했는지 확인
+    verify(postLikeRepository).save(any(PostLike.class));  // PostLike 객체가 저장되었는지 확인
+  }
+
+  @Test
+  @DisplayName("좋아요 토글 테스트 - 좋아요 취소")
+  void successToggleUnlike() {
+    // Given
+    post.setLikeCount(1);  // 이미 좋아요가 눌린 상태
+    given(postRepository.findById(1L)).willReturn(Optional.of(post));
+    given(memberService.getMember()).willReturn(member);
+    given(postLikeRepository.existsByPostAndMember(post, member)).willReturn(true);  // 이미 좋아요 눌린 상태
+
+    // When
+    postService.toggleLike(1L);
+
+    // Then
+    assertEquals(0, post.getLikeCount());  // 좋아요 수가 1 감소했는지 확인
+    verify(postLikeRepository).deleteByPostAndMember(post, member);  // PostLike가 삭제되었는지 확인
+  }
+
+  @Test
+  @DisplayName("좋아요 토글 실패 테스트 - 존재하지 않는 게시글")
+  void failToggleLikeNotFoundPost() {
+    // Given
+    given(postRepository.findById(999L)).willReturn(Optional.empty());
+
+    // When & Then
+    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+      postService.toggleLike(999L);
+    });
+
+    assertEquals("유효하지 않은 게시글 ID입니다.", exception.getMessage());
   }
 }
