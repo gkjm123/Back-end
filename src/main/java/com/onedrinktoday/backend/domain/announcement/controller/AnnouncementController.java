@@ -27,7 +27,7 @@ public class AnnouncementController {
   private final AnnouncementService announcementService;
 
   @PreAuthorize("hasRole('MANAGER')")
-  @PostMapping("/announcement")
+  @PostMapping("/announcements")
   public ResponseEntity<AnnouncementResponse> createAnnouncement(
       @RequestBody AnnouncementRequest announcementRequest) {
     return ResponseEntity.ok(announcementService.createAnnouncement(announcementRequest));
