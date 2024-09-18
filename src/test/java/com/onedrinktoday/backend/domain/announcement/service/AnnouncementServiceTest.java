@@ -91,7 +91,7 @@ public class AnnouncementServiceTest {
 
   @Test
   @DisplayName("공지사항 생성 실패 - 사용자 인증 실패, 회원(USER) 불가능")
-  void failCreateAnnouncementDueToAuthentication() {
+  void failCreateAnnouncement() {
     //given
     when(memberService.getMember()).thenThrow(new CustomException(ACCESS_DENIED));
 
@@ -117,7 +117,7 @@ public class AnnouncementServiceTest {
 
   @Test
   @DisplayName("공지사항 조회 실패 - 공지사항 없음")
-  void failGetAnnouncementNotFound() {
+  void failGetAnnouncement() {
     // given
     when(announcementRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -171,7 +171,7 @@ public class AnnouncementServiceTest {
 
   @Test
   @DisplayName("공지사항 수정 실패 - 공지사항 없음")
-  void failUpdateAnnouncementNotFound() {
+  void failUpdateAnnouncement() {
     //given
     when(memberService.getMember()).thenReturn(member);
     when(announcementRepository.findById(1L)).thenReturn(Optional.empty());
@@ -196,7 +196,7 @@ public class AnnouncementServiceTest {
 
   @Test
   @DisplayName("공지사항 삭제 실패 - 공지사항 없음")
-  void failDeleteAnnouncementNotFound() {
+  void failDeleteAnnouncement() {
     //given
     when(memberService.getMember()).thenReturn(member);
     when(announcementRepository.findById(1L)).thenReturn(Optional.empty());
