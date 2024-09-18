@@ -89,7 +89,7 @@ public class SearchService {
         .filter(Objects::nonNull)
         .map(post -> {
           List<Tag> tags = postTagRepository.findTagsByPostId(post.getId());
-          return PostResponse.of(post, tags);
+          return PostResponse.of(post, tags, false);
         })
         .toList();
 
