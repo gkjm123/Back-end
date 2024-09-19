@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +30,6 @@ public class AnnouncementService {
         .member(member)
         .title(announcementRequest.getTitle())
         .content(announcementRequest.getContent())
-        .imageUrl(announcementRequest.getImageUrl())
         .build();
 
     announcement = announcementRepository.save(announcement);
@@ -44,8 +44,7 @@ public class AnnouncementService {
       return Page.empty(pageable);
     }
 
-    return announcementRepository.findAll(pageable)
-        .map(AnnouncementResponse::from);
+    return announcements.map(AnnouncementResponse::from);
   }
 
   public AnnouncementResponse getAnnouncement(Long announcementId) {
@@ -55,6 +54,7 @@ public class AnnouncementService {
     return AnnouncementResponse.from(announcement);
   }
 
+  @Transactional
   public AnnouncementResponse updateAnnouncement(Long announcementId,
       AnnouncementRequest announcementRequest) {
     Member member = memberService.getMember();
@@ -73,6 +73,7 @@ public class AnnouncementService {
     return AnnouncementResponse.from(updatedAnnouncement);
   }
 
+  @Transactional
   public void deleteAnnouncement(Long announcementId) {
     Member member = memberService.getMember();
 
@@ -93,16 +94,13 @@ public class AnnouncementService {
         ? request.getTitle() : announcement.getTitle();
     String updatedContent = (request.getContent() != null && !request.getContent().trim().isEmpty())
         ? request.getContent() : announcement.getContent();
-    String updatedImageUrl =
-        (request.getImageUrl() != null && !request.getImageUrl().trim().isEmpty())
-            ? request.getImageUrl() : announcement.getImageUrl();
 
     return Announcement.builder()
         .id(announcement.getId())
         .member(announcement.getMember())
         .title(updatedTitle)
         .content(updatedContent)
-        .imageUrl(updatedImageUrl)
+        .imageUrl(announcement.getImageUrl())
         .createdAt(announcement.getCreatedAt())
         .updatedAt(announcement.getUpdatedAt())
         .build();

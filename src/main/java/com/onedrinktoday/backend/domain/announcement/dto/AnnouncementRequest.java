@@ -19,6 +19,4 @@ public class AnnouncementRequest {
 
   @Size(min = 10, max = 3000)
   private String content;
-
-  private String imageUrl;
 }
