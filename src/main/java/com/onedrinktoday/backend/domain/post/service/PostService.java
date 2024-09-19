@@ -4,6 +4,8 @@ import com.onedrinktoday.backend.domain.autoComplete.AutoCompleteService;
 import com.onedrinktoday.backend.domain.drink.dto.DrinkResponse;
 import com.onedrinktoday.backend.domain.drink.entity.Drink;
 import com.onedrinktoday.backend.domain.drink.repository.DrinkRepository;
+import com.onedrinktoday.backend.domain.postLike.entity.PostLike;
+import com.onedrinktoday.backend.domain.postLike.repository.PostLikeRepository;
 import com.onedrinktoday.backend.domain.search.SearchService;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.repository.MemberRepository;
@@ -37,6 +39,7 @@ public class PostService {
 
   private final PostRepository postRepository;
   private final PostTagRepository postTagRepository;
+  private final PostLikeRepository postLikeRepository;
   private final TagRepository tagRepository;
   private final MemberRepository memberRepository;
   private final DrinkRepository drinkRepository;
@@ -67,6 +70,7 @@ public class PostService {
         .content(postRequest.getContent())
         .rating(postRequest.getRating())
         .viewCount(0)  // 초기 조회수
+        .likeCount(0)  // 초기 좋아요수
         .imageUrl(imageUrl)
         .build();
 
@@ -79,7 +83,7 @@ public class PostService {
     notificationService.tagFollowPostNotification(post.getId(), tags);
     searchService.save(post, tags);
 
-    return PostResponse.of(post, tags);
+    return PostResponse.of(post, tags, false);
   }
 
   // 태그 저장
@@ -122,23 +126,27 @@ public class PostService {
 
     return posts.map(post -> {
       List<Tag> tags = postTagRepository.findTagsByPostId(post.getId());
-      return PostResponse.of(post, tags);
+      return PostResponse.of(post, tags, false);
     });
   }
 
   // 특정 게시글 조회
-  public PostResponse getPostById(Long postId) {
+  @Transactional
+  public PostResponse getPostById(Long postId, boolean isClicked) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글 ID입니다."));
 
-    // viewCount 증가
+    Member member = memberService.getMember();
+    boolean alreadyLiked = postLikeRepository.existsByPostAndMember(post, member);
+
+    // 조회수 증가
     post.setViewCount(post.getViewCount() + 1);
     postRepository.save(post);
 
     // 태그 함께 조회
     List<Tag> tags = postTagRepository.findTagsByPostId(postId);
 
-    PostResponse postResponse = PostResponse.of(post, tags);
+    PostResponse postResponse = PostResponse.of(post, tags, alreadyLiked);
 
     // CacheService에서 Double 타입의 평균 평점 가져오기
     Double averageRating = cacheService.getAverageRating(post.getDrink().getId());
@@ -154,6 +162,47 @@ public class PostService {
     }
 
     return postResponse;
+  }
+
+  // 좋아요 토글 로직
+  @Transactional
+  public void toggleLike(Long postId) {
+    Post post = postRepository.findById(postId)
+        .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글 ID입니다."));
+
+    Member member = memberService.getMember();
+    boolean alreadyLiked = postLikeRepository.existsByPostAndMember(post, member);
+
+    if (alreadyLiked) {
+      // 이미 좋아요 상태라면 좋아요 취소
+      post.setLikeCount(post.getLikeCount() - 1);
+      postLikeRepository.deleteByPostAndMember(post, member);
+    } else {
+      // 좋아요가 눌리지 않은 상태라면 좋아요 추가
+      post.setLikeCount(post.getLikeCount() + 1);
+      PostLike postLike = new PostLike();
+      postLike.setPost(post);
+      postLike.setMember(member);
+      postLikeRepository.save(postLike);
+    }
+
+    postRepository.save(post);
+  }
+
+  @Transactional
+  public void likePost(Long postId, boolean isLiked) {
+    Post post = postRepository.findById(postId)
+        .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글 ID입니다."));
+
+    // 좋아요가 눌린 상태라면 좋아요 취소(좋아요 수 감소)
+    if(isLiked) {
+      post.setLikeCount(post.getLikeCount() - 1);
+    } else {
+      // 좋아요가 눌리지 않은 상태라면 좋아요 추가(좋아요 수 증가)
+      post.setLikeCount(post.getLikeCount() + 1);
+    }
+
+    postRepository.save(post);
   }
 
   // 게시글 삭제
@@ -209,6 +258,6 @@ public class PostService {
     post = postRepository.save(post);
     searchService.save(post, updateTag);
 
-    return PostResponse.of(post, updateTag);
+    return PostResponse.of(post, updateTag, false);
   }
 }

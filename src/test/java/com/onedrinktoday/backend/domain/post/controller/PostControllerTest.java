@@ -88,7 +88,7 @@ public class PostControllerTest {
   @Test
   @DisplayName("게시글 조회 성공 테스트")
   void successGetPostById() throws Exception {
-    given(postService.getPostById(1L)).willReturn(postResponse);
+    given(postService.getPostById(1L, false)).willReturn(postResponse);
 
     mockMvc.perform(get("/api/posts/{postId}", 1L))
         .andExpect(status().isOk())
@@ -101,7 +101,7 @@ public class PostControllerTest {
   @Test
   @DisplayName("게시글 조회 실패 테스트 - 존재하지 않는 게시글")
   void failNotFoundGetPostById() throws Exception {
-    given(postService.getPostById(999L))
+    given(postService.getPostById(999L, false))
         .willThrow(new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
 
     mockMvc.perform(get("/api/posts/{postId}", 999L))
@@ -189,6 +189,26 @@ public class PostControllerTest {
         .when(postService).deletePostById(999L);
 
     mockMvc.perform(delete("/api/posts/{postId}", 999L))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.error").value("해당 게시글을 찾을 수 없습니다."));
+  }
+
+  @Test
+  @DisplayName("게시글 좋아요 성공 테스트")
+  void successLikePost() throws Exception {
+    doNothing().when(postService).likePost(1L, false);
+
+    mockMvc.perform(put("/api/posts/{postId}/like", 1L))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  @DisplayName("게시글 좋아요 실패 테스트 - 존재하지 않는 게시글")
+  void failLikePost() throws Exception {
+    doThrow(new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."))
+        .when(postService).likePost(999L, false);
+
+    mockMvc.perform(put("/api/posts/{postId}/like", 999L))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.error").value("해당 게시글을 찾을 수 없습니다."));
   }

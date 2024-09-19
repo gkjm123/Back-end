@@ -67,6 +67,10 @@ public class Post {
   @Column(name = "view_count", nullable = true)
   private Integer viewCount;
 
+  @Setter
+  @Column(name = "like_count", nullable = true)
+  private Integer likeCount;
+
   @CreationTimestamp
   private LocalDateTime createdAt;
 
