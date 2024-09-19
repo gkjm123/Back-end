@@ -90,13 +90,16 @@ public class AnnouncementServiceTest {
   }
 
   @Test
-  @DisplayName("공지사항 생성 실패 - 사용자 인증 실패, 회원(USER) 불가능")
+  @DisplayName("공지사항 생성 실패 - 사용자 인증 실패")
   void failCreateAnnouncement() {
     //given
     when(memberService.getMember()).thenThrow(new CustomException(ACCESS_DENIED));
 
-    //when, then
-    assertEquals("접근이 거부되었습니다.", ACCESS_DENIED.getMessage());
+    //when
+    CustomException exception = assertThrows(CustomException.class, () -> announcementService.createAnnouncement(new AnnouncementRequest("title", "content", "imageUrl")));
+
+    //then
+    assertEquals(ACCESS_DENIED.getMessage(), exception.getMessage());
   }
 
   @Test

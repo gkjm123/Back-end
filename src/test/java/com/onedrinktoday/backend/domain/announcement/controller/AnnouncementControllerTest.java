@@ -75,7 +75,7 @@ public class AnnouncementControllerTest {
         .willReturn(announcementResponse);
 
     //when, then
-    mockMvc.perform(post("/api/announcement")
+    mockMvc.perform(post("/api/announcements")
             .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(announcementRequest)))
@@ -116,9 +116,11 @@ public class AnnouncementControllerTest {
   @DisplayName("공지사항 전체 조회 성공")
   void successGetAllAnnouncements() throws Exception {
     //given
-    Page<AnnouncementResponse> announcementsPage = new PageImpl<>(Collections.singletonList(announcementResponse),
+    Page<AnnouncementResponse> announcementsPage = new PageImpl<>(
+        Collections.singletonList(announcementResponse),
         PageRequest.of(0, 10, Sort.by("createdAt").descending()), 1);
-    given(announcementService.getAllAnnouncements(PageRequest.of(0, 10, Sort.by("createdAt").descending())))
+    given(announcementService.getAllAnnouncements(
+        PageRequest.of(0, 10, Sort.by("createdAt").descending())))
         .willReturn(announcementsPage);
 
     //when, then
@@ -190,7 +192,7 @@ public class AnnouncementControllerTest {
 
     //when,then
     mockMvc.perform(delete("/api/announcements/{announcementId}", 1L))
-        .andExpect(status().isNoContent());
+        .andExpect(status().isOk());
   }
 
   @Test
