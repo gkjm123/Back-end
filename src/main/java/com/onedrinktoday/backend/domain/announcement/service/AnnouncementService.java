@@ -66,30 +66,7 @@ public class AnnouncementService {
       throw new CustomException(ACCESS_DENIED);
     }
 
-    String updatedTitle =
-        (announcementRequest.getTitle() != null && !announcementRequest.getTitle().trim().isEmpty())
-            ? announcementRequest.getTitle()
-            : announcement.getTitle();
-    String updatedContent =
-        (announcementRequest.getContent() != null && !announcementRequest.getContent().trim()
-            .isEmpty())
-            ? announcementRequest.getContent()
-            : announcement.getContent();
-    String updatedImageUrl =
-        (announcementRequest.getImageUrl() != null && !announcementRequest.getImageUrl().trim()
-            .isEmpty())
-            ? announcementRequest.getImageUrl()
-            : announcement.getImageUrl();
-
-    Announcement updatedAnnouncement = Announcement.builder()
-        .id(announcement.getId())
-        .member(announcement.getMember())
-        .title(updatedTitle)
-        .content(updatedContent)
-        .imageUrl(updatedImageUrl)
-        .createdAt(announcement.getCreatedAt())
-        .updatedAt(announcement.getUpdatedAt())
-        .build();
+    Announcement updatedAnnouncement = updateAnnouncementFields(announcement, announcementRequest);
 
     announcementRepository.save(updatedAnnouncement);
 
@@ -107,5 +84,27 @@ public class AnnouncementService {
     }
 
     announcementRepository.delete(announcement);
+  }
+
+  private Announcement updateAnnouncementFields(Announcement announcement,
+      AnnouncementRequest request) {
+
+    String updatedTitle = (request.getTitle() != null && !request.getTitle().trim().isEmpty())
+        ? request.getTitle() : announcement.getTitle();
+    String updatedContent = (request.getContent() != null && !request.getContent().trim().isEmpty())
+        ? request.getContent() : announcement.getContent();
+    String updatedImageUrl =
+        (request.getImageUrl() != null && !request.getImageUrl().trim().isEmpty())
+            ? request.getImageUrl() : announcement.getImageUrl();
+
+    return Announcement.builder()
+        .id(announcement.getId())
+        .member(announcement.getMember())
+        .title(updatedTitle)
+        .content(updatedContent)
+        .imageUrl(updatedImageUrl)
+        .createdAt(announcement.getCreatedAt())
+        .updatedAt(announcement.getUpdatedAt())
+        .build();
   }
 }
