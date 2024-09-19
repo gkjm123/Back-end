@@ -55,7 +55,8 @@ public class AnnouncementService {
     return AnnouncementResponse.from(announcement);
   }
 
-  public AnnouncementResponse updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest) {
+  public AnnouncementResponse updateAnnouncement(Long announcementId,
+      AnnouncementRequest announcementRequest) {
     Member member = memberService.getMember();
 
     Announcement announcement = announcementRepository.findById(announcementId)
@@ -65,12 +66,27 @@ public class AnnouncementService {
       throw new CustomException(ACCESS_DENIED);
     }
 
+    String updatedTitle =
+        (announcementRequest.getTitle() != null && !announcementRequest.getTitle().trim().isEmpty())
+            ? announcementRequest.getTitle()
+            : announcement.getTitle();
+    String updatedContent =
+        (announcementRequest.getContent() != null && !announcementRequest.getContent().trim()
+            .isEmpty())
+            ? announcementRequest.getContent()
+            : announcement.getContent();
+    String updatedImageUrl =
+        (announcementRequest.getImageUrl() != null && !announcementRequest.getImageUrl().trim()
+            .isEmpty())
+            ? announcementRequest.getImageUrl()
+            : announcement.getImageUrl();
+
     Announcement updatedAnnouncement = Announcement.builder()
         .id(announcement.getId())
         .member(announcement.getMember())
-        .title(announcementRequest.getTitle())
-        .content(announcementRequest.getContent())
-        .imageUrl(announcementRequest.getImageUrl())
+        .title(updatedTitle)
+        .content(updatedContent)
+        .imageUrl(updatedImageUrl)
         .createdAt(announcement.getCreatedAt())
         .updatedAt(announcement.getUpdatedAt())
         .build();
