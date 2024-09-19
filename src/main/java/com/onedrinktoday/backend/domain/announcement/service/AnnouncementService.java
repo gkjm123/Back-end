@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +30,6 @@ public class AnnouncementService {
         .member(member)
         .title(announcementRequest.getTitle())
         .content(announcementRequest.getContent())
-        .imageUrl(announcementRequest.getImageUrl())
         .build();
 
     announcement = announcementRepository.save(announcement);
@@ -44,8 +44,7 @@ public class AnnouncementService {
       return Page.empty(pageable);
     }
 
-    return announcementRepository.findAll(pageable)
-        .map(AnnouncementResponse::from);
+    return announcements.map(AnnouncementResponse::from);
   }
 
   public AnnouncementResponse getAnnouncement(Long announcementId) {
@@ -55,7 +54,9 @@ public class AnnouncementService {
     return AnnouncementResponse.from(announcement);
   }
 
-  public AnnouncementResponse updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest) {
+  @Transactional
+  public AnnouncementResponse updateAnnouncement(Long announcementId,
+      AnnouncementRequest announcementRequest) {
     Member member = memberService.getMember();
 
     Announcement announcement = announcementRepository.findById(announcementId)
@@ -65,21 +66,14 @@ public class AnnouncementService {
       throw new CustomException(ACCESS_DENIED);
     }
 
-    Announcement updatedAnnouncement = Announcement.builder()
-        .id(announcement.getId())
-        .member(announcement.getMember())
-        .title(announcementRequest.getTitle())
-        .content(announcementRequest.getContent())
-        .imageUrl(announcementRequest.getImageUrl())
-        .createdAt(announcement.getCreatedAt())
-        .updatedAt(announcement.getUpdatedAt())
-        .build();
+    Announcement updatedAnnouncement = updateAnnouncementFields(announcement, announcementRequest);
 
     announcementRepository.save(updatedAnnouncement);
 
     return AnnouncementResponse.from(updatedAnnouncement);
   }
 
+  @Transactional
   public void deleteAnnouncement(Long announcementId) {
     Member member = memberService.getMember();
 
@@ -91,5 +85,24 @@ public class AnnouncementService {
     }
 
     announcementRepository.delete(announcement);
+  }
+
+  private Announcement updateAnnouncementFields(Announcement announcement,
+      AnnouncementRequest request) {
+
+    String updatedTitle = (request.getTitle() != null && !request.getTitle().trim().isEmpty())
+        ? request.getTitle() : announcement.getTitle();
+    String updatedContent = (request.getContent() != null && !request.getContent().trim().isEmpty())
+        ? request.getContent() : announcement.getContent();
+
+    return Announcement.builder()
+        .id(announcement.getId())
+        .member(announcement.getMember())
+        .title(updatedTitle)
+        .content(updatedContent)
+        .imageUrl(announcement.getImageUrl())
+        .createdAt(announcement.getCreatedAt())
+        .updatedAt(announcement.getUpdatedAt())
+        .build();
   }
 }

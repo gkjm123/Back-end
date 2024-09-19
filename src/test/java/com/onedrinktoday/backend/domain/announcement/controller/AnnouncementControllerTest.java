@@ -54,7 +54,6 @@ public class AnnouncementControllerTest {
     announcementRequest = new AnnouncementRequest();
     announcementRequest.setTitle("새로운 공지");
     announcementRequest.setContent("공지 내용입니다.");
-    announcementRequest.setImageUrl("http://image");
 
     announcementResponse = AnnouncementResponse.builder()
         .id(1L)
@@ -75,7 +74,7 @@ public class AnnouncementControllerTest {
         .willReturn(announcementResponse);
 
     //when, then
-    mockMvc.perform(post("/api/announcement")
+    mockMvc.perform(post("/api/announcements")
             .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(announcementRequest)))
@@ -116,9 +115,11 @@ public class AnnouncementControllerTest {
   @DisplayName("공지사항 전체 조회 성공")
   void successGetAllAnnouncements() throws Exception {
     //given
-    Page<AnnouncementResponse> announcementsPage = new PageImpl<>(Collections.singletonList(announcementResponse),
+    Page<AnnouncementResponse> announcementsPage = new PageImpl<>(
+        Collections.singletonList(announcementResponse),
         PageRequest.of(0, 10, Sort.by("createdAt").descending()), 1);
-    given(announcementService.getAllAnnouncements(PageRequest.of(0, 10, Sort.by("createdAt").descending())))
+    given(announcementService.getAllAnnouncements(
+        PageRequest.of(0, 10, Sort.by("createdAt").descending())))
         .willReturn(announcementsPage);
 
     //when, then
@@ -136,7 +137,6 @@ public class AnnouncementControllerTest {
     AnnouncementRequest updateRequest = new AnnouncementRequest();
     updateRequest.setTitle("수정된 공지");
     updateRequest.setContent("수정된 내용입니다.");
-    updateRequest.setImageUrl("http://image");
 
     AnnouncementResponse updatedResponse = AnnouncementResponse.builder()
         .id(1L)
@@ -168,7 +168,6 @@ public class AnnouncementControllerTest {
     AnnouncementRequest updateRequest = new AnnouncementRequest();
     updateRequest.setTitle("수정된 공지");
     updateRequest.setContent("수정된 내용입니다.");
-    updateRequest.setImageUrl("http://images");
 
     given(announcementService.updateAnnouncement(eq(1010L), any(AnnouncementRequest.class)))
         .willThrow(new IllegalArgumentException("공지사항을 찾을수 없습니다."));
@@ -190,7 +189,7 @@ public class AnnouncementControllerTest {
 
     //when,then
     mockMvc.perform(delete("/api/announcements/{announcementId}", 1L))
-        .andExpect(status().isNoContent());
+        .andExpect(status().isOk());
   }
 
   @Test
