@@ -56,9 +56,8 @@ public class AnnouncementController {
 
   @PreAuthorize("hasRole('MANAGER')")
   @DeleteMapping("/announcements/{announcementId}")
-  public ResponseEntity<Void> deleteAnnouncement(@PathVariable Long announcementId) {
+  public ResponseEntity<String> deleteAnnouncement(@PathVariable Long announcementId) {
     announcementService.deleteAnnouncement(announcementId);
-    return ResponseEntity.noContent().build();
+    return ResponseEntity.ok("공지사항이 정상적으로 삭제되었습니다.");
   }
-
 }
