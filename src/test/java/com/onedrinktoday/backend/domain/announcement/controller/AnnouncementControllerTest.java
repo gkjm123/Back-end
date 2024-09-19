@@ -54,7 +54,6 @@ public class AnnouncementControllerTest {
     announcementRequest = new AnnouncementRequest();
     announcementRequest.setTitle("새로운 공지");
     announcementRequest.setContent("공지 내용입니다.");
-    announcementRequest.setImageUrl("http://image");
 
     announcementResponse = AnnouncementResponse.builder()
         .id(1L)
@@ -138,7 +137,6 @@ public class AnnouncementControllerTest {
     AnnouncementRequest updateRequest = new AnnouncementRequest();
     updateRequest.setTitle("수정된 공지");
     updateRequest.setContent("수정된 내용입니다.");
-    updateRequest.setImageUrl("http://image");
 
     AnnouncementResponse updatedResponse = AnnouncementResponse.builder()
         .id(1L)
@@ -170,7 +168,6 @@ public class AnnouncementControllerTest {
     AnnouncementRequest updateRequest = new AnnouncementRequest();
     updateRequest.setTitle("수정된 공지");
     updateRequest.setContent("수정된 내용입니다.");
-    updateRequest.setImageUrl("http://images");
 
     given(announcementService.updateAnnouncement(eq(1010L), any(AnnouncementRequest.class)))
         .willThrow(new IllegalArgumentException("공지사항을 찾을수 없습니다."));

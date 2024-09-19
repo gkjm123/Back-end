@@ -61,7 +61,6 @@ public class AnnouncementServiceTest {
     announcementRequest = AnnouncementRequest.builder()
         .title("공지사항 제목")
         .content("공지사항 내용입니다.")
-        .imageUrl("http://image")
         .build();
   }
 
@@ -82,7 +81,6 @@ public class AnnouncementServiceTest {
     Announcement capturedAnnouncement = argumentCaptor.getValue();
     assertEquals(announcementRequest.getTitle(), capturedAnnouncement.getTitle());
     assertEquals(announcementRequest.getContent(), capturedAnnouncement.getContent());
-    assertEquals(announcementRequest.getImageUrl(), capturedAnnouncement.getImageUrl());
     assertEquals(announcement.getId(), response.getId());
     assertEquals(announcement.getTitle(), response.getTitle());
     assertEquals(announcement.getContent(), response.getContent());
@@ -96,7 +94,7 @@ public class AnnouncementServiceTest {
     when(memberService.getMember()).thenThrow(new CustomException(ACCESS_DENIED));
 
     //when
-    CustomException exception = assertThrows(CustomException.class, () -> announcementService.createAnnouncement(new AnnouncementRequest("title", "content", "imageUrl")));
+    CustomException exception = assertThrows(CustomException.class, () -> announcementService.createAnnouncement(new AnnouncementRequest("title", "content")));
 
     //then
     assertEquals(ACCESS_DENIED.getMessage(), exception.getMessage());
@@ -134,12 +132,10 @@ public class AnnouncementServiceTest {
     //given
     String newTitle = "수정된 공지사항 제목";
     String newContent = "수정된 공지사항 내용입니다.";
-    String newImageUrl = "http://image";
 
     AnnouncementRequest updateRequest = AnnouncementRequest.builder()
         .title(newTitle)
         .content(newContent)
-        .imageUrl(newImageUrl)
         .build();
 
     Announcement updatedAnnouncement = Announcement.builder()
@@ -147,7 +143,7 @@ public class AnnouncementServiceTest {
         .member(member)
         .title(newTitle)
         .content(newContent)
-        .imageUrl(newImageUrl)
+        .imageUrl(announcement.getImageUrl())
         .createdAt(announcement.getCreatedAt())
         .updatedAt(LocalDateTime.now())
         .build();
@@ -166,10 +162,10 @@ public class AnnouncementServiceTest {
 
     assertEquals(newTitle, savedAnnouncement.getTitle());
     assertEquals(newContent, savedAnnouncement.getContent());
-    assertEquals(newImageUrl, savedAnnouncement.getImageUrl());
+    assertEquals(announcement.getImageUrl(), savedAnnouncement.getImageUrl());
     assertEquals(newTitle, response.getTitle());
     assertEquals(newContent, response.getContent());
-    assertEquals(newImageUrl, response.getImageUrl());
+    assertEquals(announcement.getImageUrl(), response.getImageUrl());
   }
 
   @Test
