@@ -4,6 +4,7 @@ public enum NotificationType {
   FOLLOW,
   COMMENT,
   DECLARATION,
+  REJECTION,
   REGISTRATION,
   REMOVED
 }
