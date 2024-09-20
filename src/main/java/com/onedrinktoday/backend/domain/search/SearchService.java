@@ -101,7 +101,7 @@ public class SearchService {
     return new PageImpl<>(postResponses, pageable, searchHits.getTotalHits());
   }
 
-  public List<DrinkResponse> searchPostByDrinks(Long regionId, String drinkName) {
+  public List<DrinkResponse> searchDrink(Long regionId, String drinkName) {
     return drinkRepository.findAllByRegion_IdAndNameContaining(regionId, drinkName)
         .stream().map(DrinkResponse::from).toList();
   }
