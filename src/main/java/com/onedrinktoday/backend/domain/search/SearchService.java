@@ -3,6 +3,8 @@ package com.onedrinktoday.backend.domain.search;
 import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
+import com.onedrinktoday.backend.domain.drink.dto.DrinkResponse;
+import com.onedrinktoday.backend.domain.drink.repository.DrinkRepository;
 import com.onedrinktoday.backend.domain.post.dto.PostResponse;
 import com.onedrinktoday.backend.domain.post.entity.Post;
 import com.onedrinktoday.backend.domain.post.repository.PostRepository;
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +34,7 @@ public class SearchService {
   private final ElasticSearchRepository elasticSearchRepository;
   private final PostTagRepository postTagRepository;
   private final PostRepository postRepository;
+  private final DrinkRepository drinkRepository;
 
   public void save(Post post, List<Tag> tagList) {
 
@@ -95,5 +99,10 @@ public class SearchService {
         .toList();
 
     return new PageImpl<>(postResponses, pageable, searchHits.getTotalHits());
+  }
+
+  public List<DrinkResponse> searchPostByDrinks(Long regionId, String drinkName) {
+    return drinkRepository.findAllByRegion_IdAndNameContaining(regionId, drinkName)
+        .stream().map(DrinkResponse::from).toList();
   }
 }

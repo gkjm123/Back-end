@@ -8,5 +8,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DrinkRepository extends JpaRepository<Drink, Long> {
+
   List<Drink> findByRegion(Region region);
+
+  List<Drink> findAllByRegion_IdAndNameContaining(Long regionId, String name);
+
+  List<Drink> findAllByRegion_IdAndNameStartsWith(Long regionId, String name);
 }
