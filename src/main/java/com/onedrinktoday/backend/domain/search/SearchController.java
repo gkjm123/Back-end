@@ -41,11 +41,12 @@ public class SearchController {
   }
 
   @GetMapping("/search/drinks")
-  public ResponseEntity<List<DrinkResponse>> searchDrink(
+  public ResponseEntity<Page<DrinkResponse>> searchDrink(
+      @PageableDefault Pageable pageable,
       @RequestParam Long regionId,
       @RequestParam String drinkName
   ) {
 
-    return ResponseEntity.ok(searchService.searchDrink(regionId, drinkName));
+    return ResponseEntity.ok(searchService.searchDrink(pageable, regionId, drinkName));
   }
 }
