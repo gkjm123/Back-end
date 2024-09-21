@@ -1,10 +1,15 @@
 package com.onedrinktoday.backend.domain.autoComplete;
 
+import com.onedrinktoday.backend.domain.drink.entity.Drink;
+import com.onedrinktoday.backend.domain.drink.repository.DrinkRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class AutoCompleteService {
 
   private final RedisTemplate<String, String> redisTemplate;
+  private final DrinkRepository drinkRepository;
 
   public void saveAutoCompleteTag(String tag) {
 
@@ -60,4 +66,16 @@ public class AutoCompleteService {
         .filter(x -> x.startsWith(drink) && x.endsWith("*"))
         .map(x -> x.substring(0, x.length()-1)).toList();
   }
+
+  @Cacheable(key = "#regionId.toString().concat(':').concat(#name)", value = "drink-complete")
+  public List<String> getAutoCompleteRegionDrink(Long regionId, String name) {
+
+    return drinkRepository.findAllByRegion_IdAndNameStartsWith(regionId, name)
+        .stream().map(Drink::getName).toList();
+  }
+
+  @Scheduled(cron = "0 0 0 * * *")
+  @CacheEvict(value = "drink-complete", allEntries = true)
+  public void clearAutoComplete() {}
+
 }

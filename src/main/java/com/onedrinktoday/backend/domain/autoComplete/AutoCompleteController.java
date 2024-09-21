@@ -25,4 +25,12 @@ public class AutoCompleteController {
     return ResponseEntity.ok(autoCompleteService.getAutoCompleteDrink(name));
   }
 
+  @GetMapping("/auto-complete/region-drink")
+  public ResponseEntity<List<String>> getAutoCompleteRegionDrink(
+      @RequestParam Long regionId,
+      @RequestParam String name
+  ) {
+    return ResponseEntity.ok(autoCompleteService.getAutoCompleteRegionDrink(regionId, name));
+  }
+
 }
