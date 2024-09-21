@@ -9,7 +9,6 @@ import com.onedrinktoday.backend.domain.declaration.repository.DeclarationReposi
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
 import com.onedrinktoday.backend.global.exception.CustomException;
-import com.onedrinktoday.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

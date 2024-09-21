@@ -11,6 +11,7 @@ import com.onedrinktoday.backend.domain.declaration.entity.Declaration;
 import com.onedrinktoday.backend.domain.declaration.repository.DeclarationRepository;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
+import com.onedrinktoday.backend.global.type.DeclarationType;
 import com.onedrinktoday.backend.global.type.Role;
 import java.util.List;
 import java.util.Optional;
@@ -46,7 +47,7 @@ class DeclarationServiceTest {
 
     DeclarationRequest request = DeclarationRequest.builder()
         .link("abc")
-        .type("타입")
+        .type(DeclarationType.OBSCENE)
         .content("내용")
         .build();
 
@@ -58,7 +59,7 @@ class DeclarationServiceTest {
             .id(1L)
             .member(member)
             .link("abc")
-            .type("타입")
+            .type(DeclarationType.OBSCENE)
             .content("내용")
             .approved(true)
             .build()
@@ -86,7 +87,7 @@ class DeclarationServiceTest {
             new PageImpl<>(List.of(Declaration.builder()
                 .member(member)
                 .link("abc")
-                .type("타입")
+                .type(DeclarationType.OBSCENE)
                 .content("내용")
                 .build()), Pageable.ofSize(10), 10)
         );
@@ -110,9 +111,10 @@ class DeclarationServiceTest {
         .build();
 
     Declaration declaration = Declaration.builder()
+        .id(1L)
         .member(member)
         .link("abc")
-        .type("타입")
+        .type(DeclarationType.OBSCENE)
         .content("내용")
         .build();
 
@@ -123,6 +125,6 @@ class DeclarationServiceTest {
     DeclarationResponse response = declarationService.getDeclaration(declaration.getId());
 
     //then
-    assertEquals(response.getType(), "타입");
+    assertEquals(response.getType(), DeclarationType.OBSCENE);
   }
 }

@@ -1,6 +1,7 @@
 package com.onedrinktoday.backend.domain.declaration.dto;
 
 import com.onedrinktoday.backend.domain.declaration.entity.Declaration;
+import com.onedrinktoday.backend.global.type.DeclarationType;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +18,7 @@ public class DeclarationResponse {
   private Long memberId;
   private String memberName;
   private String link;
-  private String type;
+  private DeclarationType type;
   private String content;
   private Boolean approved;
   private LocalDateTime createdAt;

@@ -2,7 +2,7 @@ package com.onedrinktoday.backend.domain.manager.controller;
 
 import com.onedrinktoday.backend.domain.declaration.dto.DeclarationResponse;
 import com.onedrinktoday.backend.domain.drink.dto.DrinkResponse;
-import com.onedrinktoday.backend.domain.manager.dto.cancelDeclarationRequest;
+import com.onedrinktoday.backend.domain.manager.dto.CancelDeclarationRequest;
 import com.onedrinktoday.backend.domain.manager.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +42,7 @@ public class ManagerController {
 
   @PutMapping("/manager/declarations/{declarationId}/cancel")
   public ResponseEntity<DeclarationResponse> cancelDeclaration(@PathVariable Long declarationId,
-      @RequestBody cancelDeclarationRequest cancelDeclarationRequest) {
+      @RequestBody CancelDeclarationRequest cancelDeclarationRequest) {
 
     return ResponseEntity.ok(
         managerService.cancelDeclaration(declarationId, cancelDeclarationRequest));

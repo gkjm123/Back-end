@@ -4,7 +4,7 @@ import static com.onedrinktoday.backend.global.exception.ErrorCode.*;
 import static com.onedrinktoday.backend.global.type.NotificationType.*;
 
 import com.onedrinktoday.backend.domain.declaration.entity.Declaration;
-import com.onedrinktoday.backend.domain.manager.dto.cancelDeclarationRequest;
+import com.onedrinktoday.backend.domain.manager.dto.CancelDeclarationRequest;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
 import com.onedrinktoday.backend.domain.notification.entity.Notification;
@@ -78,21 +78,22 @@ public class NotificationService {
   public void approveDeclarationNotification(Post post, Declaration declaration) {
     createNotification(
         post.getMember(),
-        post.getId(),
+        null,
         NotificationType.REMOVED,
-        "게시글이 신고되어 삭제되었습니다."
+        String.format("%s로 인한 '%s'의 문제로 신고가 접수되어 회원님의 게시글이 삭제 처리되었습니다.", declaration.getType().getMessage(),
+            declaration.getContent())
     );
 
     createNotification(
         declaration.getMember(),
         null,
         NotificationType.DECLARATION,
-        "신고된 게시글이 승인되었습니다."
+        String.format("%s로 인해 신고가 승인되어 게시글이 삭제되었습니다.", declaration.getType().getMessage())
     );
   }
 
   public void cancelDeclarationNotification(Declaration declaration,
-      cancelDeclarationRequest cancelDeclarationRequest) {
+      CancelDeclarationRequest cancelDeclarationRequest) {
     String message = "신고 처리 결과를 확인하세요: " + cancelDeclarationRequest.getType().getMessage();
 
     createNotification(

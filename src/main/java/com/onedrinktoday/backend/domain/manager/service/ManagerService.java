@@ -9,7 +9,7 @@ import com.onedrinktoday.backend.domain.declaration.repository.DeclarationReposi
 import com.onedrinktoday.backend.domain.drink.dto.DrinkResponse;
 import com.onedrinktoday.backend.domain.drink.entity.Drink;
 import com.onedrinktoday.backend.domain.drink.repository.DrinkRepository;
-import com.onedrinktoday.backend.domain.manager.dto.cancelDeclarationRequest;
+import com.onedrinktoday.backend.domain.manager.dto.CancelDeclarationRequest;
 import com.onedrinktoday.backend.domain.notification.service.NotificationService;
 import com.onedrinktoday.backend.domain.post.entity.Post;
 import com.onedrinktoday.backend.domain.post.repository.PostRepository;
@@ -93,7 +93,7 @@ public class ManagerService {
   }
 
   public DeclarationResponse cancelDeclaration(Long declarationId,
-      cancelDeclarationRequest cancelDeclarationRequest) {
+      CancelDeclarationRequest cancelDeclarationRequest) {
 
     Declaration declaration = declarationRepository.findById(declarationId)
         .orElseThrow(() -> new CustomException(DECLARATION_NOT_FOUND));
