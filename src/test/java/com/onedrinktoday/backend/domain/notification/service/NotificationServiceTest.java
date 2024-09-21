@@ -19,6 +19,7 @@ import com.onedrinktoday.backend.domain.tag.entity.Tag;
 import com.onedrinktoday.backend.domain.tagFollow.entity.TagFollow;
 import com.onedrinktoday.backend.domain.tagFollow.repository.TagFollowRepository;
 import com.onedrinktoday.backend.global.exception.CustomException;
+import com.onedrinktoday.backend.global.type.DeclarationType;
 import com.onedrinktoday.backend.global.type.NotificationType;
 import com.onedrinktoday.backend.global.type.CancelDeclarationType;
 import java.util.Arrays;
@@ -82,6 +83,8 @@ public class NotificationServiceTest {
         .member(Member.builder()
             .id(2L)
             .build())
+        .type(DeclarationType.ILLEGAL_INFORMATION)
+        .content("불법 내용")
         .build();
     registration = Registration.builder()
         .id(2L)
@@ -228,23 +231,35 @@ public class NotificationServiceTest {
   @Test
   @DisplayName("게시글 신고 및 신고자에게 알림 생성 성공")
   void successPostDeclarationNotification() {
-    //given
-    //when
+    // given
+    post = Post.builder()
+        .id(null)
+        .member(member)
+        .build();
+
+    declaration = Declaration.builder()
+        .member(Member.builder().id(2L).build())
+        .type(DeclarationType.ILLEGAL_INFORMATION)
+        .content("불법 내용")
+        .build();
+
+    // when
     notificationService.approveDeclarationNotification(post, declaration);
 
     //then
     verify(notificationRepository, times(1)).save(argThat(notification ->
         notification.getMember().equals(post.getMember()) &&
-            notification.getPostId().equals(1L) &&
+            notification.getPostId() == null &&
             notification.getType().equals(NotificationType.REMOVED) &&
-            notification.getContent().equals("게시글이 신고되어 삭제되었습니다.")
+            notification.getContent()
+                .equals("불법, 사기, 위법 행위 관련 사유로 인한 '불법 내용'의 문제로 신고가 접수되어 회원님의 게시글이 삭제 처리되었습니다.")
     ));
 
     verify(notificationRepository, times(1)).save(argThat(notification ->
         notification.getMember().equals(declaration.getMember()) &&
             notification.getPostId() == null &&
             notification.getType().equals(NotificationType.DECLARATION) &&
-            notification.getContent().equals("신고된 게시글이 승인되었습니다.")
+            notification.getContent().equals("불법, 사기, 위법 행위 관련 사유로 인해 신고가 승인되어 게시글이 삭제되었습니다.")
     ));
   }
 
