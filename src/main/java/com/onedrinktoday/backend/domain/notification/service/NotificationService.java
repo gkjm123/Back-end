@@ -4,6 +4,7 @@ import static com.onedrinktoday.backend.global.exception.ErrorCode.*;
 import static com.onedrinktoday.backend.global.type.NotificationType.*;
 
 import com.onedrinktoday.backend.domain.declaration.entity.Declaration;
+import com.onedrinktoday.backend.domain.manager.dto.cancelDeclarationRequest;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
 import com.onedrinktoday.backend.domain.notification.entity.Notification;
@@ -32,6 +33,7 @@ public class NotificationService {
   private final PostRepository postRepository;
   private final TagFollowRepository tagFollowRepository;
 
+  @Async
   public void createNotification(Member member, Long postId, NotificationType type,
       String content) {
     Notification notification = Notification.builder()
@@ -58,7 +60,6 @@ public class NotificationService {
     createNotification(post.getMember(), postId, COMMENT, content);
   }
 
-  @Async
   public void tagFollowPostNotification(Long postId, List<Tag> tags) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
@@ -74,7 +75,7 @@ public class NotificationService {
     }
   }
 
-  public void postDeclarationNotification(Post post, Declaration declaration) {
+  public void approveDeclarationNotification(Post post, Declaration declaration) {
     createNotification(
         post.getMember(),
         post.getId(),
@@ -87,6 +88,18 @@ public class NotificationService {
         null,
         NotificationType.DECLARATION,
         "신고된 게시글이 승인되었습니다."
+    );
+  }
+
+  public void cancelDeclarationNotification(Declaration declaration,
+      cancelDeclarationRequest cancelDeclarationRequest) {
+    String message = "신고 처리 결과를 확인하세요: " + cancelDeclarationRequest.getType().getMessage();
+
+    createNotification(
+        declaration.getMember(),
+        declaration.getId(),
+        NotificationType.REJECTION,
+        message
     );
   }
 

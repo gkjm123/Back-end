@@ -9,6 +9,7 @@ import com.onedrinktoday.backend.domain.declaration.repository.DeclarationReposi
 import com.onedrinktoday.backend.domain.drink.dto.DrinkResponse;
 import com.onedrinktoday.backend.domain.drink.entity.Drink;
 import com.onedrinktoday.backend.domain.drink.repository.DrinkRepository;
+import com.onedrinktoday.backend.domain.manager.dto.cancelDeclarationRequest;
 import com.onedrinktoday.backend.domain.notification.service.NotificationService;
 import com.onedrinktoday.backend.domain.post.entity.Post;
 import com.onedrinktoday.backend.domain.post.repository.PostRepository;
@@ -84,17 +85,20 @@ public class ManagerService {
     Post post = postRepository.findById(postIdFromLink(declaration.getLink()))
         .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
 
-    notificationService.postDeclarationNotification(post, declaration);
+    notificationService.approveDeclarationNotification(post, declaration);
 
     declaration.setApproved(true);
 
     return DeclarationResponse.from(declarationRepository.save(declaration));
   }
 
-  public DeclarationResponse cancelDeclaration(Long declarationId) {
+  public DeclarationResponse cancelDeclaration(Long declarationId,
+      cancelDeclarationRequest cancelDeclarationRequest) {
 
     Declaration declaration = declarationRepository.findById(declarationId)
         .orElseThrow(() -> new CustomException(DECLARATION_NOT_FOUND));
+
+    notificationService.cancelDeclarationNotification(declaration, cancelDeclarationRequest);
 
     declaration.setApproved(false);
 
