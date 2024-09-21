@@ -67,7 +67,7 @@ public class AutoCompleteService {
         .map(x -> x.substring(0, x.length()-1)).toList();
   }
 
-  @Cacheable(key = "#regionId+#name", value = "drink-complete")
+  @Cacheable(key = "#regionId.toString().concat(':').concat(#name)", value = "drink-complete")
   public List<String> getAutoCompleteRegionDrink(Long regionId, String name) {
 
     return drinkRepository.findAllByRegion_IdAndNameStartsWith(regionId, name)
