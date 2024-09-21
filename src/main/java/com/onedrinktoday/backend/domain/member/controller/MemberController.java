@@ -5,6 +5,7 @@ import com.onedrinktoday.backend.domain.member.dto.MemberRequest;
 import com.onedrinktoday.backend.domain.member.dto.MemberResponse;
 import com.onedrinktoday.backend.domain.member.dto.PasswordResetDTO;
 import com.onedrinktoday.backend.domain.member.dto.PasswordResetRequest;
+import com.onedrinktoday.backend.domain.member.dto.UpdateProfileRequest;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
 import com.onedrinktoday.backend.global.security.JwtProvider;
 import com.onedrinktoday.backend.global.security.TokenDto;
@@ -101,8 +102,10 @@ public class MemberController {
   }
 
   @PutMapping("/members/profile")
-  public ResponseEntity<MemberResponse> updateMemberProfile(@RequestParam String url) {
-    return ResponseEntity.ok(memberService.updateMemberProfile(url));
+  public ResponseEntity<MemberResponse> updateMemberProfile(
+      @RequestBody UpdateProfileRequest request
+  ) {
+    return ResponseEntity.ok(memberService.updateMemberProfile(request.getUrl()));
   }
 
   @DeleteMapping("/members")
