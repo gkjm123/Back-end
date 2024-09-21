@@ -80,15 +80,15 @@ public class NotificationService {
         post.getMember(),
         null,
         NotificationType.REMOVED,
-        String.format("%s로 인해 신고가 승인되어 회원님의 게시글이 삭제되었습니다.", declaration.getType().getMessage())
+        String.format("%s로 인한 '%s'의 문제로 신고가 접수되어 회원님의 게시글이 삭제 처리되었습니다.", declaration.getType().getMessage(),
+            declaration.getContent())
     );
 
     createNotification(
         declaration.getMember(),
         null,
         NotificationType.DECLARATION,
-        String.format("%s로 인한 '%s'의 문제로 신고가 접수되어 삭제 처리되었습니다.", declaration.getType().getMessage(),
-            declaration.getContent())
+        String.format("%s로 인해 신고가 승인되어 게시글이 삭제되었습니다.", declaration.getType().getMessage())
     );
   }
 
