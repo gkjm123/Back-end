@@ -212,4 +212,10 @@ public class MemberService {
       registrationRepository.saveAll(registrations);
     }
   }
+
+  public MemberResponse updateMemberProfile(String url) {
+    Member member = getMember();
+    member.setImageUrl(url);
+    return MemberResponse.from(memberRepository.save(member));
+  }
 }

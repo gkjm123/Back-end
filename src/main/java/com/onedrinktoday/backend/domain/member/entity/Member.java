@@ -67,6 +67,7 @@ public class Member {
   @Setter
   private boolean alarmEnabled;
 
+  @Setter
   private String imageUrl;
 
   @CreationTimestamp
