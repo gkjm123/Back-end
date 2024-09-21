@@ -3,6 +3,7 @@ package com.onedrinktoday.backend.domain.registration.controller;
 import com.onedrinktoday.backend.domain.registration.dto.RegistrationRequest;
 import com.onedrinktoday.backend.domain.registration.dto.RegistrationResponse;
 import com.onedrinktoday.backend.domain.registration.service.RegistrationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +26,7 @@ public class RegistrationController {
 
   @PostMapping("/drinks/registrations")
   public ResponseEntity<RegistrationResponse> register(
-      @RequestBody RegistrationRequest registrationRequest
+      @Valid @RequestBody RegistrationRequest registrationRequest
   ) {
     return ResponseEntity.ok(registrationService.register(registrationRequest));
   }

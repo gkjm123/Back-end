@@ -28,6 +28,7 @@ public enum ErrorCode {
   INVALID_REFRESH_TOKEN("리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST),
   ACCESS_DENIED("접근이 거부되었습니다.", HttpStatus.FORBIDDEN),
   ANNOUNCEMENT_NOT_FOUND("공지사항을 찾을수 없습니다.", HttpStatus.NOT_FOUND),
+  IMAGE_UPLOAD_FAIL("사진 업로드 실패", HttpStatus.BAD_REQUEST),
   LINK_NOT_FOUND("링크를 찾을 수가 없습니다.", HttpStatus.NOT_FOUND);
 
   private final String message;

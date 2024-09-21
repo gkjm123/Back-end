@@ -1,6 +1,7 @@
 package com.onedrinktoday.backend.domain.registration.dto;
 
 import com.onedrinktoday.backend.global.type.DrinkType;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,4 +23,6 @@ public class RegistrationRequest {
   private Integer cost;
   @Size(min = 10, max = 500)
   private String description;
+  @NotBlank(message = "특산주 이미지를 업로드해주세요")
+  private String imageUrl;
 }

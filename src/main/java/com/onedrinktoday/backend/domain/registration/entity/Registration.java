@@ -58,6 +58,7 @@ public class Registration {
         .sweetness(request.getSweetness())
         .cost(request.getCost())
         .description(request.getDescription())
+        .imageUrl(request.getImageUrl())
         .build();
   }
 }
