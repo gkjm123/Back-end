@@ -1,6 +1,6 @@
 package com.onedrinktoday.backend.domain.manager.dto;
 
-import com.onedrinktoday.backend.global.type.cancelDeclarationType;
+import com.onedrinktoday.backend.global.type.CancelDeclarationType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class cancelDeclarationRequest {
+public class CancelDeclarationRequest {
 
-  private cancelDeclarationType type;
+  private CancelDeclarationType type;
 }

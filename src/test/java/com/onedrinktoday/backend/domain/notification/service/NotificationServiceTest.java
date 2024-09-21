@@ -7,7 +7,7 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.onedrinktoday.backend.domain.declaration.entity.Declaration;
-import com.onedrinktoday.backend.domain.manager.dto.cancelDeclarationRequest;
+import com.onedrinktoday.backend.domain.manager.dto.CancelDeclarationRequest;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
 import com.onedrinktoday.backend.domain.notification.entity.Notification;
@@ -20,7 +20,7 @@ import com.onedrinktoday.backend.domain.tagFollow.entity.TagFollow;
 import com.onedrinktoday.backend.domain.tagFollow.repository.TagFollowRepository;
 import com.onedrinktoday.backend.global.exception.CustomException;
 import com.onedrinktoday.backend.global.type.NotificationType;
-import com.onedrinktoday.backend.global.type.cancelDeclarationType;
+import com.onedrinktoday.backend.global.type.CancelDeclarationType;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -252,9 +252,9 @@ public class NotificationServiceTest {
   @DisplayName("신고 반려 알림 생성 성공")
   void successCancelDeclarationNotification() {
     //given
-    String message = "신고 처리 결과를 확인하세요: " + cancelDeclarationType.POST_DELETED_BY_USER.getMessage();
-    cancelDeclarationRequest request = cancelDeclarationRequest.builder()
-        .type(cancelDeclarationType.POST_DELETED_BY_USER)
+    String message = "신고 처리 결과를 확인하세요: " + CancelDeclarationType.POST_DELETED_BY_USER.getMessage();
+    CancelDeclarationRequest request = CancelDeclarationRequest.builder()
+        .type(CancelDeclarationType.POST_DELETED_BY_USER)
         .build();
 
     declaration = Declaration.builder()

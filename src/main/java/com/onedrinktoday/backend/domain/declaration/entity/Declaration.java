@@ -2,6 +2,7 @@ package com.onedrinktoday.backend.domain.declaration.entity;
 
 import com.onedrinktoday.backend.domain.declaration.dto.DeclarationRequest;
 import com.onedrinktoday.backend.domain.member.entity.Member;
+import com.onedrinktoday.backend.global.type.DeclarationType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,7 +32,7 @@ public class Declaration {
   private Member member;
 
   private String link;
-  private String type;
+  private DeclarationType type;
   private String content;
 
   @Setter
