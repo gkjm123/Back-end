@@ -3,8 +3,8 @@ package com.onedrinktoday.backend.domain.comment.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -223,17 +223,13 @@ public class CommentServiceTest {
         .anonymous(isAnonymous)
         .build();
 
-    Comment updatedComment = Comment.builder()
-        .id(comment.getId())
-        .member(member)
-        .post(post)
-        .content(newContent)
-        .anonymous(isAnonymous)
-        .build();
-
     when(memberService.getMember()).thenReturn(member);
     when(commentRepository.findById(comment.getId())).thenReturn(Optional.of(comment));
-    when(commentRepository.save(any(Comment.class))).thenReturn(updatedComment);
+
+    comment.setContent(newContent);
+    comment.setAnonymous(isAnonymous);
+
+    when(commentRepository.save(eq(comment))).thenReturn(comment);
 
     //when
     CommentResponse response = commentService.updateComment(comment.getId(), commentRequest);
