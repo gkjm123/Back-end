@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.onedrinktoday.backend.domain.comment.dto.CommentRequest;
@@ -12,6 +14,7 @@ import com.onedrinktoday.backend.domain.comment.entity.Comment;
 import com.onedrinktoday.backend.domain.comment.repository.CommentRepository;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
+import com.onedrinktoday.backend.domain.notification.service.NotificationService;
 import com.onedrinktoday.backend.domain.post.entity.Post;
 import com.onedrinktoday.backend.domain.post.repository.PostRepository;
 import com.onedrinktoday.backend.global.exception.CustomException;
@@ -44,6 +47,9 @@ public class CommentServiceTest {
   @Mock
   private PostRepository postRepository;
 
+  @Mock
+  private NotificationService notificationService;
+
   private CommentRequest commentRequest;
   private Comment comment;
   private Member member;
@@ -58,18 +64,19 @@ public class CommentServiceTest {
 
     post = Post.builder().
         id(1L)
+        .member(member)
+        .build();
+
+    commentRequest = CommentRequest.builder()
+        .postId(1L)
+        .content("맛있어 보이네요")
+        .anonymous(true)
         .build();
 
     comment = Comment.builder()
         .id(1L)
         .member(member)
         .post(post)
-        .content("맛있어 보이네요")
-        .anonymous(true)
-        .build();
-
-    commentRequest = CommentRequest.builder()
-        .postId(post.getId())
         .content("맛있어 보이네요")
         .anonymous(true)
         .build();
@@ -81,15 +88,26 @@ public class CommentServiceTest {
     //given
     when(memberService.getMember()).thenReturn(member);
     when(postRepository.findById(commentRequest.getPostId())).thenReturn(Optional.of(post));
-    when(commentRepository.save(any(Comment.class))).thenReturn(comment);
 
-    //when
+    when(commentRepository.save(argThat(comment ->
+        comment.getMember().equals(member) &&
+            comment.getPost().equals(post) &&
+            comment.getContent().equals(commentRequest.getContent()) &&
+            comment.isAnonymous() == commentRequest.isAnonymous()
+    ))).thenReturn(comment);
+
+    // when
     CommentResponse response = commentService.createComment(commentRequest);
 
-    //then
+    // then
     assertEquals(comment.getPost().getId(), response.getPostId());
     assertEquals(comment.getContent(), response.getContent());
     assertEquals(comment.isAnonymous(), response.isAnonymous());
+
+    if (!post.getMember().getId().equals(member.getId())) {
+      verify(notificationService).postCommentNotification(post.getId(), member.getName(),
+          commentRequest.isAnonymous());
+    }
   }
 
   @Test
