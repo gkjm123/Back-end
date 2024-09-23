@@ -1,8 +1,7 @@
 package com.onedrinktoday.backend.domain.registration.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 import com.onedrinktoday.backend.domain.member.entity.Member;
@@ -17,6 +16,7 @@ import com.onedrinktoday.backend.global.type.Role;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -55,15 +55,18 @@ class RegistrationServiceTest {
     RegistrationRequest request = RegistrationRequest.builder()
         .drinkName("특산주")
         .description("특산주 입니다.")
+        .regionId(1L)
         .build();
 
     given(memberService.getMember())
         .willReturn(member);
 
-    given(regionRepository.findById(anyLong()))
+    given(regionRepository.findById(eq(1L)))
         .willReturn(Optional.of(region));
 
-    given(registrationRepository.save(any(Registration.class)))
+    ArgumentCaptor<Registration> registrationCaptor = ArgumentCaptor.forClass(Registration.class);
+
+    given(registrationRepository.save(registrationCaptor.capture()))
         .willReturn(Registration.builder()
             .id(1L)
             .member(member)
@@ -78,7 +81,6 @@ class RegistrationServiceTest {
 
     //then
     assertEquals(response.getDrinkName(), "특산주");
-
-
+    assertEquals(registrationCaptor.getValue().getDrinkName(), "특산주");
   }
 }
