@@ -12,6 +12,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,9 +27,17 @@ public class SuggestController {
   private final SuggestTagService suggestTagService;
   private final SuggestDrinkService suggestDrinkService;
 
+  // 사용자 위치 기반 가장 가까운 지역 특산주 추천
   @GetMapping("/suggest/drink")
-  public ResponseEntity<DrinkResponse> suggestDrink(@RequestParam Float lat, @RequestParam Float lon) {
-    DrinkResponse suggestDrink = suggestService.suggestDrinkByLocation(lat, lon);
+  public ResponseEntity<DrinkResponse> suggestDrink(@RequestHeader("memberId") Long memberId, @RequestParam Float lat, @RequestParam Float lon) {
+    DrinkResponse suggestDrink = suggestService.suggestDrinkByLocation(memberId, lat, lon);
+    return ResponseEntity.ok(suggestDrink);
+  }
+
+  // 재접속시 기존 사용자의 저장된 지역 특산주 추천
+  @GetMapping("/suggest/drink/current")
+  public ResponseEntity<DrinkResponse> suggestDrinkForCurrent(@RequestHeader("memberId") Long memberId) {
+    DrinkResponse suggestDrink = suggestService.suggestDrinkByCurrentRegion(memberId);
     return ResponseEntity.ok(suggestDrink);
   }
 
