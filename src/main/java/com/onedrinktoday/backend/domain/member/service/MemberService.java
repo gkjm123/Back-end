@@ -1,5 +1,7 @@
 package com.onedrinktoday.backend.domain.member.service;
 
+import static org.apache.logging.log4j.util.Strings.isNotEmpty;
+
 import com.onedrinktoday.backend.domain.comment.entity.Comment;
 import com.onedrinktoday.backend.domain.comment.repository.CommentRepository;
 import com.onedrinktoday.backend.domain.member.dto.MemberRequest.SignIn;
@@ -118,11 +120,19 @@ public class MemberService {
   }
 
   public MemberResponse updateMemberInfo(UpdateInfo updateInfo) {
-
     Member member = getMember();
-    member.setName(updateInfo.getName());
-    member.setFavorDrinkType(updateInfo.getFavorDrinkType());
-    member.setAlarmEnabled(updateInfo.isAlarmEnabled());
+
+    if (isNotEmpty(updateInfo.getName())) {
+      member.setName(updateInfo.getName());
+    }
+
+    if (updateInfo.getFavorDrinkType() != null && !updateInfo.getFavorDrinkType().isEmpty()) {
+      member.setFavorDrinkType(updateInfo.getFavorDrinkType());
+    }
+
+    if (updateInfo.getAlarmEnabled() != null) {
+      member.setAlarmEnabled(updateInfo.getAlarmEnabled());
+    }
 
     return MemberResponse.from(memberRepository.save(member));
   }
