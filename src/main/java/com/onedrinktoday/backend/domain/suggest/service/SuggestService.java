@@ -3,6 +3,8 @@ package com.onedrinktoday.backend.domain.suggest.service;
 import com.onedrinktoday.backend.domain.drink.dto.DrinkResponse;
 import com.onedrinktoday.backend.domain.drink.entity.Drink;
 import com.onedrinktoday.backend.domain.drink.repository.DrinkRepository;
+import com.onedrinktoday.backend.domain.member.entity.Member;
+import com.onedrinktoday.backend.domain.member.repository.MemberRepository;
 import com.onedrinktoday.backend.domain.region.entity.Region;
 import com.onedrinktoday.backend.domain.region.repository.RegionRepository;
 import java.util.List;
@@ -15,11 +17,19 @@ import org.springframework.stereotype.Service;
 public class SuggestService {
   private final RegionRepository regionRepository;
   private final DrinkRepository drinkRepository;
+  private final MemberRepository memberRepository;
 
   // 사용자 위치 기준 가장 가까운 지역 찾기
-  public DrinkResponse suggestDrinkByLocation(Float latitude, Float longitude) {
+  public DrinkResponse suggestDrinkByLocation(Long memberId, Float latitude, Float longitude) {
+    Member member = memberRepository.findById(memberId)
+        .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
     List<Region> allregions = regionRepository.findAll();
     Region closestRegion = findClosestRegion(allregions, latitude, longitude);
+
+    // 사용자 거주지값 갱신
+    member.setRegion(closestRegion);
+    memberRepository.save(member);
 
     // 해당 지역 특산주 리스트 가져와서 랜덤으로 하나 추천
     List<Drink> drinkInRegion = drinkRepository.findByRegion(closestRegion);
@@ -33,7 +43,7 @@ public class SuggestService {
           double dist2 = calculateDistance(lat, lon, r2.getLatitude(), r2.getLongitude());
           return Double.compare(dist1, dist2);
         })
-        .orElseThrow(() -> new RuntimeException("No regions found."));
+        .orElseThrow(() -> new RuntimeException("가장 가까운 지역을 찾을 수 없습니다."));
   }
 
   // Haversine 공식: 두 지점 사이의 거리를 계산
@@ -48,8 +58,23 @@ public class SuggestService {
     return R * c; // 거리 (단위 : km)
 }
 
+  // 랜덤 특산주 추천
   private Drink getRandomDrink(List<Drink> drinks) {
     Random random = new Random();
     return drinks.get(random.nextInt(drinks.size()));
+  }
+
+  // 사용자 기존 지역으로 특산주 추천
+  public DrinkResponse suggestDrinkByCurrentRegion(Long memberId) {
+    Member member = memberRepository.findById(memberId)
+        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+    Region currentRegion = member.getRegion();
+    if(currentRegion == null) {
+      throw new RuntimeException("사용자의 거주지 정보가 없습니다.");
+    }
+
+    List<Drink> drinksInRegion = drinkRepository.findByRegion(currentRegion);
+    return drinksInRegion.isEmpty() ? null : DrinkResponse.from(getRandomDrink(drinksInRegion));
   }
 }
