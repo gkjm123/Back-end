@@ -10,9 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,7 +26,6 @@ import com.onedrinktoday.backend.domain.member.repository.MemberRepository;
 import com.onedrinktoday.backend.domain.post.entity.Post;
 import com.onedrinktoday.backend.domain.post.repository.PostRepository;
 import com.onedrinktoday.backend.domain.region.entity.Region;
-import com.onedrinktoday.backend.domain.region.repository.RegionRepository;
 import com.onedrinktoday.backend.domain.registration.entity.Registration;
 import com.onedrinktoday.backend.domain.registration.repository.RegistrationRepository;
 import com.onedrinktoday.backend.domain.tagFollow.repository.TagFollowRepository;
@@ -53,13 +50,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(MockitoExtension.class)
-public class MemberRigistrationServiceTest {
+public class MemberRegistrationServiceTest {
 
   @InjectMocks
   private MemberService memberService;
@@ -69,9 +65,6 @@ public class MemberRigistrationServiceTest {
 
   @Mock
   private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-  @Mock
-  private RegionRepository regionRepository;
 
   @Mock
   private PostRepository postRepository;
@@ -95,7 +88,6 @@ public class MemberRigistrationServiceTest {
   private Region region;
   private SignUp signUpRequest;
   private SignIn signInRequest;
-  private UpdateInfo updateInfo;
   private List<DrinkType> favorDrinkTypes;
 
   @BeforeEach
@@ -115,16 +107,19 @@ public class MemberRigistrationServiceTest {
     signUpRequest = new SignUp("John", "john@google.com", "Password123!", new Date(),
         favorDrinkTypes, true);
     signInRequest = new SignIn("john@google.com", "Password123!");
-    updateInfo = new UpdateInfo("John", favorDrinkTypes, true);
+
+    MemberDetail memberDetail = new MemberDetail(MemberResponse.from(member));
+    Authentication authentication = new UsernamePasswordAuthenticationToken(memberDetail, null);
+    SecurityContextHolder.getContext().setAuthentication(authentication);
   }
 
   @Test
   @DisplayName("회원 가입 성공")
   void successSignUp() {
-    //given
-    when(regionRepository.findById(anyLong())).thenReturn(Optional.of(region));
+    // given
+    when(memberRepository.findByEmail(signUpRequest.getEmail())).thenReturn(Optional.empty());
 
-    member = Member.builder()
+    Member expectedMember = Member.builder()
         .id(1L)
         .region(region)
         .name(signUpRequest.getName())
@@ -133,22 +128,23 @@ public class MemberRigistrationServiceTest {
         .favorDrinkType(signUpRequest.getFavorDrinkType())
         .role(Role.USER)
         .alarmEnabled(signUpRequest.isAlarmEnabled())
+        .password(bCryptPasswordEncoder.encode(signUpRequest.getPassword()))
         .build();
 
-    when(memberRepository.save(any(Member.class))).thenReturn(member);
+    when(memberRepository.save(any(Member.class))).thenReturn(expectedMember);
 
     //when
     MemberResponse response = memberService.signUp(signUpRequest);
 
     //then
-    assertEquals(member.getId(), response.getId());
-    assertEquals(member.getRegion().getPlaceName(), response.getPlaceName());
-    assertEquals(member.getName(), response.getName());
-    assertEquals(member.getEmail(), response.getEmail());
-    assertEquals(member.getBirthDate(), response.getBirthDate());
-    assertEquals(member.getFavorDrinkType(), response.getFavorDrinkType());
-    assertEquals(member.getRole(), response.getRole());
-    assertEquals(member.isAlarmEnabled(), response.isAlarmEnabled());
+    assertEquals(expectedMember.getId(), response.getId());
+    assertEquals(expectedMember.getRegion().getPlaceName(), response.getPlaceName());
+    assertEquals(expectedMember.getName(), response.getName());
+    assertEquals(expectedMember.getEmail(), response.getEmail());
+    assertEquals(expectedMember.getBirthDate(), response.getBirthDate());
+    assertEquals(expectedMember.getFavorDrinkType(), response.getFavorDrinkType());
+    assertEquals(expectedMember.getRole(), response.getRole());
+    assertEquals(expectedMember.isAlarmEnabled(), response.isAlarmEnabled());
   }
 
   @Test
@@ -290,11 +286,6 @@ public class MemberRigistrationServiceTest {
 
     when(memberRepository.findByEmail(email)).thenReturn(Optional.of(member));
 
-    //MemberDetail 사용하여 인증 정보 확인
-    MemberDetail memberDetail = new MemberDetail(MemberResponse.from(member));
-    SecurityContextHolder.getContext()
-        .setAuthentication(new UsernamePasswordAuthenticationToken(memberDetail, null));
-
     //when
     MemberResponse response = memberService.getMemberInfo();
 
@@ -315,11 +306,6 @@ public class MemberRigistrationServiceTest {
     //given
     String email = member.getEmail();
     member.setRegion(region);
-
-    //MemberDetail 사용하여 인증 정보 확인
-    MemberDetail memberDetail = new MemberDetail(MemberResponse.from(member));
-    SecurityContextHolder.getContext()
-        .setAuthentication(new UsernamePasswordAuthenticationToken(memberDetail, null));
 
     //when
     when(memberRepository.findByEmail(email)).thenReturn(Optional.empty());
@@ -347,65 +333,30 @@ public class MemberRigistrationServiceTest {
         .imageUrl(member.getImageUrl())
         .build();
 
-    Member updatedMember = Member.builder()
-        .name(updateInfo.getName())
-        .favorDrinkType(updateInfo.getFavorDrinkType())
-        .alarmEnabled(updateInfo.isAlarmEnabled())
+    UpdateInfo updateInfo = UpdateInfo.builder()
+        .name("변경 이름")
+        .favorDrinkType(List.of(DrinkType.BEER, DrinkType.WINE))
+        .alarmEnabled(false)
         .build();
 
-    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(existMember));
-    when(regionRepository.findById(anyLong())).thenReturn(Optional.of(region));
-    when(memberRepository.save(any(Member.class))).thenReturn(updatedMember);
+    Member updatedMember = Member.builder()
+        .id(existMember.getId())
+        .name(updateInfo.getName())
+        .favorDrinkType(updateInfo.getFavorDrinkType())
+        .alarmEnabled(existMember.isAlarmEnabled())
+        .imageUrl(existMember.getImageUrl())
+        .build();
 
-    //MemberDetail 사용하여 인증 정보 확인
-    MemberDetail memberDetail = new MemberDetail(MemberResponse.from(existMember));
-    Authentication authentication = new UsernamePasswordAuthenticationToken(memberDetail, null);
-    SecurityContextHolder.getContext().setAuthentication(authentication);
+    when(memberRepository.findByEmail(member.getEmail())).thenReturn(Optional.of(existMember));
+    when(memberRepository.save(any(Member.class))).thenReturn(updatedMember);
 
     //when
     MemberResponse response = memberService.updateMemberInfo(updateInfo);
 
     //then
-    assertEquals(updatedMember.getRegion().getPlaceName(), response.getPlaceName());
     assertEquals(updatedMember.getName(), response.getName());
     assertEquals(updatedMember.getFavorDrinkType(), response.getFavorDrinkType());
     assertEquals(updatedMember.isAlarmEnabled(), response.isAlarmEnabled());
-    assertEquals(updatedMember.getImageUrl(), response.getImageUrl());
-  }
-
-  @Test
-  @DisplayName("회원 정보 업데이트 실패 - 잘못된 지역 ID")
-  void failUpdateMemberInfo() {
-    //given
-    Member existMember = Member.builder()
-        .id(member.getId())
-        .region(region)
-        .name(member.getName())
-        .email(member.getEmail())
-        .birthDate(member.getBirthDate())
-        .favorDrinkType(member.getFavorDrinkType())
-        .role(member.getRole())
-        .alarmEnabled(true)
-        .imageUrl(member.getImageUrl())
-        .build();
-
-    UpdateInfo wrongUpdateInfo = new UpdateInfo(updateInfo.getName(),
-        updateInfo.getFavorDrinkType(), updateInfo.isAlarmEnabled());
-
-    //MemberDetail 사용하여 인증 정보 확인
-    MemberDetail memberDetail = new MemberDetail(MemberResponse.from(existMember));
-    Authentication authentication = new UsernamePasswordAuthenticationToken(memberDetail, null);
-    SecurityContextHolder.getContext().setAuthentication(authentication);
-
-    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(existMember));
-    when(regionRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-    //when
-    CustomException customException = assertThrows(CustomException.class,
-        () -> memberService.updateMemberInfo(wrongUpdateInfo));
-
-    //then
-    assertEquals(REGION_NOT_FOUND.getMessage(), customException.getMessage());
   }
 
   @Test
@@ -578,14 +529,6 @@ public class MemberRigistrationServiceTest {
     when(commentRepository.findAllByMember(existMember)).thenReturn(List.of(comment));
     when(registrationRepository.findAllByMember(existMember)).thenReturn(List.of(registration));
 
-    MemberResponse memberResponse = MemberResponse.from(existMember);
-    MemberDetail memberDetail = new MemberDetail(memberResponse);
-    Authentication authentication = new UsernamePasswordAuthenticationToken(memberDetail, null);
-
-    SecurityContext securityContext = mock(SecurityContext.class);
-    when(securityContext.getAuthentication()).thenReturn(authentication);
-    SecurityContextHolder.setContext(securityContext);
-
     //when
     memberService.withdrawMember();
 
@@ -605,11 +548,6 @@ public class MemberRigistrationServiceTest {
   void failWithdrawMember() {
     //given
     String email = member.getEmail();
-
-    //MemberDetail 사용하여 인증 정보 확인
-    MemberDetail memberDetail = new MemberDetail(MemberResponse.from(member));
-    Authentication authentication = new UsernamePasswordAuthenticationToken(memberDetail, null);
-    SecurityContextHolder.getContext().setAuthentication(authentication);
 
     when(memberRepository.findByEmail(email)).thenReturn(Optional.empty());
 

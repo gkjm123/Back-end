@@ -120,7 +120,8 @@ public class MemberRegistrationControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value(memberResponse.getName()))
         .andExpect(jsonPath("$.email").value(memberResponse.getEmail()))
-        .andExpect(jsonPath("$.favorDrinkType[0]").value(memberResponse.getFavorDrinkType().get(0).toString()))
+        .andExpect(jsonPath("$.favorDrinkType[0]").value(
+            memberResponse.getFavorDrinkType().get(0).toString()))
         .andExpect(jsonPath("$.role").value(memberResponse.getRole().toString()))
         .andExpect(jsonPath("$.alarmEnabled").value(memberResponse.isAlarmEnabled()))
         .andDo(print());
@@ -131,9 +132,9 @@ public class MemberRegistrationControllerTest {
   public void failSignUp() throws Exception {
     //given
     MemberRequest.SignUp invalidRequest = MemberRequest.SignUp.builder()
-        .name(null)
-        .email(null)
-        .password(null)
+        .name("")
+        .email("")
+        .password("")
         .birthDate(null)
         .favorDrinkType(List.of(DrinkType.SOJU, DrinkType.DISTILLED_SPIRITS))
         .alarmEnabled(true)
@@ -412,7 +413,8 @@ public class MemberRegistrationControllerTest {
             .content(new ObjectMapper().writeValueAsString(updateInfo)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value(updateInfo.getName()))
-        .andExpect(jsonPath("$.favorDrinkType[0]").value(updateInfo.getFavorDrinkType().get(0).toString()))
+        .andExpect(
+            jsonPath("$.favorDrinkType[0]").value(updateInfo.getFavorDrinkType().get(0).toString()))
         .andExpect(jsonPath("$.alarmEnabled").value(updateInfo.isAlarmEnabled()))
         .andDo(print());
   }
