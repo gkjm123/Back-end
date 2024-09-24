@@ -15,13 +15,13 @@ import lombok.NoArgsConstructor;
 public class RegistrationRequest {
 
   private Long regionId;
-  @Size(min = 2, max = 50)
+  @Size(min = 2, max = 50, message = "특산주 이름을 2~50자 사이로 입력해주세요")
   private String drinkName;
   private DrinkType type;
   private Float degree;
   private Integer sweetness;
   private Integer cost;
-  @Size(min = 10, max = 500)
+  @Size(min = 10, max = 500, message = "특산주 설명을 10~500자 사이로 입력해주세요")
   private String description;
   @NotBlank(message = "특산주 이미지를 업로드해주세요")
   private String imageUrl;

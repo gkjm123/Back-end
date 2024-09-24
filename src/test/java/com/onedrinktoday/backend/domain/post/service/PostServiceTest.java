@@ -161,7 +161,7 @@ public class PostServiceTest {
     given(postLikeRepository.existsByPostAndMember(any(Post.class), any(Member.class))).willReturn(true);
 
     // When
-    PostResponse postResponse = postService.getPostById(1L, false);
+    PostResponse postResponse = postService.getPostById(1L);
 
     // Then
     assertNotNull(postResponse);
@@ -175,7 +175,7 @@ public class PostServiceTest {
     given(postRepository.findById(999L)).willReturn(Optional.empty());
 
     // When & Then
-    assertThrows(IllegalArgumentException.class, () -> postService.getPostById(999L, false));
+    assertThrows(IllegalArgumentException.class, () -> postService.getPostById(999L));
   }
 
   @Test
