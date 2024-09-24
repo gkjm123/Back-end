@@ -4,7 +4,7 @@ import com.onedrinktoday.backend.domain.drink.dto.DrinkResponse;
 import com.onedrinktoday.backend.domain.post.entity.Post;
 import com.onedrinktoday.backend.domain.tag.dto.TagDTO;
 import com.onedrinktoday.backend.domain.tag.entity.Tag;
-import com.onedrinktoday.backend.global.type.Type;
+import com.onedrinktoday.backend.global.type.PostType;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +24,7 @@ public class PostResponse {
   private String memberName;
   @Setter
   private DrinkResponse drink;
-  private Type type;
+  private PostType type;
   @Setter
   private String content;
   @Setter

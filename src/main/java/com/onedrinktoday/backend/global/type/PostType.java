@@ -1,5 +1,5 @@
 package com.onedrinktoday.backend.global.type;
 
-public enum Type {
+public enum PostType {
   AD, REVIEW
 }

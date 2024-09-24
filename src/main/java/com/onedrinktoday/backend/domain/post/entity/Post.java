@@ -2,7 +2,7 @@ package com.onedrinktoday.backend.domain.post.entity;
 
 import com.onedrinktoday.backend.domain.drink.entity.Drink;
 import com.onedrinktoday.backend.domain.member.entity.Member;
-import com.onedrinktoday.backend.global.type.Type;
+import com.onedrinktoday.backend.global.type.PostType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -49,7 +49,7 @@ public class Post {
   private Drink drink;
 
   @Enumerated(EnumType.STRING)
-  private Type type;
+  private PostType type;
 
   @Setter
   @Column(name = "content", columnDefinition = "TEXT", nullable = false)

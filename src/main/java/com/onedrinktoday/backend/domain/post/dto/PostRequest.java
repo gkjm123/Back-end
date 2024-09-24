@@ -1,6 +1,6 @@
 package com.onedrinktoday.backend.domain.post.dto;
 
-import com.onedrinktoday.backend.global.type.Type;
+import com.onedrinktoday.backend.global.type.PostType;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,7 @@ public class PostRequest {
 
   private Long memberId;
 
-  private Type type;
+  private PostType type;
 
   @Setter
   @Size(min = 10, max = 3000)
