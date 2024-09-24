@@ -41,7 +41,11 @@ public class CommentService {
         .build();
 
     commentRepository.save(comment);
-    notificationService.postCommentNotification(post.getId(), member.getName(), commentRequest.isAnonymous());
+
+    if (!post.getMember().getId().equals(member.getId())) {
+      notificationService.postCommentNotification(post.getId(), member.getName(),
+          commentRequest.isAnonymous());
+    }
 
     return CommentResponse.from(comment);
   }
