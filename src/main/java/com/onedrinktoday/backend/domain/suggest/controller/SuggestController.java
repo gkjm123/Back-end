@@ -7,6 +7,7 @@ import com.onedrinktoday.backend.domain.suggest.service.SuggestMonthlyService;
 import com.onedrinktoday.backend.domain.suggest.service.SuggestService;
 import com.onedrinktoday.backend.domain.suggest.service.SuggestTagService;
 import com.onedrinktoday.backend.domain.tag.dto.TagDTO;
+import com.onedrinktoday.backend.global.security.JwtProvider;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,17 +27,27 @@ public class SuggestController {
   private final SuggestMonthlyService suggestMonthlyService;
   private final SuggestTagService suggestTagService;
   private final SuggestDrinkService suggestDrinkService;
+  private final JwtProvider jwtProvider;
 
   // 사용자 위치 기반 가장 가까운 지역 특산주 추천
   @GetMapping("/suggest/drink")
-  public ResponseEntity<DrinkResponse> suggestDrink(@RequestHeader("memberId") Long memberId, @RequestParam Float lat, @RequestParam Float lon) {
-    DrinkResponse suggestDrink = suggestService.suggestDrinkByLocation(memberId, lat, lon);
+  public ResponseEntity<DrinkResponse> suggestDrink(
+      @RequestHeader("Access-Token") String token,
+      @RequestParam Float lat,
+      @RequestParam Float lon) {
+
+      Long memberId = jwtProvider.getMemberId(token);
+
+      DrinkResponse suggestDrink = suggestService.suggestDrinkByLocation(memberId, lat, lon);
     return ResponseEntity.ok(suggestDrink);
   }
 
   // 재접속시 기존 사용자의 저장된 지역 특산주 추천
   @GetMapping("/suggest/drink/current")
-  public ResponseEntity<DrinkResponse> suggestDrinkForCurrent(@RequestHeader("memberId") Long memberId) {
+  public ResponseEntity<DrinkResponse> suggestDrinkForCurrent(@RequestHeader("Access-Token") String token) {
+
+    Long memberId = jwtProvider.getMemberId(token);
+
     DrinkResponse suggestDrink = suggestService.suggestDrinkByCurrentRegion(memberId);
     return ResponseEntity.ok(suggestDrink);
   }
