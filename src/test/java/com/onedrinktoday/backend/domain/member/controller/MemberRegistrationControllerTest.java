@@ -123,7 +123,7 @@ public class MemberRegistrationControllerTest {
         .andExpect(jsonPath("$.favorDrinkType[0]").value(
             memberResponse.getFavorDrinkType().get(0).toString()))
         .andExpect(jsonPath("$.role").value(memberResponse.getRole().toString()))
-        .andExpect(jsonPath("$.alarmEnabled").value(memberResponse.getAlarmEnabled()))
+        .andExpect(jsonPath("$.alarmEnabled").value(memberResponse.isAlarmEnabled()))
         .andDo(print());
   }
 
@@ -398,7 +398,7 @@ public class MemberRegistrationControllerTest {
         .birthDate(new Date())
         .favorDrinkType(updateInfo.getFavorDrinkType())
         .role(Role.USER)
-        .alarmEnabled(updateInfo.getAlarmEnabled())
+        .alarmEnabled(updateInfo.isAlarmEnabled())
         .createdAt(LocalDateTime.now())
         .build();
 
@@ -415,7 +415,7 @@ public class MemberRegistrationControllerTest {
         .andExpect(jsonPath("$.name").value(updateInfo.getName()))
         .andExpect(
             jsonPath("$.favorDrinkType[0]").value(updateInfo.getFavorDrinkType().get(0).toString()))
-        .andExpect(jsonPath("$.alarmEnabled").value(updateInfo.getAlarmEnabled()))
+        .andExpect(jsonPath("$.alarmEnabled").value(updateInfo.isAlarmEnabled()))
         .andDo(print());
   }
 

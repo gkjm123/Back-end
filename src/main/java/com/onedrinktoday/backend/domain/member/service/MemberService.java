@@ -130,8 +130,8 @@ public class MemberService {
       member.setFavorDrinkType(updateInfo.getFavorDrinkType());
     }
 
-    if (updateInfo.getAlarmEnabled() != null) {
-      member.setAlarmEnabled(updateInfo.getAlarmEnabled());
+    if (updateInfo.isAlarmEnabled() != member.isAlarmEnabled()) {
+      member.setAlarmEnabled(updateInfo.isAlarmEnabled());
     }
 
     return MemberResponse.from(memberRepository.save(member));

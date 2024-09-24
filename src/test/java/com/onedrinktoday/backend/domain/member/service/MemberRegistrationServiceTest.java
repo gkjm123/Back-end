@@ -127,7 +127,7 @@ public class MemberRegistrationServiceTest {
         .birthDate(signUpRequest.getBirthDate())
         .favorDrinkType(signUpRequest.getFavorDrinkType())
         .role(Role.USER)
-        .alarmEnabled(signUpRequest.getAlarmEnabled())
+        .alarmEnabled(signUpRequest.isAlarmEnabled())
         .password(bCryptPasswordEncoder.encode(signUpRequest.getPassword()))
         .build();
 
@@ -144,7 +144,7 @@ public class MemberRegistrationServiceTest {
     assertEquals(expectedMember.getBirthDate(), response.getBirthDate());
     assertEquals(expectedMember.getFavorDrinkType(), response.getFavorDrinkType());
     assertEquals(expectedMember.getRole(), response.getRole());
-    assertEquals(expectedMember.getAlarmEnabled(), response.getAlarmEnabled());
+    assertEquals(expectedMember.isAlarmEnabled(), response.isAlarmEnabled());
   }
 
   @Test
@@ -296,7 +296,7 @@ public class MemberRegistrationServiceTest {
     assertEquals(birthDate, response.getBirthDate());
     assertEquals(Role.USER, response.getRole());
     assertEquals(favorDrinkTypes, response.getFavorDrinkType());
-    assertTrue(response.getAlarmEnabled());
+    assertTrue(response.isAlarmEnabled());
     assertNull(response.getDeletedAt());
   }
 
@@ -336,14 +336,14 @@ public class MemberRegistrationServiceTest {
     UpdateInfo updateInfo = UpdateInfo.builder()
         .name("변경 이름")
         .favorDrinkType(List.of(DrinkType.BEER, DrinkType.WINE))
-        .alarmEnabled(null)
+        .alarmEnabled(false)
         .build();
 
     Member updatedMember = Member.builder()
         .id(existMember.getId())
         .name(updateInfo.getName())
         .favorDrinkType(updateInfo.getFavorDrinkType())
-        .alarmEnabled(existMember.getAlarmEnabled())
+        .alarmEnabled(existMember.isAlarmEnabled())
         .imageUrl(existMember.getImageUrl())
         .build();
 
@@ -356,7 +356,7 @@ public class MemberRegistrationServiceTest {
     //then
     assertEquals(updatedMember.getName(), response.getName());
     assertEquals(updatedMember.getFavorDrinkType(), response.getFavorDrinkType());
-    assertEquals(updatedMember.getAlarmEnabled(), response.getAlarmEnabled());
+    assertEquals(updatedMember.isAlarmEnabled(), response.isAlarmEnabled());
   }
 
   @Test

@@ -32,10 +32,10 @@ public class MemberRequest {
     private Date birthDate;
 
     private List<DrinkType> favorDrinkType;
-    private Boolean alarmEnabled;
+    private boolean alarmEnabled;
 
     public SignUp(String name, String email, String password, Date birthDate,
-        List<DrinkType> favorDrinkType, Boolean alarmEnabled) {
+        List<DrinkType> favorDrinkType, boolean alarmEnabled) {
       this.name = name;
       this.email = email;
       this.password = password;
@@ -69,9 +69,9 @@ public class MemberRequest {
     private String name;
 
     private List<DrinkType> favorDrinkType;
-    private Boolean alarmEnabled;
+    private boolean alarmEnabled;
 
-    public UpdateInfo(String name, List<DrinkType> favorDrinkType, Boolean alarmEnabled) {
+    public UpdateInfo(String name, List<DrinkType> favorDrinkType, boolean alarmEnabled) {
       this.name = name;
       this.favorDrinkType = favorDrinkType;
       this.alarmEnabled = alarmEnabled;

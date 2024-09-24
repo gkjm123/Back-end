@@ -65,7 +65,7 @@ public class Member {
   private Role role;
 
   @Setter
-  private Boolean alarmEnabled;
+  private boolean alarmEnabled;
 
   @Setter
   private String imageUrl;
@@ -88,7 +88,7 @@ public class Member {
         .birthDate(request.getBirthDate())
         .favorDrinkType(request.getFavorDrinkType())
         .role(Role.USER)
-        .alarmEnabled(request.getAlarmEnabled())
+        .alarmEnabled(request.isAlarmEnabled())
         .build();
   }
 }

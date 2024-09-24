@@ -24,7 +24,7 @@ public class MemberResponse {
   private Date birthDate;
   private List<DrinkType> favorDrinkType;
   private Role role;
-  private Boolean alarmEnabled;
+  private boolean alarmEnabled;
   private String imageUrl;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
@@ -39,7 +39,7 @@ public class MemberResponse {
         .birthDate(member.getBirthDate())
         .favorDrinkType(member.getFavorDrinkType())
         .role(member.getRole())
-        .alarmEnabled(member.getAlarmEnabled())
+        .alarmEnabled(member.isAlarmEnabled())
         .imageUrl(member.getImageUrl())
         .createdAt(member.getCreatedAt())
         .updatedAt(member.getUpdatedAt())
