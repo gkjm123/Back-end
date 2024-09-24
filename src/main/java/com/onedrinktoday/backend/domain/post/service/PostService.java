@@ -132,7 +132,7 @@ public class PostService {
 
   // 특정 게시글 조회
   @Transactional
-  public PostResponse getPostById(Long postId, boolean isClicked) {
+  public PostResponse getPostById(Long postId) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글 ID입니다."));
 

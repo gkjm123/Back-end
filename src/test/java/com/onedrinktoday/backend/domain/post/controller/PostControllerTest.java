@@ -88,7 +88,7 @@ public class PostControllerTest {
   @Test
   @DisplayName("게시글 조회 성공 테스트")
   void successGetPostById() throws Exception {
-    given(postService.getPostById(1L, false)).willReturn(postResponse);
+    given(postService.getPostById(1L)).willReturn(postResponse);
 
     mockMvc.perform(get("/api/posts/{postId}", 1L))
         .andExpect(status().isOk())
@@ -101,7 +101,7 @@ public class PostControllerTest {
   @Test
   @DisplayName("게시글 조회 실패 테스트 - 존재하지 않는 게시글")
   void failNotFoundGetPostById() throws Exception {
-    given(postService.getPostById(999L, false))
+    given(postService.getPostById(999L))
         .willThrow(new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
 
     mockMvc.perform(get("/api/posts/{postId}", 999L))
