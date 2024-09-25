@@ -47,9 +47,9 @@ public class PostController {
   }
 
   @DeleteMapping("/posts/{postId}")
-  public ResponseEntity<Void> deletePostById(@PathVariable Long postId) {
+  public ResponseEntity<String> deletePostById(@PathVariable Long postId) {
     postService.deletePostById(postId);
-    return ResponseEntity.noContent().build();
+    return ResponseEntity.ok("게시글이 삭제되었습니다.");
   }
 
   @PutMapping("/posts/{postId}")
