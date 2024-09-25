@@ -20,7 +20,7 @@ public class GoogleController {
   private final GoogleService googleService;
 
   @PostMapping("/google/join")
-  public ResponseEntity<TokenDto> join(@RequestParam String code) {
+  public ResponseEntity<TokenDTO> join(@RequestParam String code) {
     return ResponseEntity.ok(googleService.join(code));
   }
 
