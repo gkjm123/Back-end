@@ -248,13 +248,12 @@ public class PostService {
     String imageUrl = postRequest.getImageUrl() != null ? postRequest.getImageUrl() : post.getDrink().getImageUrl();
     post.setImageUrl(imageUrl);
 
-    postRepository.save(post);
+    post = postRepository.save(post);
 
     // 기존 태그 삭제
     postTagRepository.deleteByPostId(postId);
     List<Tag> updateTag = saveTags(postRequest.getTag(), post);
 
-    post = postRepository.save(post);
     searchService.save(post, updateTag);
 
     return PostResponse.of(post, updateTag, false);

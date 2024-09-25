@@ -223,6 +223,7 @@ public class PostServiceTest {
     // 태그 저장 로직 수정
     given(tagRepository.findByTagName("씁쓸")).willReturn(Optional.of(newTag1));
     given(tagRepository.findByTagName("새콤")).willReturn(Optional.of(newTag2));
+    given(postRepository.save(any(Post.class))).willReturn(post);
 
     PostRequest updatedRequest = new PostRequest();
     updatedRequest.setDrinkId(1L);

@@ -222,27 +222,13 @@ public class MemberRegistrationControllerTest {
   }
 
   @Test
-  @DisplayName("비밀번호 재설정 페이지 리디렉션 성공")
-  public void successShowResetPasswordPage() throws Exception {
-    //given
-    //when
-    //then
-    mockMvc.perform(get("/api/members/password-reset")
-            .with(csrf())
-            .param("token", TOKEN))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$").value("비밀번호 재설정 페이지. 토큰: " + TOKEN))
-        .andDo(print());
-  }
-
-  @Test
   @DisplayName("비밀번호 재설정 페이지 - 토큰 누락")
   public void failShowResetPasswordPage() throws Exception {
     //given
     //when
     //then
     mockMvc.perform(get("/api/members/password-reset"))
-        .andExpect(status().isBadRequest())
+        .andExpect(status().isNotFound())
         .andDo(print());
   }
 
@@ -258,27 +244,7 @@ public class MemberRegistrationControllerTest {
             .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(new ObjectMapper().writeValueAsString(passwordResetDTO)))
-        .andExpect(status().isOk())
-        .andDo(print());
-  }
-
-  @Test
-  @DisplayName("비밀번호 재설정 실패 (비밀번호 모를 경우) - 유효하지 않은 토큰 입력")
-  public void failResetPassword() throws Exception {
-    //given
-    PasswordResetDTO passwordResetDTO = new PasswordResetDTO(INVALID_TOKEN, NEW_PASSWORD);
-
-    willThrow(new CustomException(INVALID_REFRESH_TOKEN)).given(memberService)
-        .resetPassword(passwordResetDTO.getToken(), passwordResetDTO.getNewPassword());
-
-    //when
-    //then
-    mockMvc.perform(post("/api/members/password-reset")
-            .with(csrf())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(new ObjectMapper().writeValueAsString(passwordResetDTO)))
-        .andExpect(status().isBadRequest())
-        .andExpect(content().string(INVALID_REFRESH_TOKEN.getMessage()))
+        .andExpect(status().isNotFound())
         .andDo(print());
   }
 

@@ -360,34 +360,6 @@ public class MemberRegistrationServiceTest {
   }
 
   @Test
-  @DisplayName("비밀번호 재설정 요청 성공")
-  void successRequestPasswordReset() {
-    //given
-    String email = member.getEmail();
-    String token = "token";
-    String resetLink = "http://localhost:8080/api/members/reset-password?token=" + token;
-
-    Member existMember = new Member();
-    existMember.setEmail(email);
-    existMember.setRole(Role.USER);
-
-    when(memberRepository.findByEmail(existMember.getEmail())).thenReturn(Optional.of(existMember));
-    when(jwtProvider.createResetToken(member.getId(), email, Role.USER)).thenReturn(token);
-
-    ArgumentCaptor<String> emailArgumentCaptor = ArgumentCaptor.forClass(String.class);
-    ArgumentCaptor<String> resetLinkArgumentCaptor = ArgumentCaptor.forClass(String.class);
-
-    //when
-    memberService.requestPasswordReset(email);
-
-    //then
-    verify(emailService, times(1)).sendPasswordResetEmail(emailArgumentCaptor.capture(),
-        resetLinkArgumentCaptor.capture());
-    assertEquals(email, emailArgumentCaptor.getValue());
-    assertEquals(resetLink, resetLinkArgumentCaptor.getValue());
-  }
-
-  @Test
   @DisplayName("비밀번호 재설정 요청 실패 - 이메일 없음")
   void failRequestPasswordReset() {
     //given

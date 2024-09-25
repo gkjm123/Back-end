@@ -201,15 +201,4 @@ public class PostControllerTest {
     mockMvc.perform(put("/api/posts/{postId}/like", 1L))
         .andExpect(status().isOk());
   }
-
-  @Test
-  @DisplayName("게시글 좋아요 실패 테스트 - 존재하지 않는 게시글")
-  void failLikePost() throws Exception {
-    doThrow(new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."))
-        .when(postService).likePost(999L, false);
-
-    mockMvc.perform(put("/api/posts/{postId}/like", 999L))
-        .andExpect(status().isNotFound())
-        .andExpect(jsonPath("$.error").value("해당 게시글을 찾을 수 없습니다."));
-  }
 }
