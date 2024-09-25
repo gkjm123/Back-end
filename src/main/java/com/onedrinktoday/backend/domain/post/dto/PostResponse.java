@@ -1,5 +1,6 @@
 package com.onedrinktoday.backend.domain.post.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.onedrinktoday.backend.domain.drink.dto.DrinkResponse;
 import com.onedrinktoday.backend.domain.post.entity.Post;
 import com.onedrinktoday.backend.domain.tag.dto.TagDTO;
@@ -35,6 +36,7 @@ public class PostResponse {
   private Integer viewCount;
   private Integer likeCount;
   @Setter
+  @JsonProperty("isLiked")
   private boolean isLiked;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
