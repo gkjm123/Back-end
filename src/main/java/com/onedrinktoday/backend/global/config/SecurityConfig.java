@@ -29,8 +29,11 @@ public class SecurityConfig {
 
     http
         .authorizeHttpRequests((auth) -> auth
-            .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+            .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**", "/api/members/signin", "/api/members/signup").permitAll()
             .requestMatchers(AntPathRequestMatcher.antMatcher("/api/members/refresh")).permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/members/request-password-reset")).permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/members/password-reset")).permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/members/password-reset-success")).permitAll()
             .anyRequest().authenticated()
         );
 

@@ -157,13 +157,14 @@ public class MemberService {
         member.getRole());
 
     // 도메인 변경(예정)
-    String resetLink = "http://localhost:8080/api/members/reset-password?token=" + token;
+    String resetLink = "http://localhost:8080/api/members/password-reset?token=" + token;
 
     emailService.sendPasswordResetEmail(member.getEmail(), resetLink);
   }
 
   // 비밀번호 재설정(회원이 비밀번호를 모를 경우)
   public void resetPassword(String token, String newPassword) {
+
     String email = jwtProvider.getEmail(token);
 
     Member member = memberRepository.findByEmail(email)
