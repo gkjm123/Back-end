@@ -52,7 +52,7 @@ class GoogleServiceTest {
         .willReturn("refresh");
 
     //when
-    TokenDto tokenDto = googleService.join("code");
+    TokenDTO tokenDto = googleService.join("code");
 
     //then
     assertEquals(tokenDto.getAccessToken(), "access");

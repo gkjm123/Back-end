@@ -19,7 +19,7 @@ import com.onedrinktoday.backend.global.exception.CustomException;
 import com.onedrinktoday.backend.global.exception.ErrorCode;
 import com.onedrinktoday.backend.global.security.JwtProvider;
 import com.onedrinktoday.backend.global.security.MemberDetail;
-import com.onedrinktoday.backend.global.security.TokenDto;
+import com.onedrinktoday.backend.global.security.TokenDTO;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -62,7 +62,7 @@ public class MemberService {
     return MemberResponse.from(memberRepository.save(member));
   }
 
-  public TokenDto signIn(SignIn request) {
+  public TokenDTO signIn(SignIn request) {
     Member member = memberRepository.findByEmail(request.getEmail())
         .orElseThrow(() -> new CustomException(ErrorCode.LOGIN_FAIL));
 
@@ -78,13 +78,13 @@ public class MemberService {
     member.setRefreshToken(refreshToken);
     memberRepository.save(member);
 
-    return TokenDto.builder()
+    return TokenDTO.builder()
         .accessToken(accessToken)
         .refreshToken(refreshToken)
         .build();
   }
 
-  public TokenDto refreshAccessToken(String refreshToken) {
+  public TokenDTO refreshAccessToken(String refreshToken) {
 
     String email;
 
@@ -108,7 +108,7 @@ public class MemberService {
     String accessToken = jwtProvider.createAccessToken(member.getId(), member.getEmail(),
         member.getRole());
 
-    return TokenDto.builder()
+    return TokenDTO.builder()
         .refreshToken(refreshToken)
         .accessToken(accessToken)
         .build();

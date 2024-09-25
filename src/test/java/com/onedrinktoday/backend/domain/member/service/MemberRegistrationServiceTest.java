@@ -33,7 +33,7 @@ import com.onedrinktoday.backend.global.exception.CustomException;
 import com.onedrinktoday.backend.global.exception.ErrorCode;
 import com.onedrinktoday.backend.global.security.JwtProvider;
 import com.onedrinktoday.backend.global.security.MemberDetail;
-import com.onedrinktoday.backend.global.security.TokenDto;
+import com.onedrinktoday.backend.global.security.TokenDTO;
 import com.onedrinktoday.backend.global.type.DrinkType;
 import com.onedrinktoday.backend.global.type.Role;
 import java.util.Arrays;
@@ -182,7 +182,7 @@ public class MemberRegistrationServiceTest {
         "refreshToken");
 
     //when
-    TokenDto tokenDto = memberService.signIn(signInRequest);
+    TokenDTO tokenDto = memberService.signIn(signInRequest);
 
     //then
     assertEquals("accessToken", tokenDto.getAccessToken());
@@ -234,7 +234,7 @@ public class MemberRegistrationServiceTest {
         newAccessToken);
 
     //when
-    TokenDto tokenDto = memberService.refreshAccessToken(refreshToken);
+    TokenDTO tokenDto = memberService.refreshAccessToken(refreshToken);
 
     //then
     assertEquals(newAccessToken, tokenDto.getAccessToken());

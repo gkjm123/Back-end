@@ -8,7 +8,7 @@ import com.onedrinktoday.backend.domain.member.dto.PasswordResetRequest;
 import com.onedrinktoday.backend.domain.member.dto.UpdateProfileRequest;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
 import com.onedrinktoday.backend.global.security.JwtProvider;
-import com.onedrinktoday.backend.global.security.TokenDto;
+import com.onedrinktoday.backend.global.security.TokenDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +44,7 @@ public class MemberController {
   }
 
   @PostMapping("/members/signin")
-  public ResponseEntity<TokenDto> signIn(@Valid @RequestBody MemberRequest.SignIn request) {
+  public ResponseEntity<TokenDTO> signIn(@Valid @RequestBody MemberRequest.SignIn request) {
 
     return ResponseEntity.ok(memberService.signIn(request));
   }
@@ -82,7 +82,7 @@ public class MemberController {
 
   //access 토큰 만료시 FE 에서 요청하는 컨트롤러, Refresh Token 을 헤더로 받아, 엑세스 토큰 새로 발급해 반환
   @PostMapping("/members/refresh")
-  public ResponseEntity<TokenDto> refreshAccessToken(
+  public ResponseEntity<TokenDTO> refreshAccessToken(
       @RequestHeader("Refresh-Token") String refreshToken) {
 
     return ResponseEntity.ok(memberService.refreshAccessToken(refreshToken));

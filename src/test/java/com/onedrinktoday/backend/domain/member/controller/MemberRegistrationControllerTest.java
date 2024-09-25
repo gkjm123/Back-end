@@ -25,7 +25,7 @@ import com.onedrinktoday.backend.domain.member.dto.PasswordResetRequest;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
 import com.onedrinktoday.backend.global.exception.CustomException;
 import com.onedrinktoday.backend.global.security.JwtProvider;
-import com.onedrinktoday.backend.global.security.TokenDto;
+import com.onedrinktoday.backend.global.security.TokenDTO;
 import com.onedrinktoday.backend.global.type.DrinkType;
 import com.onedrinktoday.backend.global.type.Role;
 import java.time.LocalDateTime;
@@ -68,7 +68,7 @@ public class MemberRegistrationControllerTest {
   private MemberRequest.UpdateInfo updateInfo;
   private PasswordResetRequest passwordResetRequest;
   private ChangePasswordRequestDTO changePasswordRequestDTO;
-  private TokenDto tokenDto;
+  private TokenDTO tokenDto;
 
   @BeforeEach
   public void setUp() {
@@ -96,7 +96,7 @@ public class MemberRegistrationControllerTest {
     updateInfo = new MemberRequest.UpdateInfo(
         "JohnDoeBa", List.of(DrinkType.BEER), false);
 
-    tokenDto = TokenDto.builder()
+    tokenDto = TokenDTO.builder()
         .accessToken("accessToken")
         .refreshToken(REFRESH_TOKEN)
         .build();
