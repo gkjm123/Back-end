@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 public class JwtProvider {
 
   private final SecretKey secretKey;
-  private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 60 * 30; // 엑세스 토큰 기한
+  private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 3; // 엑세스 토큰 기한
   private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 24 * 7; // 리프레시 토큰 기한
   private static final long PASSWORD_RESET_EXPIRE_TIME = 1000L * 60 * 30; // 비밀번호 재설정 토큰 기한
 

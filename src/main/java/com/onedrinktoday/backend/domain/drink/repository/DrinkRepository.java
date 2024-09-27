@@ -15,5 +15,7 @@ public interface DrinkRepository extends JpaRepository<Drink, Long> {
 
   Page<Drink> findAllByRegion_IdAndNameContaining(Pageable pageable, Long regionId, String name);
 
+  Page<Drink> findAllByNameContaining(Pageable pageable, String name);
+
   List<Drink> findAllByRegion_IdAndNameStartsWith(Long regionId, String name);
 }

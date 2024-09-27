@@ -30,7 +30,7 @@ public class SecurityConfig {
     http
         .authorizeHttpRequests((auth) -> auth
             .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**", "/api/members/signin", "/api/members/signup").permitAll()
-            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/members/**")).permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/**")).permitAll()
             .anyRequest().authenticated()
         );
 

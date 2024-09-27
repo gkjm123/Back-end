@@ -102,7 +102,12 @@ public class SearchService {
   }
 
   public Page<DrinkResponse> searchDrink(Pageable pageable, Long regionId, String drinkName) {
-    return drinkRepository.findAllByRegion_IdAndNameContaining(pageable, regionId, drinkName)
-        .map(DrinkResponse::from);
+
+    if (regionId == 0) {
+      return drinkRepository.findAllByNameContaining(pageable, drinkName).map(DrinkResponse::from);
+    } else {
+      return drinkRepository.findAllByRegion_IdAndNameContaining(pageable, regionId, drinkName)
+          .map(DrinkResponse::from);
+    }
   }
 }

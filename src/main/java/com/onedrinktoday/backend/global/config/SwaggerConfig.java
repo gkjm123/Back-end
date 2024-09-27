@@ -19,8 +19,14 @@ public class SwaggerConfig {
           new Parameter()
               .in(ParameterIn.HEADER.toString())
               .required(false)
-              .description("JWT 토큰")
-              .name("TOKEN")
+              .description("엑세스 토큰")
+              .name("Access-Token")
+      ).addParametersItem(
+          new Parameter()
+              .in(ParameterIn.HEADER.toString())
+              .required(false)
+              .description("리프레시 토큰")
+              .name("Refresh-Token")
       );
 
       return operation;
