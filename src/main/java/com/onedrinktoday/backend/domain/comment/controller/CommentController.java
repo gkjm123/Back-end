@@ -44,9 +44,9 @@ public class CommentController {
   }
 
   @DeleteMapping("/comments/{commentId}")
-  public ResponseEntity<Void> deleteCommentById(@PathVariable Long commentId) {
+  public ResponseEntity<String> deleteCommentById(@PathVariable Long commentId) {
     commentService.deleteCommentById(commentId);
-    return ResponseEntity.noContent().build();
+    return ResponseEntity.ok("댓글이 삭제되었습니다.");
   }
 
   @PutMapping("/comments/{commentId}")
