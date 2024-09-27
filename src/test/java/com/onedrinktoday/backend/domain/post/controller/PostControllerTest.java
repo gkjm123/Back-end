@@ -179,7 +179,7 @@ public class PostControllerTest {
     doNothing().when(postService).deletePostById(1L);
 
     mockMvc.perform(delete("/api/posts/{postId}", 1L))
-        .andExpect(status().isNoContent());
+        .andExpect(status().isOk());
   }
 
   @Test

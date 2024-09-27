@@ -151,7 +151,7 @@ public class CommentControllerTest {
     //then
     mockMvc.perform(delete("/api/comments/1")
             .with(csrf()))
-        .andExpect(status().isNoContent())
+        .andExpect(status().isOk())
         .andDo(print());
   }
 
