@@ -1,6 +1,7 @@
 package com.onedrinktoday.backend.domain.declaration.dto;
 
 import com.onedrinktoday.backend.domain.declaration.entity.Declaration;
+import com.onedrinktoday.backend.global.type.CancelDeclarationType;
 import com.onedrinktoday.backend.global.type.DeclarationType;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ public class DeclarationResponse {
   private DeclarationType type;
   private String content;
   private Boolean approved;
+  private CancelDeclarationType cancelType;
   private LocalDateTime createdAt;
 
   public static DeclarationResponse from(Declaration declaration) {
@@ -32,6 +34,7 @@ public class DeclarationResponse {
         .type(declaration.getType())
         .content(declaration.getContent())
         .approved(declaration.getApproved())
+        .cancelType(declaration.getCancelType())
         .createdAt(declaration.getCreatedAt())
         .build();
   }
