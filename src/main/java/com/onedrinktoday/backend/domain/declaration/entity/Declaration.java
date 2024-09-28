@@ -5,6 +5,8 @@ import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.global.type.CancelDeclarationType;
 import com.onedrinktoday.backend.global.type.DeclarationType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -40,6 +42,7 @@ public class Declaration {
   private Boolean approved;
 
   @Setter
+  @Enumerated(value = EnumType.STRING)
   private CancelDeclarationType cancelType;
 
   @CreationTimestamp
