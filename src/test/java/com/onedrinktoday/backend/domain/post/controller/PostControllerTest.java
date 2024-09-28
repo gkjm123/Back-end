@@ -90,7 +90,7 @@ public class PostControllerTest {
   void successGetPostById() throws Exception {
     given(postService.getPostById(1L)).willReturn(postResponse);
 
-    mockMvc.perform(get("/api/posts/{postId}", 1L))
+    mockMvc.perform(get("/api/post/{postId}", 1L))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content").value(postResponse.getContent()))
         .andExpect(jsonPath("$.rating").value(postResponse.getRating()))
@@ -104,7 +104,7 @@ public class PostControllerTest {
     given(postService.getPostById(999L))
         .willThrow(new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
 
-    mockMvc.perform(get("/api/posts/{postId}", 999L))
+    mockMvc.perform(get("/api/post/{postId}", 999L))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.error").value("해당 게시글을 찾을 수 없습니다."));
   }

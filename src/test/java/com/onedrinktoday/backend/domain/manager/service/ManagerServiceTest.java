@@ -67,7 +67,7 @@ class ManagerServiceTest {
 
   @BeforeEach
   void setUp() {
-    ReflectionTestUtils.setField(managerService, "postUri", "/posts/{postId}");
+    ReflectionTestUtils.setField(managerService, "postUri", "/post/{postId}");
     ReflectionTestUtils.setField(managerService, "postId", "postId");
 
     Member member = Member.builder()
@@ -90,7 +90,7 @@ class ManagerServiceTest {
     declaration = Declaration.builder()
         .id(1L)
         .member(member)
-        .link("/posts/1")
+        .link("/post/1")
         .type(DeclarationType.OBSCENE)
         .content("신고내용 입니다.")
         .approved(false)
