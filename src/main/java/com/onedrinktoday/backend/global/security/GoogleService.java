@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.repository.MemberRepository;
 import com.onedrinktoday.backend.global.type.Role;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -46,18 +47,21 @@ public class GoogleService {
     String email = userResourceNode.get("email").asText();
     String name = userResourceNode.get("name").asText();
 
-    Member member = memberRepository.findByEmail(email)
-        .orElse(memberRepository.save(Member.builder()
-            .name(name)
-            .email(email)
-            .password(id)
-            .role(Role.USER)
-            .alarmEnabled(true)
-            .build())
-        );
+    Optional<Member> optionalMember = memberRepository.findByEmail(email.trim());
+
+    Member member = optionalMember.orElseGet(() -> memberRepository.save(Member.builder()
+        .name(name)
+        .email(email)
+        .password(id)
+        .role(Role.USER)
+        .alarmEnabled(true)
+        .build()));
 
     String accessToken = jwtProvider.createAccessToken(member.getId(), member.getEmail(), member.getRole());
     String refreshToken = jwtProvider.createRefreshToken(member.getId(), member.getEmail(), member.getRole());
+
+    member.setRefreshToken(refreshToken);
+    memberRepository.save(member);
 
     return TokenDTO.builder()
         .accessToken(accessToken)

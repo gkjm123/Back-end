@@ -101,6 +101,7 @@ public class ManagerService {
     notificationService.cancelDeclarationNotification(declaration, cancelDeclarationRequest);
 
     declaration.setApproved(false);
+    declaration.setCancelType(cancelDeclarationRequest.getType());
 
     return DeclarationResponse.from(declarationRepository.save(declaration));
   }

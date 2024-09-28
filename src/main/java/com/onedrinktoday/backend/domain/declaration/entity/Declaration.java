@@ -2,6 +2,7 @@ package com.onedrinktoday.backend.domain.declaration.entity;
 
 import com.onedrinktoday.backend.domain.declaration.dto.DeclarationRequest;
 import com.onedrinktoday.backend.domain.member.entity.Member;
+import com.onedrinktoday.backend.global.type.CancelDeclarationType;
 import com.onedrinktoday.backend.global.type.DeclarationType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,6 +38,9 @@ public class Declaration {
 
   @Setter
   private Boolean approved;
+
+  @Setter
+  private CancelDeclarationType cancelType;
 
   @CreationTimestamp
   private LocalDateTime createdAt;
