@@ -114,7 +114,7 @@ public class PostService {
   public Page<PostResponse> getAllPosts(Pageable pageable, String sortBy, Long memberId) {
     Page<Post> posts;
 
-    if("viewCount".equals(sortBy)) {
+    if ("viewCount".equals(sortBy)) {
       posts = postRepository.findAllByOrderByViewCountDesc(pageable); // 조회수 정렬
     } else {
       posts = postRepository.findAllByOrderByCreatedAtDesc(pageable); // 최신순 정렬
@@ -199,7 +199,7 @@ public class PostService {
         .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글 ID입니다."));
 
     // 좋아요가 눌린 상태라면 좋아요 취소(좋아요 수 감소)
-    if(isLiked) {
+    if (isLiked) {
       post.setLikeCount(post.getLikeCount() - 1);
     } else {
       // 좋아요가 눌리지 않은 상태라면 좋아요 추가(좋아요 수 증가)
@@ -255,12 +255,42 @@ public class PostService {
 
     post = postRepository.save(post);
 
-    // 기존 태그 삭제
-    postTagRepository.deleteByPostId(postId);
-    List<Tag> updateTag = saveTags(postRequest.getTag() != null ? postRequest.getTag() : List.of(), post);
+    // 기존 태그 가져오기
+    List<Tag> existingTags = postTagRepository.findTagsByPostId(postId);
+    List<String> newTagNames = postRequest.getTag() != null ? postRequest.getTag() : List.of();
 
-    searchService.save(post, updateTag);
+    // 기존 태그 중에서 새로운 요청에 없는 태그는 삭제
+    for (Tag existingTag : existingTags) {
+      if (!newTagNames.contains(existingTag.getTagName())) {
+        PostTag postTag = postTagRepository.findByPostAndTag(post, existingTag)
+            .orElse(null);
+        if (postTag != null) {
+          postTagRepository.delete(postTag);
+        }
+      }
+    }
 
-    return PostResponse.of(post, updateTag, false);
+    // 새로운 태그를 추가
+    for (String newTagName : newTagNames) {
+      boolean alreadyExists = existingTags.stream().anyMatch(tag -> tag.getTagName().equals(newTagName));
+      if (!alreadyExists) {
+        Tag tag = tagRepository.findByTagName(newTagName)
+            .orElseGet(() -> {
+              Tag newTag = new Tag();
+              newTag.setTagName(newTagName);
+              autoCompleteService.saveAutoCompleteTag(newTagName);
+              return tagRepository.save(newTag);
+            });
+
+        PostTag newPostTag = new PostTag(post, tag);
+        postTagRepository.save(newPostTag);
+      }
+    }
+
+    // 최종 업데이트된 태그 목록 가져오기
+    List<Tag> updatedTags = postTagRepository.findTagsByPostId(postId);
+    searchService.save(post, updatedTags);
+
+    return PostResponse.of(post, updatedTags, false);
   }
 }
