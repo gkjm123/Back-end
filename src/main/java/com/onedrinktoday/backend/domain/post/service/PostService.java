@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -110,7 +111,8 @@ public class PostService {
   }
 
   // 전체 게시글 조회
-  public Page<PostResponse> getAllPosts(Pageable pageable, String sortBy) {
+  @Cacheable(value = "posts", key = "#pageable.pageNumber + '-' + #pageable.pageSize + '-' + #sortBy + '-' + #memberId")
+  public Page<PostResponse> getAllPosts(Pageable pageable, String sortBy, Long memberId) {
     Page<Post> posts;
 
     if("viewCount".equals(sortBy)) {
@@ -124,9 +126,13 @@ public class PostService {
       return Page.empty(pageable);  // 빈 페이지 반환
     }
 
+    Member member = memberRepository.findById(memberId)
+        .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
+
     return posts.map(post -> {
       List<Tag> tags = postTagRepository.findTagsByPostId(post.getId());
-      return PostResponse.of(post, tags, false);
+      boolean alreadyLiked = postLikeRepository.existsByPostAndMember(post, member);
+      return PostResponse.of(post, tags, alreadyLiked);
     });
   }
 
@@ -165,6 +171,7 @@ public class PostService {
 
   // 좋아요 토글 로직
   @Transactional
+  @CacheEvict(value = "posts", key = "#postId")
   public void toggleLike(Long postId) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글 ID입니다."));
