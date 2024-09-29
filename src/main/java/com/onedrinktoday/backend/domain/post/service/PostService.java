@@ -228,7 +228,7 @@ public class PostService {
 
   // 게시글 수정
   @Transactional
-  @CacheEvict(key = "#postRequest.drinkId", value = "avg-rating")
+  @CacheEvict(value = "avg-rating", key = "#postRequest.drinkId", condition = "#postRequest.drinkId != null")
   public PostResponse updatePost(Long postId, PostRequest postRequest) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글 ID입니다."));
