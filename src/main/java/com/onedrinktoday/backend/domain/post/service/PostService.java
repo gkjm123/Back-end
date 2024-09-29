@@ -257,7 +257,7 @@ public class PostService {
 
     // 기존 태그 삭제
     postTagRepository.deleteByPostId(postId);
-    List<Tag> updateTag = saveTags(postRequest.getTag(), post);
+    List<Tag> updateTag = saveTags(postRequest.getTag() != null ? postRequest.getTag() : List.of(), post);
 
     searchService.save(post, updateTag);
 
