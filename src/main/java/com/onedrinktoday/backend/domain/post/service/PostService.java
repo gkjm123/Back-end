@@ -111,7 +111,6 @@ public class PostService {
   }
 
   // 전체 게시글 조회
-  @Cacheable(value = "posts", key = "#pageable.pageNumber + '-' + #pageable.pageSize + '-' + #sortBy + '-' + #memberId")
   public Page<PostResponse> getAllPosts(Pageable pageable, String sortBy, Long memberId) {
     Page<Post> posts;
 
@@ -171,7 +170,6 @@ public class PostService {
 
   // 좋아요 토글 로직
   @Transactional
-  @CacheEvict(value = "posts", key = "#postId")
   public void toggleLike(Long postId) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글 ID입니다."));
