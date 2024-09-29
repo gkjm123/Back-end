@@ -16,6 +16,7 @@ public class CommentResponse {
   private Long id;
   private Long memberId;
   private String memberName;
+  private String memberImageUrl;
   private Long postId;
   private String content;
   private boolean anonymous;
@@ -23,16 +24,18 @@ public class CommentResponse {
   private LocalDateTime updatedAt;
 
   public static CommentResponse from(Comment comment) {
-
     String memberName = "탈퇴한 사용자";
+    String memberImageUrl = null;
     if (comment.getMember() != null) {
       memberName = comment.isAnonymous() ? "익명" : comment.getMember().getName();
+      memberImageUrl = comment.isAnonymous() ? null : comment.getMember().getImageUrl();
     }
 
     return CommentResponse.builder()
         .id(comment.getId())
         .memberId(comment.getMember() != null ? comment.getMember().getId() : null)
         .memberName(memberName)
+        .memberImageUrl(memberImageUrl)
         .postId(comment.getPost().getId())
         .content(comment.getContent())
         .anonymous(comment.isAnonymous())

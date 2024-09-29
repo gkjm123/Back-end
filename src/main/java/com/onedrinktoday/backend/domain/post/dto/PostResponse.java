@@ -23,6 +23,7 @@ public class PostResponse {
   private Long id;
   private Long memberId;
   private String memberName;
+  private String memberImageUrl;
   @Setter
   private DrinkResponse drink;
   private PostType type;
@@ -44,12 +45,14 @@ public class PostResponse {
   public static PostResponse of(Post post, List<Tag> tags, boolean isLiked) {
     String memberName = post.getMember() != null ? post.getMember().getName() : "탈퇴한 사용자";
     Long memberId = post.getMember() != null ? post.getMember().getId() : null;
+    String memberImageUrl = post.getMember() != null ? post.getMember().getImageUrl() : null;
     String imageUrl = post.getImageUrl() != null ? post.getImageUrl() : post.getDrink().getImageUrl();
 
     return PostResponse.builder()
         .id(post.getId())
         .memberId(memberId)
         .memberName(memberName)
+        .memberImageUrl(memberImageUrl)
         .drink(DrinkResponse.from(post.getDrink()))
         .type(post.getType())
         .content(post.getContent())
@@ -66,10 +69,15 @@ public class PostResponse {
 
   // post 엔티티 변환
   public static PostResponse from(Post post) {
+    String memberName = post.getMember() != null ? post.getMember().getName() : "탈퇴한 사용자";
+    Long memberId = post.getMember() != null ? post.getMember().getId() : null;
+    String memberImageUrl = post.getMember() != null ? post.getMember().getImageUrl() : null;
+
     return PostResponse.builder()
         .id(post.getId())
-        .memberId(post.getMember().getId())
-        .memberName(post.getMember().getName())
+        .memberId(memberId)
+        .memberName(memberName)
+        .memberImageUrl(memberImageUrl)
         .drink(DrinkResponse.from(post.getDrink()))
         .type(post.getType())
         .content(post.getContent())
@@ -78,7 +86,7 @@ public class PostResponse {
         .viewCount(post.getViewCount())
         .likeCount(post.getLikeCount())
         .createdAt(post.getCreatedAt())
-        .drink(DrinkResponse.from(post.getDrink()))
+        .updatedAt(post.getUpdatedAt())
         .build();
   }
 }
