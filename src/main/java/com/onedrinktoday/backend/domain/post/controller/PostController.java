@@ -1,6 +1,7 @@
 package com.onedrinktoday.backend.domain.post.controller;
 
 import com.onedrinktoday.backend.domain.member.entity.Member;
+import com.onedrinktoday.backend.domain.member.service.MemberService;
 import com.onedrinktoday.backend.domain.post.dto.PostRequest;
 import com.onedrinktoday.backend.domain.post.dto.PostResponse;
 import com.onedrinktoday.backend.domain.post.service.PostService;
@@ -26,6 +27,7 @@ import org.springframework.security.core.Authentication;
 @RequestMapping("/api")
 public class PostController {
   private final PostService postService;
+  private final MemberService memberService;
 
   @PostMapping("/posts")
   public ResponseEntity<PostResponse> post(@RequestBody PostRequest postRequest) {
@@ -39,9 +41,7 @@ public class PostController {
                                                         @RequestParam(defaultValue = "createdAt") String sortBy) {
     Pageable pageable = PageRequest.of(page, size);
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    Member member = (Member) authentication.getPrincipal(); // 사용자 정보 Member로 캐스팅
-
+    Member member = memberService.getMember();
     Page<PostResponse> posts = postService.getAllPosts(pageable, sortBy, member.getId());
     return ResponseEntity.ok(posts);
   }
