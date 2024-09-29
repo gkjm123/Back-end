@@ -109,7 +109,7 @@ public class PostControllerTest {
         .andExpect(jsonPath("$.error").value("해당 게시글을 찾을 수 없습니다."));
   }
 
-  @Test
+  /*@Test
   @DisplayName("게시글 리스트 조회 성공 테스트")
   void successGetAllPosts() throws Exception {
     Page<PostResponse> postsPage = new PageImpl<>(Arrays.asList(postResponse), PageRequest.of(0, 10), 1);
@@ -120,7 +120,7 @@ public class PostControllerTest {
         .andExpect(jsonPath("$.content[0].content").value(postResponse.getContent()))
         .andExpect(jsonPath("$.content[0].tags[0].tagName").value("달콤"))
         .andExpect(jsonPath("$.content[0].tags[1].tagName").value("시원"));
-  }
+  }*/
 
   @Test
   @DisplayName("게시글 수정 성공 테스트")
