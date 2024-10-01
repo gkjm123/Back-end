@@ -10,6 +10,7 @@ import com.onedrinktoday.backend.domain.declaration.entity.Declaration;
 import com.onedrinktoday.backend.domain.manager.dto.CancelDeclarationRequest;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
+import com.onedrinktoday.backend.domain.notification.dto.NotificationResponse;
 import com.onedrinktoday.backend.domain.notification.entity.Notification;
 import com.onedrinktoday.backend.domain.notification.repository.NotificationRepository;
 import com.onedrinktoday.backend.domain.post.entity.Post;
@@ -119,6 +120,7 @@ public class NotificationServiceTest {
             .postId(1L)
             .type(NotificationType.COMMENT)
             .content("댓글이 달렸습니다.")
+            .isRead(false)
             .build(),
         Notification.builder()
             .id(2L)
@@ -126,14 +128,18 @@ public class NotificationServiceTest {
             .postId(2L)
             .type(NotificationType.FOLLOW)
             .content("새로운 게시글이 태그와 작성되었습니다.")
+            .isRead(false)
             .build()
     );
-    Page<Notification> notificationPage = new PageImpl<>(notifications, pageable,
-        notifications.size());
+    Page<Notification> notificationPage = new PageImpl<>(notifications, pageable, notifications.size());
 
     //Stubbing 설정
     given(memberService.getMember()).willReturn(member);
     given(notificationRepository.findByMemberId(1L, pageable)).willReturn(notificationPage);
+
+    //특정 알림 조회하여 읽음으로 변경
+    given(notificationRepository.findById(1L)).willReturn(Optional.of(notifications.get(0)));
+    notificationService.getNotification(1L);
 
     //when
     Page<Notification> result = notificationService.getRecentNotifications(pageable);
@@ -141,7 +147,37 @@ public class NotificationServiceTest {
     //then
     assertNotNull(result);
     assertEquals(2, result.getTotalElements());
+    assertTrue(result.getContent().get(0).isRead());
+    assertFalse(result.getContent().get(1).isRead());
     verify(notificationRepository).findByMemberId(1L, pageable);
+  }
+
+  @Test
+  @DisplayName("특정 알림 조회 성공 테스트")
+  void successGetNotification() {
+    //given
+    Long notificationId = 1L;
+    Notification notification = Notification.builder()
+        .id(notificationId)
+        .member(member)
+        .postId(1L)
+        .type(NotificationType.COMMENT)
+        .content("댓글이 달렸습니다.")
+        .isRead(false)
+        .build();
+
+    //Stubbing 설정
+    given(memberService.getMember()).willReturn(member);
+    given(notificationRepository.findById(notificationId)).willReturn(Optional.of(notification));
+
+    //when
+    NotificationResponse result = notificationService.getNotification(notificationId);
+
+    //then
+    assertNotNull(result);
+    assertTrue(notification.isRead());
+    assertEquals(notificationId, result.getId());
+    verify(notificationRepository).save(notification);
   }
 
   @Test

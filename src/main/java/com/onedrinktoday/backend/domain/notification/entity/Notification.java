@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
@@ -42,6 +43,10 @@ public class Notification {
   private NotificationType type;
 
   private String content;
+
+  @Setter
+  @Column(name = "isRead")
+  private boolean isRead;
 
   @CreationTimestamp
   private LocalDateTime createdAt;

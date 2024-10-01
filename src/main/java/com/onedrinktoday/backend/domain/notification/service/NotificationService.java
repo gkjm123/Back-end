@@ -7,6 +7,7 @@ import com.onedrinktoday.backend.domain.declaration.entity.Declaration;
 import com.onedrinktoday.backend.domain.manager.dto.CancelDeclarationRequest;
 import com.onedrinktoday.backend.domain.member.entity.Member;
 import com.onedrinktoday.backend.domain.member.service.MemberService;
+import com.onedrinktoday.backend.domain.notification.dto.NotificationResponse;
 import com.onedrinktoday.backend.domain.notification.entity.Notification;
 import com.onedrinktoday.backend.domain.notification.repository.NotificationRepository;
 import com.onedrinktoday.backend.domain.post.entity.Post;
@@ -51,6 +52,22 @@ public class NotificationService {
     return notificationRepository.findByMemberId(memberId, pageable);
   }
 
+  public NotificationResponse getNotification(Long notificationId) {
+    Long currentMemberId = memberService.getMember().getId();
+
+    Notification notification = notificationRepository.findById(notificationId)
+        .orElseThrow(() -> new CustomException(NOTIFICATION_NOT_FOUND));
+
+    if (!notification.getMember().getId().equals(currentMemberId)) {
+      throw new CustomException(ACCESS_DENIED);
+    }
+
+    notification.setRead(true);
+    notificationRepository.save(notification);
+
+    return NotificationResponse.from(notification);
+  }
+
   public void postCommentNotification(Long postId, String memberName, boolean isAnonymous) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
@@ -80,7 +97,8 @@ public class NotificationService {
         post.getMember(),
         null,
         NotificationType.REMOVED,
-        String.format("%s로 인한 '%s'의 문제로 신고가 접수되어 회원님의 게시글이 삭제 처리되었습니다.", declaration.getType().getMessage(),
+        String.format("%s로 인한 '%s'의 문제로 신고가 접수되어 회원님의 게시글이 삭제 처리되었습니다.",
+            declaration.getType().getMessage(),
             declaration.getContent())
     );
 

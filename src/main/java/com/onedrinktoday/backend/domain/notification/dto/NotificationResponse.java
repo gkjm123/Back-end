@@ -18,6 +18,7 @@ public class NotificationResponse {
   private Long postId;
   private NotificationType type;
   private String content;
+  private boolean isRead;
   private LocalDateTime createdAt;
 
   public static NotificationResponse from(Notification notification) {
@@ -26,6 +27,7 @@ public class NotificationResponse {
         .postId(notification.getPostId())
         .type(notification.getType())
         .content(notification.getContent())
+        .isRead(notification.isRead())
         .createdAt(notification.getCreatedAt())
         .build();
   }
