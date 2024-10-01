@@ -45,8 +45,8 @@ public class Notification {
   private String content;
 
   @Setter
-  @Column(name = "isRead")
-  private boolean isRead;
+  @Column(name = "readStatus")
+  private boolean readStatus;
 
   @CreationTimestamp
   private LocalDateTime createdAt;

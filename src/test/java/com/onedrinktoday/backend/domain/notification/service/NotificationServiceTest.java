@@ -120,7 +120,7 @@ public class NotificationServiceTest {
             .postId(1L)
             .type(NotificationType.COMMENT)
             .content("댓글이 달렸습니다.")
-            .isRead(false)
+            .readStatus(false)
             .build(),
         Notification.builder()
             .id(2L)
@@ -128,7 +128,7 @@ public class NotificationServiceTest {
             .postId(2L)
             .type(NotificationType.FOLLOW)
             .content("새로운 게시글이 태그와 작성되었습니다.")
-            .isRead(false)
+            .readStatus(false)
             .build()
     );
     Page<Notification> notificationPage = new PageImpl<>(notifications, pageable, notifications.size());
@@ -147,8 +147,8 @@ public class NotificationServiceTest {
     //then
     assertNotNull(result);
     assertEquals(2, result.getTotalElements());
-    assertTrue(result.getContent().get(0).isRead());
-    assertFalse(result.getContent().get(1).isRead());
+    assertTrue(result.getContent().get(0).isReadStatus());
+    assertFalse(result.getContent().get(1).isReadStatus());
     verify(notificationRepository).findByMemberId(1L, pageable);
   }
 
@@ -163,7 +163,7 @@ public class NotificationServiceTest {
         .postId(1L)
         .type(NotificationType.COMMENT)
         .content("댓글이 달렸습니다.")
-        .isRead(false)
+        .readStatus(false)
         .build();
 
     //Stubbing 설정
@@ -175,7 +175,7 @@ public class NotificationServiceTest {
 
     //then
     assertNotNull(result);
-    assertTrue(notification.isRead());
+    assertTrue(notification.isReadStatus());
     assertEquals(notificationId, result.getId());
     verify(notificationRepository).save(notification);
   }

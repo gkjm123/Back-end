@@ -62,7 +62,7 @@ public class NotificationService {
       throw new CustomException(ACCESS_DENIED);
     }
 
-    notification.setRead(true);
+    notification.setReadStatus(true);
     notificationRepository.save(notification);
 
     return NotificationResponse.from(notification);
