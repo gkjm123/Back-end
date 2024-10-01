@@ -156,8 +156,7 @@ public class MemberService {
     String token = jwtProvider.createResetToken(member.getId(), member.getEmail(),
         member.getRole());
 
-    // 도메인 변경(예정)
-    String resetLink = "http://localhost:8080/api/members/password-reset?token=" + token;
+    String resetLink = "https://coding-bankatgan.vercel.app/api/members/password-reset?token=" + token;
 
     emailService.sendPasswordResetEmail(member.getEmail(), resetLink);
   }
