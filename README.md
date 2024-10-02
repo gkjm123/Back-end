@@ -28,7 +28,8 @@
 
 <br><br>
 ## 💽 ERD 구조
-![eeee](https://github.com/user-attachments/assets/0432cf55-9e85-46a7-9e9c-0de58689ab58)
+![전통주](https://github.com/user-attachments/assets/1b8ad56e-0539-4e24-bc4d-774f05bdb9d0)
+
 
 <br><br>
 ## 📎 기술 스택  
