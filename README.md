@@ -58,77 +58,7 @@ Back-End
 
 <br><br>
 ## 📱 앱 시연 영상  
-<table>
-  <tr>
-    <td>회원가입 / 일반 & 소셜 로그인</td>
-  </tr>
-  <tr>
-    <td><a href="">영상보기</a></td>
-  </tr>
-
-  <tr>
-    <td>비밀번호 찾기</td>
-  </tr>
-  <tr>
-    <td><a href="">영상보기</a></td>
-  </tr>
-
-  <tr>
-    <td>마이 페이지</td>
-  </tr>
-  <tr>
-    <td><a href="">영상보기</a></td>
-  </tr>
-
-  <tr>
-    <td>특산주 등록 / 매니저 승인</td>
-  </tr>
-  <tr>
-    <td><a href="">영상보기</a></td>
-  </tr>
-
-  <tr>
-    <td>게시글 / 댓글 작성</td>
-  </tr>
-  <tr>
-    <td><a href="">영상보기</a></td>
-  </tr>
-
-  <tr>
-    <td>특산주 & 태그 검색 / 자동완성</td>
-  </tr>
-  <tr>
-    <td><a href="">영상보기</a></td>
-  </tr>
-
-  <tr>
-    <td>태그 팔로우 추가 / 삭제</td>
-  </tr>
-  <tr>
-    <td><a href="">영상보기</a></td>
-  </tr>
-
-  <tr>
-    <td>알림 확인</td>
-  </tr>
-  <tr>
-    <td><a href="">영상보기</a></td>
-  </tr>
-
-  <tr>
-    <td>신고 등록 / 승인</td>
-  </tr>
-  <tr>
-    <td><a href="">영상보기</a></td>
-  </tr>
-
-  <tr>
-    <td>특산주 추천(지역 / 생일 / 매월)</td>
-  </tr>
-  <tr>
-    <td><a href="">영상보기</a></td>
-  </tr>
-</table>
+* [영상 보기](https://develop-growth.notion.site/One-Drink-Today-9ef0f66fc89e4bbe952db9e05e0e6714)
 
 <br><br>
 ## ☄️ Trouble Shooting 및 회고  
